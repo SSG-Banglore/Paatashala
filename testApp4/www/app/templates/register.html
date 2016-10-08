@@ -1,0 +1,73 @@
+﻿<ion-content>
+    <ion-list>
+        <div class="list" style="background-color: lightcoral;">
+            <label class = "item item-input" style="background-color:blue; color:white;">Register As :</label>
+            <ion-list>
+                <ion-radio ng-model="radio" ng-value="'A'"  style="width:168px;background-color:darkgrey;">Student</ion-radio>
+
+                <ion-radio ng-model="radio" ng-value="'B'" style="position: relative;width: 175px;top: -55px;left: 180px;">Teacher</ion-radio>
+            </ion-list>
+            <form name="studentform" novalidate>
+                <label class="item item-input">
+                    <input name="studentname" type="text" placeholder="Student Name" ng-model="studentname" required>
+                    <span style="color:red;" ng-show="studentform.studentname.$dirty && studentform.studentname.$invalid">
+                    <span ng-show="studentform.studentname.$error.required">Name is required</span>
+                        </span>
+                </label>
+                <label class="item item-input">
+                    <input name="studentschool" type="text" placeholder="Student School" ng-model="studentschool" required>
+                    <span style="color:red;" ng-show="studentform.studentschool.$dirtystudentform.studentschool.$invalid && studentform.studentschool.$invalid  ">
+                    <span ng-show="studentform.studentschool.$error.required">school is required</span>
+                        </span>
+                </label>
+                <label class="item item-input">
+                    <input name="branch" type="text" placeholder="Branch" ng-model="branch" required>
+                    <span style="color:red;" ng-show="studentform.branch.$dirty && studentform.branch.$invalid">
+                    <span ng-show="studentform.branch.$error.required">Branch is required</span>
+                        </span>
+                </label>
+                <label class="item item-input">
+                    <input name="class" type="text" placeholder="Class" ng-model="class" required>
+                    <span style="color:red;" ng-show="studentform.class.$dirty &&  studentform.class.$invalid ">
+                    <span ng-show="studentform.class.$error.required">Class is Required</span>
+                        </span>
+                </label>
+                <label class="item item-input">
+                    <input name="section" type="text" placeholder="Section" ng-model="section" required>
+                    <span style="color:red;" ng-show=" studentform.section.$dirty && studentform.section.$invalid">
+                    <span ng-show="studentform.section.$error.required">Section is required</span>
+                        </span>
+                </label>
+                <label class="item item-input">
+                    <input name="ParentsNo" type="number" placeholder="Parents no" ng-model="ParentsNo" required>
+                    <span style="color:red;" ng-show="studentform.ParentsNo.$dirty && studentform.ParentsNo.$invalid ">
+                    <span ng-show="studentform.ParentsNo.$error.required">Parents number is required</span>
+                        </span>
+                </label>
+                <label class="item item-input">
+                    <input name="email" type="email" placeholder="Email" ng-model="email" required>
+                    <span style="color:red;"  ng-show="studentform.email.$dirty && studentform.email.$invalid  ">
+                    <span ng-show="studentform.email.$error.required">Email id is required</span>
+                        <span ng-show="studentform.email.$error.invalid">Email Id is Invalid</span>
+                        </span>
+                </label>
+                <label class="item item-input">
+                    <input type="password" name="Pass" placeholder="Password" ng-model="Pass" required>
+                    <span style="color:red;" ng-show="studentform.Pass.$dirty && studentform.Pass.$invalid ">
+                        <span ng-show="studentform.Pass.$error.required">Password is required</span>
+                    </span>
+                </label>
+                <label class="item item-input">
+                   
+                    <input type="password" name="confirmPass" placeholder="Confirm Password" ng-model="confirmPass" required>
+                    <span style="color:red;" ng-show="studentform.confirmPass.$dirty && studentform.confirmPass.$invalid ">
+                        <span ng-show="studentform.confirmPass.$error.required">Confirm Password is required</span>
+                    </span>
+                </label>
+                <button class="button button-block button-positive" style="width: 187px;border-radius: 15px;position: relative;left: 80px;top: 39px;" ng-disabled="studentform.studentname.$dirty && studentform.studentname.$invalid || studentform.studentschool.$invalid && studentform.studentschool.$dirty || studentform.branch.$invalid && studentform.branch.$dirty || studentform.class.$invalid && studentform.class.$dirty || studentform.section.$invalid && studentform.section.$dirty || studentform.ParentsNo.$invalid && studentform.ParentsNo.$dirty || studentform.email.$invalid && studentform.email.$dirty " ng-click="gologin()" >
+                    Register
+                </button>
+            </form>
+     </div>   
+    </ion-list>
+</ion-content>
