@@ -1,0 +1,25 @@
+﻿<ion-view>
+    <div class="bar bar-header bar-stable" style="background-color:aliceblue;">
+        <a class="button icon-left ion-chevron-left button-clear button-dark" href="#/templates/view-parent-home.html"></a>
+        <h1 class="title"><strong> Transport Facility </strong></h1>
+    </div>
+    <ion-content style="margin-top: 44px;   margin-bottom: 48px;background-color: aqua;">
+        <div class="row" >
+            <div class="col" style="font-size:18px;">Pickup Time</div>
+            <div class="col" style="padding-right:9px;"><input type="datetime-local" style="margin-right: -53px; height: 31px;  width: 191px;" ng-model="TransportDetail.PickupTime" disabled /></div>
+        </div>
+        <div class="row">
+            <div class="col" style="font-size:18px;">Drop Time</div>
+            <div class="col" style="padding-right:9px;"><input type="datetime-local" style="margin-right: -53px; height: 31px;  width: 191px;" ng-model="TransportDetail.DropTime" disabled /></div>
+        </div>
+        <div class="row">
+            <div class="col" style="font-size:18px;">Starting Point</div>
+            <div class="col" style="padding-right:9px;">{{TransportDetail.Transport.StopName}}</div>
+        </div>
+        <div class="row">
+            <div class="col" style="font-size:18px;">Ending Point</div>
+            <div class="col" style="padding-right:9px;"> {{TransportDetail.Transport.Endpoint}}</div>
+        </div>
+      
+    </ion-content>
+</ion-view>

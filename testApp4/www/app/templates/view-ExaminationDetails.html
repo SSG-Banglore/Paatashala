@@ -1,0 +1,26 @@
+﻿<ion-view>
+    <div class="bar bar-header bar-stable" style="background-color:aliceblue;">
+        <a class="button icon-left ion-chevron-left button-clear button-dark" href="#/templates/view-parent-home.html"></a>
+        <h1 class="title"><strong> Examination Details </strong></h1>
+    </div>
+    <ion-content style="margin-top: 44px;   margin-bottom: 48px;background-color: aqua;">
+
+        <div style="margin-top: 8px; margin-left : -6px;">
+            <div class="row">
+                <div class="col" style="font-size:14px;">Examtype</div>
+                <div class="col" style="font-size:14px;">SubjectName</div>
+                <div class="col" style="font-size:14px;">ExamDate</div>
+                <div class="col" style="font-size:14px;">Duration</div>
+                <div class="col" style="font-size:14px;">Starttime</div>
+            </div>
+            <div class="row" style="margin-left : -21px;" ng-repeat="s in examinationDetail.ExamSchedule">
+                <div class="col" style="margin-left: 21px;margin-right: 14px;">{{s.Examtype}}</div>
+                <div class="col" style="margin-left: 14px;margin-right: 14px;">{{s.SubjectName}}</div>
+                <div class="col" style="margin-left: 7px;margin-right: 37px;">{{s.ExamDate | date: "yyyy-MM-dd"}}</div>
+                <div class="col"style="margin-left: -18px;margin-right: -16px;">{{s.Duration|date:" HH:mm"}}</div>
+                <div class="col" style="margin-left: 20px;margin-right: -29px;">{{s.Starttime|date: " HH:mm a"}}</div>
+            </div>
+     
+        </div>
+    </ion-content>
+</ion-view>

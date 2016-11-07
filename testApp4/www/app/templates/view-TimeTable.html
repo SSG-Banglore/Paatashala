@@ -1,0 +1,19 @@
+﻿<ion-view>
+    <div class="bar bar-header bar-stable" style="background-color:aliceblue;">
+        <a class="button icon-left ion-chevron-left button-clear button-dark" href="#/templates/view-parent-home.html"></a>
+        <h1 class="title"><strong> Time Table </strong></h1>
+    </div>
+    <ion-content style="margin-top: 44px;   margin-bottom: 48px;background-color: aqua;">
+        <ion-scroll zooming="true" direction="xy" style="width: 320px; height: 500px">
+            <div class="scroll-container" style="width: 1000px; ">
+                <div class="row" ng-repeat="pd in periodData.WeekdayTimeTables" ng-show="pd.Visible" data-toggle="modal" data-target="#timeTableSetModel" ng-click="openPopup(pd)">
+                    <div class="col"><h4 class="list-group-item-heading"><b>{{pd.Name}}</b></h4>
+                    </div>
+                    <div class="col" style="margin-top: 12px;" ng-repeat="per in pd.Periods"><p>{{per.StartTime | date:"HH:mm a"}} - {{per.EndTime |     date:"HH:mm a"}}</p><h4>{{per.Subject.Name}}</h4>
+                    </div>
+                </div>
+            </div>
+        </ion-scroll>
+    </ion-content>
+</ion-view>
+
