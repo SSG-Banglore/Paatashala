@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    angular.module("myapp", ["ionic", "myapp.controllers", "myapp.services"])
+    angular.module("myapp", ["ionic", "myapp.controllers", "myapp.services","ngCordova"])
         .run(function ($ionicPlatform) {
             $ionicPlatform.ready(function () {
                 if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -144,10 +144,20 @@
                             templateUrl: "app/templates/view-signout.html",
                             controller: "signoutCtrl"
                         })
+                        .state("Geolocation", {
+                            url: "/Geolocation",
+                            templateUrl: "app/templates/Geolocation.html",
+                            controller: "GeolocationCtrl"
+                        })
+                          .state("barCodeScanner", {
+                              url: "/barCodeScanner",
+                              templateUrl: "app/templates/barCodeScanner.html",
+                              controller: "barCodeScannerCtrl"
+                        })
             ;
             
 
            
-            $urlRouterProvider.otherwise("/view-afterLogin");
+            $urlRouterProvider.otherwise("/view-parent-home");
         });
 })();

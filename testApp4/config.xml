@@ -107,4 +107,10 @@
     <splash src="res/screens/wp8/SplashScreenImage.png" width="768" height="1280" />
   </platform>
   <plugin name="cordova-plugin-geolocation" version="2.1.0" />
+  <plugin name="cordova-plugin-camera" version="2.1.1" />
+  <plugin name="cordova-plugin-media-capture" version="1.2.0" />
+  <plugin name="cordova-plugin-inappbrowser" version="1.2.1" />
+  <plugin name="cordova-plugin-dialogs" version="1.2.1" />
+  <plugin name="cordova-plugin-network-information" version="1.2.1" />
+  <plugin name="phonegap-plugin-barcodescanner" version="6.0.3" src="https://github.com/phonegap/phonegap-plugin-barcodescanner.git" />
 </widget>

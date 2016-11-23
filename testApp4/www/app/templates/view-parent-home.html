@@ -1,64 +1,28 @@
 ﻿<ion-view view-title>
-    <div class="bar bar-header bar-stable" style="background-color:aliceblue;">
+    <div class="bar bar-header bar-positive">
         <h1 class="title"><strong> Parent-Home </strong></h1>
-        <button class="button" style="right: -331px;"  ng-click="openPopover($event)"><i class="ion-android-more-vertical"></i></button>
+        <button class="button button-icon icon ion-navicon" ng-click="openPopover($event)"></button>
         <script id="my-popover.html" type="text/ng-template">
-            <ion-popover-view>              
+            <ion-popover-view>
                 <ion-content>
-                    <div class="list">               
+                    <div class="list">
                         <a class="item" href="#/view-profile">
                             Profile
                         </a>
                         <a class="item" href="#/view-signout">
                             Signout
                         </a>
-                        </div>
-                 </ion-content>
+                    </div>
+                </ion-content>
             </ion-popover-view>
         </script>
     </div>
-    <ion-content>
+    <ion-content class="padding has-header">
         <div class="list">
-            <a class="item" href="#/view-feeDeatils">
-                fee Details
-            </a>
-            <a class="item" href="#/view-subject-details">
-                subject Details
-            </a>
-            <a class="item" href="#/view-attendence">
-                Attendence
-            </a>
-            <a class="item" href="#/view-transportFacility">
-                Transport facility
-            </a>
-            <a class="item" href="#/view-hostelDetails">
-                hostel Details
-            </a>
-            <a class="item" href="#/view-personalDetails">
-                Personal Detals
-            </a>
-            <a class="item" href="#/view-HomeWork-Details">
-               HomeWork
-            </a>
-            <a class="item" href="#/view-holidays">
-               Holidays
-            </a>
-            <a class="item" href="#/view-MessageBox">
-                Message Box
-            </a>
-            <a class="item" href="#/view-TimeTable">
-                TimeTable
-            </a>
-            <a class="item" href="#/view-ExaminationDetails">
-                Examination Details
-            </a>
-            <a class="item" href="#/view-teacherDetail">
-                Teacher
-            </a>
-            <a class="item" href="#/view-assesmentReport">
-                Report card/Assesment Report
+            <a class="item item-icon-left" href="{{page.Href}}" ng-repeat="page in Pages">
+                <i class="icon {{page.Icon}}"></i>
+                {{page.Name}}
             </a>
         </div>
-       
     </ion-content>
 </ion-view>

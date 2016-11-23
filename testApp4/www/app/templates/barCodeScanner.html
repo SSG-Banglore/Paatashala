@@ -1,0 +1,30 @@
+﻿<ion-view>
+    <ion-content class="padding">
+        <!--<button id="scan" ng-click="scanBarCode()" style="width:100px; height: 30px;">Scan</button>
+        <button id="scan" ng-click="add()" style="width:100px; height: 30px;">Add</button>-->
+        <button class="button button-block button-positive" ng-click="scanBarCode()">
+            Scan
+        </button>
+        <div class="card">
+            <div class="item item-divider">
+                Scanned Students
+            </div>
+            <div class="list list-inset">
+                <div class="item" ng-repeat="ss in scannedStudents">
+                    {{ss}}
+                </div>
+                <div class="item" ng-show="scannedStudents.length == 0">
+                   No students scanned yet
+                </div>
+            </div>
+
+        </div>
+        <ion-list>
+            <ion-radio ng-model="choice" ng-value="'pickup'">Pick Up</ion-radio>
+            <ion-radio ng-model="choice" ng-value="'drop'">Drop</ion-radio>
+        </ion-list>
+        <button class="button button-block button-positive" ng-click="sendStudentsTimings()">
+            Submit Student List
+        </button>
+    </ion-content>
+</ion-view>
