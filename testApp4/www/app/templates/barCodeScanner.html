@@ -1,5 +1,6 @@
 ﻿<ion-view>
-    <ion-content class="padding">
+    <ion-content class="padding" >
+        <form name="BarCodeForm">
         <!--<button id="scan" ng-click="scanBarCode()" style="width:100px; height: 30px;">Scan</button>
         <button id="scan" ng-click="add()" style="width:100px; height: 30px;">Add</button>-->
         <button class="button button-block button-positive" ng-click="scanBarCode()">
@@ -10,21 +11,25 @@
                 Scanned Students
             </div>
             <div class="list list-inset">
-                <div class="item" ng-repeat="ss in scannedStudents">
+                <div class="item" ng-repeat="ss in scannedStudents.Name">
                     {{ss}}
+                  <button  style="float:right" class="button button-small button-assertive  pull-right" ng-click="DeleteCurrentRow($index)" >Delete</button>
+                    
                 </div>
-                <div class="item" ng-show="scannedStudents.length == 0">
+                <div class="item" ng-show="scannedStudents.Id.length == 0">
                    No students scanned yet
                 </div>
             </div>
 
         </div>
         <ion-list>
-            <ion-radio ng-model="choice" ng-value="'pickup'">Pick Up</ion-radio>
-            <ion-radio ng-model="choice" ng-value="'drop'">Drop</ion-radio>
+            <ion-radio ng-model="data.choice" name="PickDropRadio" ng-value="true" >Pick Up</ion-radio >
+            <ion-radio ng-model="data.choice" name="PickDropRadio" ng-value="false" ng-required="!(data.choice)" >Drop</ion-radio>
+            <span style="color:red" ng-show="BarCodeForm.PickDropRadio.$error.required">You have to choose pick up or drop</span>
         </ion-list>
-        <button class="button button-block button-positive" ng-click="sendStudentsTimings()">
+        <button  class="button button-block button-positive" ng-disabled="BarCodeForm.$invalid" ng-click="sendStudentsTimings()">
             Submit Student List
         </button>
+            </form>
     </ion-content>
 </ion-view>

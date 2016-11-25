@@ -351,6 +351,17 @@
 
                 }])
                 .controller("GeolocationCtrl", ["$scope", "$state", "$http", "$cordovaGeolocation", function ($scope, $state, $http, $cordovaGeolocation) {
+                    $scope.Routes = [];
+                    $scope.data = {
+                        code :[],
+                    }
+                    $http.post('http://' + IpConfig + '/SMSAPI/GeoLocation/GetRouteCode?OrgId=1').then(function (res) {
+                        debugger;
+                        console.log(res);
+                        $scope.Routes = res.data;
+                    })
+                  
+                    
                     $scope.getGeolocation = function () {
                         var posOptions = { timeout: 10000, enableHighAccuracy: false };
                         $cordovaGeolocation
@@ -358,13 +369,12 @@
                           .then(function (position) {
                               var lat = position.coords.latitude;
                               var long = position.coords.longitude;
-
-                              $http.post('http://' + IpConfig + '/SMSAPI/GeoLocation/GetLocation?Lattitude=' + lat + '&Longitude=' + long).then(function (res) {
+                              var Route = $scope.data.code;
+                              $scope.date = new Date();
+                              var jsonObj3 =JSON.stringify($scope.date);
+                              $http.post('http://' + IpConfig + '/SMSAPI/GeoLocation/GetLocation?Lattitude=' + lat + '&Longitude=' + long + '&OrgId=1&Routecode=' + Route + '&nowDateTime=' + jsonObj3).then(function (res) {
                                   debugger;
-
-
                               })
-
                           }, function (err) {
                               // error
                           });
@@ -372,14 +382,36 @@
                     }
 
                 }])
-                .controller("barCodeScannerCtrl", ["$scope", "$state","$http", "$cordovaBarcodeScanner", function ($scope, $state,$http,$cordovaBarcodeScanner) {
-                    
-                    $scope.scannedStudents = [];
+                .controller("barCodeScannerCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", function ($scope, $state, $http, $cordovaBarcodeScanner) {
+
+                    $scope.studentsList = [];
+                    $http.post('http://' + IpConfig + '/SMSAPI/Attandance/getStudentsList?OrgId=1').then(function (res) {
+                        console.log(res);
+                        $scope.studentsList = res.data;
+                    })
+                    $scope.scannedStudents = {
+                        Id: [],
+                        Name:[]
+                    }
+                    $scope.data ={}
+                        
+                    $scope.DeleteCurrentRow = function (index) {
+                        debugger;
+                        $scope.scannedStudents.Name.splice(index, 1);
+                         $scope.scannedStudents.Id.splice(index, 1);
+                    }
                     $scope.scanBarCode = function () {
                         $cordovaBarcodeScanner.scan().then(function (imageData) {
-
-                            var ScannedStudents = $scope.scannedStudents.push( imageData.text);
-                            console.log($scope.scannedStudents);
+                            var Id = imageData.text;
+                            $scope.studentsList.forEach(function (value, index) {
+                                if (value.Id == Id)
+                                {
+                                    $scope.scannedStudents.Name.push(value.Name)
+                                    $scope.scannedStudents.Id.push(value.Id)
+                                }
+                            })
+                        //    var ScannedStudents = $scope.studentsList.push(Id);
+                         //   console.log($scope.scannedStudents);
 
                             //alert(imageData.text);
                             //var scaned = imageData.text;
@@ -393,11 +425,11 @@
                     }
                     $scope.sendStudentsTimings = function () {
                         debugger;
-                        
-                        //var jsonObj1 = JSON.stringify( $scope.scannedStudents[]);
+                        var pick = $scope.data.choice;
+                        var jsonObj1 = $scope.scannedStudents.Id;
                         $scope.date = new Date();
                         var jsonObj2 =JSON.stringify($scope.date);
-                        $http.post('http://' + IpConfig + '/SMSAPI/Attandance/SaveAttendance?OrgId=1&StudentId=' + jsonObj1  + '&scanDateTime=' + jsonObj2).then(function (res) {
+                        $http.post('http://' + IpConfig + '/SMSAPI/Attandance/SaveAttendance?OrgId=1&StudentId=' + jsonObj1 + '&scanDateTime=' + jsonObj2 + '&IsPicUp=' + pick).then(function (res) {
                             debugger;
                         });
                     }
@@ -413,7 +445,7 @@
         $scope.dismissError = function () {
             $scope.activeError = false;
         };
-
+       
         //broadcast event to catch an error and display it in the error section
         $scope.$on("error", function (evt, val) {
             //set the error message and mark activeError to true

@@ -1,7 +1,21 @@
 ﻿<ion-view>
     <ion-content>
-        <button id="geolocation" ng-click="getGeolocation()" style="width:100px; height: 30px;"> geolocation</button>
-
+        <button class="button button-block button-positive" ng-click="getGeolocation()">
+            geolocation
+        </button>
+        <!--<button id="geolocation" ng-click="getGeolocation()" style="width:100px; height: 30px;"> geolocation</button>-->
+        <div>
+            <label class="item item-input item-select">
+                <label class="input-label">
+                    RouteCode
+                </label>
+             
+                <select ng-model="data.code"  ng-options="r.Id as r.RouteCode for r in Routes">
+                  
+                </select>
+            </label>
+            
+        </div>
         <script src="https://maps-api-ssl.google.com/maps/api/js?libraries=places"></script>
     </ion-content>
 
