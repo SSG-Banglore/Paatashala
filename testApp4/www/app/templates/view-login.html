@@ -1,0 +1,24 @@
+﻿<ion-view>
+    <ion-nav-title>
+       Login
+    </ion-nav-title>
+    <ion-content class="padding">
+        <!--<ion-radio  ng-model="choice" ng-value="'Employee'">Employee</ion-radio>
+        <ion-radio ng-model="choice" ng-value="'Parent'">Parent</ion-radio>-->
+        <label class="radio-inline"><input type="radio" ng-model="data.Usertype" value="Employee">Employee</label><br />
+        <label class="radio-inline"><input type="radio" ng-model="data.Usertype" value="Parent">Parent</label>
+        <div class="list list-inset">        
+            <label class="item item-input">
+                <input type="text" ng-model="loginData.Username" placeholder="Username">
+            </label>
+            <label class="item item-input">
+                <input type="text" ng-model="loginData.Password" placeholder="Password">
+            </label>
+        </div>
+        <button class="button button-block button-light" ng-click="login()">
+            Login
+        </button>
+        <h4 style="color:lightsalmon">{{message}}</h4>
+        <a style="margin-left:134px;" href="#/view-SendVerificationCode">New User </a>
+    </ion-content>
+</ion-view>

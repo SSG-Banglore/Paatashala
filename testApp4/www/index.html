@@ -15,6 +15,10 @@
         <h1 class="title">Error: {{error}}</h1>
         <button class="button icon ion-close-round" ng-click="dismissError()"></button>
     </div>
+    <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button>
+        </ion-nav-back-button>
+    </ion-nav-bar>
     <ion-nav-view></ion-nav-view>
     <div class="spinner">
         <ion-spinner icon="android" class="spinnerSpinner"></ion-spinner>
@@ -35,6 +39,7 @@
     <script src="app/services.js"></script>
     <script src="app/controllers.js"></script>
     <script src="app/app.js"></script>
+    <script src="http://maps.google.com/maps/api/js"></script>
 
 </body>
 </html>

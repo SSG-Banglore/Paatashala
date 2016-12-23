@@ -1,7 +1,8 @@
-﻿(function () {
+﻿/// <reference path="templates/view-login.html" />
+(function () {
     "use strict";
 
-    angular.module("myapp", ["ionic", "myapp.controllers", "myapp.services","ngCordova"])
+    angular.module("myapp", ["ionic", "myapp.controllers", "myapp.services", "ngCordova"])
         .run(function ($ionicPlatform) {
             $ionicPlatform.ready(function () {
                 if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -14,6 +15,26 @@
         })
         .config(function ($stateProvider, $urlRouterProvider) {
             $stateProvider
+                .state('login', {
+                    url: '/login',
+                    templateUrl: 'app/templates/view-login.html',
+                    controller: 'loginCtrl'
+                })
+                .state('setting', {
+                    url: '/setting',
+                    templateUrl: 'app/templates/view-setting.html',
+                    controller: 'settingCtrl'
+                })
+                 .state('manage-children', {
+                     url: '/manage-children',
+                     templateUrl: 'app/templates/view-manage-children.html',
+                     controller: 'manageChildrenCtrl'
+                 })
+                .state('change-student', {
+                    url: '/change-student',
+                    templateUrl: 'app/templates/view-change-student.html',
+                    controller: 'changeStudentCtrl'
+                })
             .state("app", {
                 url: "/app",
                 abstract: true,
@@ -35,6 +56,21 @@
                   templateUrl: "app/templates/view-home.html",
                   controller: "registerCtrl"
               })
+                  .state("view-SendVerificationCode", {
+                      url: "/view-SendVerificationCode",
+                      templateUrl: "app/templates/view-SendVerificationCode.html",
+                      controller: "SendVerificationCodeCtrl"
+                  })
+                 .state("view-PassCode", {
+                     url: "/view-PassCode",
+                     templateUrl: "app/templates/view-PassCode.html",
+                     controller: "PassCodeCtrl"
+                 })
+                 .state("ChangePassword", {
+                     url: "/ChangePassword",
+                     templateUrl: "app/templates/ChangePasswordhtml.html",
+                     controller: "ChangePasswordCtrl"
+                 })
               .state("view-afterLogin", {
                   url: "/view-afterLogin",
                   templateUrl: "app/templates/view-afterLogin.html",
@@ -91,25 +127,25 @@
                      controller: "HomeWorkDetailsCtrl"
                  })
                  .state("view-holidays", {
-                      url: "/view-holidays",
-                      templateUrl: "app/templates/view-holidays.html",
-                      controller: "holidaysCtrl"
-                  })
+                     url: "/view-holidays",
+                     templateUrl: "app/templates/view-holidays.html",
+                     controller: "holidaysCtrl"
+                 })
                   .state("view-MessageBox", {
-                          url: "/view-MessageBox",
-                          templateUrl: "app/templates/view-MessageBox.html",
-                          controller: "MessageBoxCtrl"
-                      })
+                      url: "/view-MessageBox",
+                      templateUrl: "app/templates/view-MessageBox.html",
+                      controller: "MessageBoxCtrl"
+                  })
                   .state("view-TimeTable", {
-                         url: "/view-TimeTable",
-                         templateUrl: "app/templates/view-TimeTable.html",
-                         controller: "TimeTableCtrl"
-                     })
+                      url: "/view-TimeTable",
+                      templateUrl: "app/templates/view-TimeTable.html",
+                      controller: "TimeTableCtrl"
+                  })
                   .state("view-ExaminationDetails", {
-                          url: "/view-ExaminationDetails",
-                          templateUrl: "app/templates/view-ExaminationDetails.html",
-                          controller: "examinationDetailsCtrl"
-                      })
+                      url: "/view-ExaminationDetails",
+                      templateUrl: "app/templates/view-ExaminationDetails.html",
+                      controller: "examinationDetailsCtrl"
+                  })
                   .state("view-teacherDetail", {
                       url: "/view-teacherDetail",
                       templateUrl: "app/templates/view-teacherDetail.html",
@@ -153,11 +189,15 @@
                               url: "/barCodeScanner",
                               templateUrl: "app/templates/barCodeScanner.html",
                               controller: "barCodeScannerCtrl"
-                        })
+                          })
             ;
-            
 
-           
-            $urlRouterProvider.otherwise("/view-parent-home");
+            //if (localStorage['loginUser']) {
+            //    $urlRouterProvider.otherwise("/view-parent-home");
+            //} else {
+            //    $urlRouterProvider.otherwise("/login");
+            //}
+
+            $urlRouterProvider.otherwise("/login");
         });
 })();

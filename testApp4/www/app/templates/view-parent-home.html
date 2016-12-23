@@ -1,27 +1,25 @@
-﻿<ion-view view-title>
-    <div class="bar bar-header bar-positive">
-        <h1 class="title"><strong> Parent-Home </strong></h1>
-        <button class="button button-icon icon ion-navicon" ng-click="openPopover($event)"></button>
-        <script id="my-popover.html" type="text/ng-template">
-            <ion-popover-view>
-                <ion-content>
-                    <div class="list">
-                        <a class="item" href="#/view-profile">
-                            Profile
-                        </a>
-                        <a class="item" href="#/view-signout">
-                            Signout
-                        </a>
-                    </div>
-                </ion-content>
-            </ion-popover-view>
-        </script>
-    </div>
+﻿<ion-view>
+    <ion-nav-title>
+        Home
+    </ion-nav-title>
     <ion-content class="padding has-header">
         <div class="list">
             <a class="item item-icon-left" href="{{page.Href}}" ng-repeat="page in Pages">
                 <i class="icon {{page.Icon}}"></i>
                 {{page.Name}}
+            </a>
+        </div>
+        <div class="list">
+            <div class="item item-divider">
+                Manage
+            </div>
+            <a class="item item-icon-left" href="#/setting">
+                <i class="icon ion-android-settings"></i>
+                Settings
+            </a>
+            <a class="item item-icon-left" href="#/change-student">
+                <i class="icon ion-social-octocat"></i>
+                Change Student
             </a>
         </div>
     </ion-content>

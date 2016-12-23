@@ -1,20 +1,35 @@
 ﻿<ion-view>
-    <div class="bar bar-header bar-stable" style="background-color:aliceblue;">
-        <a class="button icon-left ion-chevron-left button-clear button-dark" href="#/templates/view-parent-home.html"></a>
-        <h1 class="title"><strong> Fee Details </strong></h1>
-    </div>
-    <ion-content style="margin-top: 44px;   margin-bottom: 48px;background-color: aqua;">
-       
-        <div style="margin-top: 8px; margin-left: 17px;">
-            <div class="row">
-                <div class="col" style="font-size:20px;">Fee Date</div>
-                <div class="col"style="font-size:20px;" >Amount</div>
+    <ion-nav-title>
+        Fee Details({{student.Name}})
+    </ion-nav-title>
+    <ion-content>
+
+        <div class="card" ng-repeat="f in feeDetails">
+            <div class="item item-text-wrap">
+                <p>Paid Date : <b>{{f.DatePaid}}</b></p>
+                <p>Grand Total :<b> &#8377; {{f.GrandTotal}}</b></p>
+                <p>Period :<b> {{f.PaidForPeriod}}</b></p>
             </div>
-            <div class="row" ng-repeat="s in FeeDetail.FeepaidList" >
-                <div class="col" style="padding-right:4px;">{{s.Date | date:"yyyy-MM-dd"}}</div>
-                <div class="col" style="padding-right:4px;">{{s.GrandTotal}}</div>
-            </div>
-      
         </div>
     </ion-content>
 </ion-view>
+<style>
+    .rwd-table {
+        background: #34495E;
+        color: #fff;
+        border-radius: .4em;
+        overflow: hidden;
+    }
+
+        .rwd-table tr {
+            border-color: gold;
+        }
+
+        .rwd-table th, td {
+            margin: .5em 1em;
+        }
+
+            .rwd-table th, td:before {
+                color: #dd5;
+            }
+</style>
