@@ -5,20 +5,43 @@
     <ion-content class="padding">
         <!--<ion-radio  ng-model="choice" ng-value="'Employee'">Employee</ion-radio>
         <ion-radio ng-model="choice" ng-value="'Parent'">Parent</ion-radio>-->
-        <label class="radio-inline"><input type="radio" ng-model="data.Usertype" value="Employee">Employee</label><br />
-        <label class="radio-inline"><input type="radio" ng-model="data.Usertype" value="Parent">Parent</label>
+        <!--<ion-list>
+            <ion-radio ng-model="data.Usertype" ng-value="'Employee'">Employee</ion-radio>
+            <ion-radio ng-model="data.Usertype" ng-value="'Parent'">Parent</ion-radio>
+        </ion-list>-->
+        <div class="button-bar" ng-init="loginData.Usertype = 'Parent'">
+            <a class="button"
+               ng-class="{'button-positive': loginData.Usertype == 'Parent' }"
+               ng-click="loginData.Usertype='Parent'">Parent</a>
+            <a class="button" 
+               ng-class="{'button-positive': loginData.Usertype == 'Employee' }" 
+               ng-click="loginData.Usertype='Employee'" >Employee</a>
+        </div>
+        <!--<label class="radio-inline"><input type="radio" ng-model="data.Usertype" value="Employee">Employee</label><br />
+        <label class="radio-inline"><input type="radio" ng-model="data.Usertype" value="Parent">Parent</label>-->
         <div class="list list-inset">        
             <label class="item item-input">
-                <input type="text" ng-model="loginData.Username" placeholder="Username">
+                <input type="text" ng-model="loginData.Username" placeholder="Username" ng-init="loginData.Username = 'dharani.be1994@gmail.com'">
             </label>
             <label class="item item-input">
-                <input type="text" ng-model="loginData.Password" placeholder="Password">
+                <input type="password" ng-model="loginData.Password" placeholder="Password" ng-init="loginData.Password = '12345'">
+            </label>
+            <label class="item item-input" ng-show="loginData.Usertype == 'Employee'" >
+                <input type="text" ng-model="loginData.OrgName" placeholder="Organization Name">
             </label>
         </div>
         <button class="button button-block button-light" ng-click="login()">
             Login
         </button>
+        <button class="button button-clear button-block button-positive" ng-show="loginData.Usertype == 'Parent'" ng-click="newUser()">
+            New User
+        </button>
+        <button ng-show="loginData.Usertype == 'Parent'" class="button button-clear button-block button-positive" ng-click="forgetPassword()">
+            Forget Password
+        </button>
+        <button ng-show="loginData.Usertype == 'Employee'" class="button button-clear button-block button-positive" ng-click="EmployeeForgetPassword()">
+            Forget Password
+        </button>
         <h4 style="color:lightsalmon">{{message}}</h4>
-        <a style="margin-left:134px;" href="#/view-SendVerificationCode">New User </a>
     </ion-content>
 </ion-view>

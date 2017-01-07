@@ -1,44 +1,22 @@
 ﻿<ion-view>
-    <div class="bar bar-header bar-positive">
-        <a class="button icon-left ion-chevron-left button-clear button-dark" href="#/templates/view-parent-home.html"></a>
-         <h1 class="title"><strong> Subjects Details </strong></h1>
-    </div>
-    <ion-content style="margin-top: 44px;   margin-bottom: 48px;">
-
-        <!--<table>
+    <ion-nav-title>
+        Subject Details
+    </ion-nav-title>
+    <ion-content class="padding">
+        <table class="table-fill">
             <thead>
                 <tr>
-                    <td>Subject</td>
-                    <td>Faculty</td>
+                    <th class="text-left">Subject</th>
+                    <th class="text-left">Faculty</th>
                 </tr>
             </thead>
-            <tr ng-repeat="s in SubjectDetail.subjectsList">
-                <td>{{s.SubjectName}}</td>
-                <td>{{s.EmployeeName}}</td>
-            </tr>
-        </table>-->
-       <div style="margin-top: 8px; margin-left: 17px;">
-           <div class="row">
-               <div class="col" style="font-size:20px;">Subject</div>
-               <div class="col" style="font-size:20px;">Faculty</div>
-           </div>
-           <div class="row" ng-repeat="s in SubjectDetail.subjectsList">
-               <div class="col" style="padding-right:4px;" >{{s.SubjectName}}</div>  
-               <div class="col" style="padding-right:4px;" >{{s.EmployeeName}}</div>
-           </div>
-    <!--<div class="row">
-        <table>
-            <tr ng-repeat="x in SubjectDeatil">
-                <td>{{x.Name}}</td>
-            </tr>
+            <tbody class="table-hover">
+                <tr ng-repeat="s in SubjectDetail.subjectsList">
+                    <td class="text-left">{{s.SubjectName}}</td>
+                    <td class="text-left">{{s.EmployeeName}}</td>
+                </tr>
+            </tbody>
         </table>
-        <!--<div class="col" ng-repeat="x in SubjectDeatil">{{x.Id}}</div>-->
-        <!--<div class="col" ng-repeat="x in SubjectDeatil">{{x.Name}}</div>-->
-    <!--</div>-->
-    <!--<div class="row">
-        <div class="col">{{SubjectDeatil[1].Id}}</div>
-        <div class="col">{{SubjectDeatil[1].Name}}</div>
-    </div>-->
-           </div>
     </ion-content>
 </ion-view>
+<link href="../../css/custom-table.css" rel="stylesheet" />

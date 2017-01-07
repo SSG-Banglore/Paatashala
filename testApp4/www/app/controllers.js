@@ -1,33 +1,74 @@
 ﻿(function () {
     "use strict";
-    var IpConfig = "192.168.1.34";
-    var host = 'http://localhost:56623/';
-    angular.module("myapp.controllers", [])
+    var host = "http://192.168.1.34/SMSAPI/";
+    //var host = 'http://localhost:56623/';
+    angular.module("myapp.controllers", ['ionic-datepicker','tabSlideBox'])
 
     .controller("appCtrl", ["$scope", function ($scope) {
     }])
-    .controller('loginCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', function ($scope, $http, $CustomLS, $ionicLoading, $state) {
+    .controller('loginCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', '$ionicHistory', function ($scope, $http, $CustomLS, $ionicLoading, $state, $ionicHistory) {
         $scope.loginData = {};
         $scope.message = "";
+        $scope.newUser = function () {
+            $state.go('view-SendVerificationCode');
+        };
+        $scope.forgetPassword = function () {
+            $state.go('view-forgetPassword');
+        }
+        $scope.EmployeeForgetPassword = function () {
+            $state.go('view-employeeForgetPassword');
+        }
         $scope.login = function () {
-            $ionicLoading.show({ template: 'Login...', duration: 10000 });
-            $http.post(host + 'User/Login', $scope.loginData).success(function (data) {
-                if (data.Status) {
-                    $CustomLS.setObject('loginUser', data.User);
-                    $state.go('view-parent-home');
-                }
-                else {
-                    $scope.message = data.Message;
-                }
-                $ionicLoading.hide();
-            }).error(function (errData) {
-                console.log(errData);
-                $ionicLoading.hide();
-            });
+            if ($scope.loginData.Usertype == 'Employee') {
+                $ionicLoading.show({ template: 'Login...', duration: 10000 });
+                $http.post(host + 'User/EmployeeLogin', $scope.loginData).success(function (data) {
+                    debugger;
+                    if (data.Status) {
+                        localStorage['LoginType'] = 'Employee';
+                        $CustomLS.setObject('LoginUser', data.User);
+                        $CustomLS.setObject('currentStudents', data.HasStudents);
+                        $state.go('view-Employee-home');
+                    }
+                    else {
+                        $scope.message = data.Message;
+                    }
+                    $ionicLoading.hide();
+                }).error(function (errData) {
+                    console.log(errData);
+                    $ionicLoading.hide();
+                });
+            }
+            else {
+                $ionicLoading.show({ template: 'Login...', duration: 10000 });
+                $http.post(host + 'User/Login', $scope.loginData).success(function (data) {
+                    if (data.Status) {
+                        localStorage['LoginType'] = 'Parent';
+                        $CustomLS.setObject('LoginUser', data.User);
+                        $CustomLS.setObject('currentStudents', data.HasStudents);
+                        $scope.values = $CustomLS.getObject('currentStudents');
+                        $scope.selectStudent = data.HasStudents[0];
+                        localStorage['selectedStudent'] = $scope.selectStudent.Id;
+                        localStorage['selectedStudentBatch'] = $scope.selectStudent.Batch;
+                        localStorage['selectedStudentCourse'] = $scope.selectStudent.Course;
+                        localStorage['selectedStudentOrgId'] = $scope.selectStudent.OrgId;
+                        $state.go('view-parent-home');
+                    }
+                    else {
+                        $scope.message = data.Message;
+                    }
+                    $ionicLoading.hide();
+                }).error(function (errData) {
+                    console.log(errData);
+                    $ionicLoading.hide();
+                });
+            }
         }
     }])
     .controller('settingCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', function ($scope, $http, $CustomLS, $ionicLoading, $state) {
-
+        $scope.logout = function () {
+            localStorage.clear();
+            $state.go('login');
+        };
     }])
     .controller('changeStudentCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', function ($scope, $http, $CustomLS, $ionicLoading, $state) {
         $scope.currentStudents = $CustomLS.getObject('currentStudents', []);
@@ -36,6 +77,11 @@
         };
         $scope.changeStudent = function () {
             localStorage['selectedStudent'] = $scope.data.student;
+            $scope.studentCurrent = $scope.currentStudents.find(function (f) { return f.Id == $scope.data.student });
+            localStorage['selectedStudentBatch'] = $scope.studentCurrent.Batch;
+            localStorage['selectedStudentCourse'] = $scope.studentCurrent.Course;
+            localStorage['selectedStudentOrgId'] = $scope.studentCurrent.OrgId;
+
         };
     }])
     .controller('manageChildrenCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', function ($scope, $http, $CustomLS, $ionicLoading, $state) {
@@ -45,6 +91,7 @@
         $scope.students = [];
         $scope.data = {};
         $scope.currentStudents = $CustomLS.getObject('currentStudents', []);
+
         $http.post(host + 'Course/GetAllByOrg', { 'OrgId': $scope.user.OrgId }).success(function (data) {
             $scope.courses = data;
             console.log(data);
@@ -56,10 +103,10 @@
         $scope.getStudents = function () {
             if ($scope.data.batchId != undefined && $scope.data.courseId != undefined) {
                 $http.post(host + 'Student/GetStudents',
-                    { 'OrgId': $scope.user.OrgId, 'batchId': $scope.data.batchId, 'courseId': $scope.data.courseId }).success(function (data) {
-                        $scope.students = data;
-                        console.log(data);
-                    });
+                        { 'OrgId': $scope.user.OrgId, 'batchId': $scope.data.batchId, 'courseId': $scope.data.courseId }).success(function (data) {
+                            $scope.students = data;
+                            console.log(data);
+                        });
             }
         };
         $scope.addSelectedStudents = function () {
@@ -98,7 +145,7 @@
     }])
        .controller("registerCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
 
-           $http.get('http://' + IpConfig + '/SMSAPI/School/GetAll').then(function (res) {
+           $http.get(host + '/School/GetAll').then(function (res) {
                debugger;
                console.log(res);
                $scope.SchoolList = res.data;
@@ -107,82 +154,113 @@
        }])
         .controller("SendVerificationCodeCtrl", ["$scope", "$state", "$ionicLoading", "$http", "$ionicPopup", "$CustomLS", function ($scope, $state, $ionicLoading, $http, $ionicPopup, $CustomLS) {
             $scope.sendVerificationCode = function (data) {
-                debugger;
-                $ionicLoading.show({ template: 'Sending...', duration: 10000 });
-                $CustomLS.setObject('Email',data.email);
-                $http.post('http://' + IpConfig + '/SMSAPI/ParentRegistration/SendEmailVerificationCode', { 'Email': data.email }).then(function (res) {
-                    debugger;
+                $ionicLoading.show({ template: 'Sending Verification Code...', duration: 10000 });
+                $CustomLS.setObject('UserRegistration', data);
+                $http.post(host + 'ParentRegistration/SendEmailVerificationCode', { 'Email': data.email }).success(function (data) {
                     $ionicLoading.hide();
-                    if (res.data == true) {
+                    if (data.status) {
                         $state.go('view-PassCode');
-                    }
-                    else if (res.data == false) {
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'Invalid',
-                            template: 'Error Occured'
-                        });
                     }
                     else {
                         var alertPopup = $ionicPopup.alert({
                             title: 'Invalid',
-                            template: res.data,
+                            template: data.Message,
                         });
                     }
                 })
             }
         }])
          .controller("PassCodeCtrl", ["$scope", "$state", "$ionicLoading", "$http", "$ionicPopup", "$CustomLS", function ($scope, $state, $ionicLoading, $http, $ionicPopup, $CustomLS) {
+             $scope.UserRegistration = $CustomLS.getObject('UserRegistration', []);
              $scope.verify = function (data) {
                  debugger;
                  $ionicLoading.show({ template: 'Verifing...', duration: 10000 });
-                 $http.post('http://' + IpConfig + '/SMSAPI/ParentRegistration/VerifyCode', { 'Email': JSON.parse(localStorage.getItem("Email")), 'Passcode': data.passcode }).then(function (res) {
-                     debugger;
+                 $http.post(host + '/ParentRegistration/VerifyCode', { 'Email': $scope.UserRegistration.email, 'Passcode': data.passcode }).success(function (data) {
                      $ionicLoading.hide();
-                     if (res.data == true) {
+                     if (data.status) {
                          $state.go('ChangePassword');
                      }
                      else {
                          var alertPopup = $ionicPopup.alert({
                              title: 'Invalid',
-                             template: res.data,
+                             template: data.Message,
                          });
                      }
                  })
              }
          }])
-         .controller("ChangePasswordCtrl", ["$scope", "$state", "$http",function ($scope, $state,$http) {
+         .controller("ChangePasswordCtrl", ["$scope", "$state", "$http", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $ionicPopup) {
+             $scope.user = $CustomLS.getObject('UserRegistration');
              $scope.changePassword = function (data) {
                  if (data.password == data.repeatPassword) {
-                     $http.post('http://' + IpConfig + '/SMSAPI/ParentRegistration/SavePassword', {'Email': JSON.parse(localStorage.getItem("Email")),'Password': data.password }).then(function (res) {
-                         if (res.data == true) {
+                     $http.post(host + '/ParentRegistration/SavePassword', { 'Email': $scope.user.email, 'Password': data.password }).success(function (data) {
+                         debugger;
+                         if (data.status) {
+                             //   $CustomLS.setObject('StudentLocalStorage', data.Students);
+                             $CustomLS.setObject('currentStudents', data.Students);
+                             $scope.values = $CustomLS.getObject('currentStudents');
+                             $scope.selectStudent = $scope.values[0];
+                             localStorage['selectedStudent'] = $scope.selectStudent.Id;
+                             localStorage['selectedStudentBatch'] = $scope.selectStudent.Batch;
+                             localStorage['selectedStudentCourse'] = $scope.selectStudent.Course;
+                             localStorage['selectedStudentOrgId'] = $scope.selectStudent.OrgId;
                              $state.go('login');
                          }
                      })
                  }
-                 else {
-
-                 }
-
-                  }
-             
-
-        }])
+             }
+         }])
         .controller("afterLoginCtrl", ["$scope", "$state", function ($scope, $state) {
 
-
         }])
-         .controller("forgetPasswordCtrl", ["$scope", "$state", function ($scope, $state) {
-             $scope.submitEmail = function () {
-
-                 $state.go('view-getNewPassword');
+         .controller("parentForgetPasswordCtrl", ["$scope", "$state", "$http", "$ionicPopup", "$CustomLS", "$ionicLoading", function ($scope, $state, $http, $ionicPopup, $CustomLS, $ionicLoading) {
+             $scope.message = "";
+             $scope.sendPassword = function (data) {
+                 $ionicLoading.show({ template: 'Sending...', duration: 10000 });
+                 $http.post(host + 'ForgetPassword/getPassword', { Email: data.email }).success(function (data) {
+                     $ionicLoading.hide();
+                     if (data.status) {
+                         var alertPopup = $ionicPopup.alert({
+                             title: 'Success',
+                             template: 'Password Sent Your Mail'
+                         });
+                         $state.go('login');
+                     }
+                     else {
+                         var alertPopup = $ionicPopup.alert({
+                             title: 'Invalid',
+                             template: data.Message
+                         });
+                     }
+                 });
              }
-
          }])
+        .controller("employeeForgetPasswordCtrl", ["$scope", "$state", "$http", "$ionicPopup", "$CustomLS", "$ionicLoading", function ($scope, $state, $http, $ionicPopup, $CustomLS, $ionicLoading) {
+            $scope.sendEmployeePassword = function (data) {
+                $ionicLoading.show({ template: 'Sending...', duration: 10000 });
+                $http.post(host + 'ForgetPassword/getEmployeePassword', { Email: data.email, OrgName: data.OrgName }).success(function (data) {
+                    $ionicLoading.hide();
+                    if (data.status) {
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'Success',
+                            template: 'Password Sent Your Mail'
+                        });
+                        $state.go('login');
+                    }
+                    else {
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'Invalid',
+                            template: data.Message
+                        });
+                    }
+                })
+            }
+        }])
         .controller("getNewPasswordCtrl", ["$scope", "$state", function ($scope, $state) {
 
 
         }])
-         .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", function ($scope, $state, $ionicPopover) {
+         .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate) {
              $scope.Pages = [
              {
                  "Name": "Fee Details", "Href": "#/view-feeDeatils", "Icon": "ion-card"
@@ -190,12 +268,12 @@
              {
                  "Name": "Subject Details", "Href": "#/view-subject-details", "Icon": "ion-ios-book"
              },
-             {
-                 "Name": "Transport Facilty", "Href": "#/view-transportFacility", "Icon": "ion-android-bus"
-             },
-             {
-                 "Name": "Hostel Details", "Href": "#/view-hostelDetails", "Icon": "ion-ios-home"
-             },
+             //{
+             //    "Name": "Transport Facilty", "Href": "#/view-transportFacility", "Icon": "ion-android-bus"
+             //},
+             //{
+             //    "Name": "Hostel Details", "Href": "#/view-hostelDetails", "Icon": "ion-ios-home"
+             //},
              {
                  "Name": "Personal Details", "Href": "#/view-personalDetails", "Icon": "ion-android-person"
              },
@@ -220,12 +298,12 @@
              {
                  "Name": "Assesment Report", "Href": "#/view-assesmentReport", "Icon": "ion-ribbon-a"
              },
-              {
-                  "Name": "Bar Code Scanner", "Href": "#/barCodeScanner", "Icon": "ion-qr-scanner"
-              },
-             {
-                 "Name": "Geo Location", "Href": "#/Geolocation", "Icon": "ion-location"
-             }
+             // {
+             //     "Name": "Bar Code Scanner", "Href": "#/barCodeScanner", "Icon": "ion-qr-scanner"
+             // },
+             //{
+             //    "Name": "Geo Location", "Href": "#/Geolocation", "Icon": "ion-location"
+             //}
              ];
 
              $scope.submitEmail = function () {
@@ -238,35 +316,48 @@
              });
 
 
-             $scope.openPopover = function ($event) {
-                 $scope.popover.show($event);
-             };
-             $scope.closePopover = function () {
-                 $scope.popover.hide();
-             };
-             //Cleanup the popover when we're done with it!
-             $scope.$on('$destroy', function () {
-                 $scope.popover.remove();
-             });
-             // Execute action on hidden popover
-             $scope.$on('popover.hidden', function () {
-                 // Execute action
-             });
-             // Execute action on remove popover
-             $scope.$on('popover.removed', function () {
-                 $scope.popover.remove();
-             });
+             //$scope.openPopover = function ($event) {
+             //    $scope.popover.show($event);
+             //};
+             //$scope.closePopover = function () {
+             //    $scope.popover.hide();
+             //};
+             ////Cleanup the popover when we're done with it!
+             //$scope.$on('$destroy', function () {
+             //    $scope.popover.remove();
+             //});
+             //// Execute action on hidden popover
+             //$scope.$on('popover.hidden', function () {
+             //    // Execute action
+             //});
+             //// Execute action on remove popover
+             //$scope.$on('popover.removed', function () {
+             //    $scope.popover.remove();
+             //});
 
          }])
-         .controller("subjectDetailCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
+        .controller("employeeHomeCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+            $scope.Pages = [
 
-             $http.get('http://' + IpConfig + '//SMSAPI/Subjects/GetAllByStudent?StudentId=10112').then(function (res) {
-
-                 debugger;
-                 console.log(res);
-                 $scope.SubjectDetail = res.data;
+         {
+             "Name": "Bar Code Scanner", "Href": "#/barCodeScanner", "Icon": "ion-qr-scanner"
+         },
+         {
+             "Name": "Geo Location", "Href": "#/Geolocation", "Icon": "ion-location"
+         },
+            {
+                "Name": "Holidays", "Href": "#/view-holidays", "Icon": "ion-android-bicycle"
+            },
+            {
+                "Name": "Personal Details", "Href": "#/EmployeeProfile", "Icon": "ion-android-person"
+            }
+            ];
+        }])
+         .controller("subjectDetailCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+             var studentId = localStorage['selectedStudent'];
+             $http.post(host + '/Subjects/GetAllByStudent', { StudentId: studentId }).success(function (data) {
+                 $scope.SubjectDetail = data;
              });
-
          }])
         .controller("feeDetailCtrl", ["$scope", "$state", "$http", "$ionicLoading", '$CustomLS', function ($scope, $state, $http, $ionicLoading, $CustomLS) {
             var studentId = localStorage['selectedStudent'];
@@ -281,29 +372,27 @@
         }])
         .controller("attendenceCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
             debugger;
-            $http.get('http://' + IpConfig + '//SMSAPI/Subjects/GetAllByStudent?StudentId=10111').then(function (res) {
-
+            $http.get(host + '/Subjects/GetAllByStudent?StudentId=10111').then(function (res) {
                 debugger;
                 console.log(res);
                 $scope.SubjectDetail = res.data;
             });
 
         }])
-         .controller("transportFacilityCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
-             debugger;
-             $http.get('http://' + IpConfig + '//SMSAPI/Transport/GetAllByStudent?StudentId=43&OrgId=1').then(function (res) {
-
+         .controller("transportFacilityCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+             var studentId = localStorage['selectedStudent'];
+             var OrgId = $CustomLS.getObject('selectedStudentOrgId');
+             $http.post(host + '/Transport/GetAllByStudent', { StudentId: studentId, OrgId: OrgId }).success(function (data) {
                  debugger;
-                 console.log(res);
-                 $scope.TransportDetail = res.data;
-                 $scope.TransportDetail.PickupTime = new Date(res.data.PickupTime);
-                 $scope.TransportDetail.DropTime = new Date(res.data.DropTime);
+                 $scope.TransportDetail = data;
+                 $scope.TransportDetail.PickupTime = new Date(data.PickupTime);
+                 $scope.TransportDetail.DropTime = new Date(data.DropTime);
              });
 
          }])
           .controller("hostelDetailsCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
               debugger;
-              $http.get('http://' + IpConfig + '//SMSAPI/Subjects/GetAllByStudent?StudentId=10111').then(function (res) {
+              $http.get(host + '/Subjects/GetAllByStudent?StudentId=10111').then(function (res) {
 
                   debugger;
                   console.log(res);
@@ -311,107 +400,94 @@
               });
 
           }])
-            .controller("personalDetailsCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
-                debugger;
-                $http.get('http://' + IpConfig + '//SMSAPI/PersonalDetail/GetAllDetail?StudentId=10105&OrgId=1').then(function (res) {
-
-                    debugger;
-                    console.log(res);
-                    $scope.PersonalDetail = res.data;
-
+            .controller("personalDetailsCtrl", ["$scope", "$state", "$http", '$CustomLS', function ($scope, $state, $http, $CustomLS) {
+                var studentId = localStorage['selectedStudent'];
+                var OrgId = localStorage['selectedStudentOrgId'];
+                $http.post(host + '/PersonalDetail/GetAllDetail', { StudentId: studentId, OrgId: OrgId }).success(function (data) {
+                    $scope.PersonalDetail = data;
                 });
-
-
             }])
-          .controller("HomeWorkDetailsCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", function ($scope, $state, $filter, $http, $ionicPopup) {
-              $http.post('http://' + IpConfig + '/SMSAPI/Homework/GetByCourse?CourseId=17&BatchId=12&OrgId=1').then(function (res) {
+          .controller("HomeWorkDetailsCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "$CustomLS", 'ionicDatePicker', function ($scope, $state, $filter, $http, $ionicPopup, $CustomLS, ionicDatePicker) {
+              var BatchId = localStorage['selectedStudentBatch'];
+              var CourseId = localStorage['selectedStudentCourse'];
+              var OrgId = localStorage['selectedStudentOrgId'];
+              $scope.date = new Date();
+              $scope.FormattedDate = $scope.date.toLocaleDateString();
+              //$http.post(host + '/Homework/GetByCourse', { CourseId: CourseId, BatchId: BatchId, OrgId: OrgId }).success(function (data) {
+              //    $scope.HomeworkDetail = data;
+              //    $scope.HomeworkDetail.assignmentsList.forEach(function (value, index) {
+              //        console.log(value.Date);
+              //        value.Date = new Date(value.Date);
+              //        console.log(value, index);
+              //    })
+              //});
+              $scope.setDateTime = function () {
+                  var ipObj1 = {
+                      callback: function (val) {  //Mandatory
+                          var date = new Date(val);
+                          $scope.date = date;
+                          $scope.FormattedDate = date.toLocaleDateString();
+                      },
+                      inputDate: new Date(),
+                      showTodayButton: true,
+                      to: new Date(), //Optional
+                      inputDate: new Date(),      //Optional
+                      mondayFirst: false,          //Optional
+                      closeOnSelect: false,       //Optional
+                      templateType: 'popup'       //Optional
+                  };
+                  ionicDatePicker.openDatePicker(ipObj1);
+              };
 
-                  debugger;
-                  console.log(res);
-                  $scope.HomeworkDetail = res.data;
-                  $scope.HomeworkDetail.assignmentsList.forEach(function (value, index) {
-                      console.log(value.Date);
-                      value.Date = new Date(value.Date);
-                      console.log(value, index);
-                  })
-              });
-              $scope.showPopUp = function () {
-                  $scope.data = {}
-                  var myPopup = $ionicPopup.show({
-                      template: '<input type="text" placeholder="YYYY-MM-DD" ng-model="data.HomeworkDate" id="datepicker">',
-                      title: 'Filter By Date',
-                      scope: $scope,
-                      buttons: [
-                      { text: 'Cancel' },
-                      {
-                          text: '<b>done</b>',
-                          type: 'button-positive',
-                          onTap: function (e) {
-                              if (!$scope.data.HomeworkDate) {
-                                  e.preventDefault();
-                              } else {
-                                  return $scope.data.HomeworkDate;
-                              }
-                          }
-                      }
-                      ]
-
-                  })
-                  myPopup.then(function (res) {
-
+              $scope.getHomework = function () {
+                  $http.post(host + '/Homework/GetByDate', { CourseId: CourseId, BatchId: BatchId, OrgId: OrgId, Date: $scope.date }).success(function (data) {
                       debugger;
-                      $http.post('http://' + IpConfig + '/SMSAPI/Homework/GetByDate?Date=' + $scope.data.HomeworkDate + '&CourseId=17&BatchId=12&OrgId=1').then(function (res) {
-                          debugger;
-                          console.log(res);
-                          $scope.HomeworkDetail = res.data;
-                          debugger;
-                          //$state.go('view-filteredHomeworkDetail', $scope.Hwork);
-
+                      $scope.HomeworkDetail = data;
+                      $scope.HomeworkDetail.assignmentsList.forEach(function (value, index) {
+                          console.log(value.Date);
+                          value.Date = new Date(value.Date);
+                          console.log(value, index);
                       })
-                  });
-              }
-
+                  })
+              };
+              $scope.getHomework();
           }])
-
-             .controller("holidaysCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
-                 debugger;
-                 $http.get('http://' + IpConfig + '//SMSAPI/Holiday/GetAll?OrgId=1').then(function (res) {
-
-                     debugger;
-                     console.log(res);
-                     $scope.HolidayDetail = res.data;
-                     $scope.HolidayDetail.HolidaysList.forEach(function (value, index) {
-                         console.log(value.Date);
-                         value.Date = new Date(value.Date);
-                         console.log(value, index);
-                     })
+             .controller("holidaysCtrl", ["$scope", "$state", "$http", '$CustomLS', function ($scope, $state, $http, $CustomLS) {
+                 var OrgId = localStorage['selectedStudentOrgId'];
+                 $http.post(host + '/Holiday/GetAll', { OrgId: OrgId }).success(function (data) {
+                     $scope.HolidayDetail = data;
+                     //$scope.HolidayDetail.HolidaysList.forEach(function (value, index) {
+                     //    console.log(value.Date); 
+                     //    value.Date = new Date(value.Date);
+                     //    console.log(value, index);
+                     //})
                  });
-
-
              }])
             .controller("MessageBoxCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
                 debugger;
-                $http.get('http://' + IpConfig + '//SMSAPI/Subjects/GetAllByStudent?StudentId=10111').then(function (res) {
-
+                $http.get(host + '/Subjects/GetAllByStudent?StudentId=10111').then(function (res) {
                     debugger;
                     console.log(res);
                     $scope.SubjectDetail = res.data;
                 });
 
             }])
-          .controller("TimeTableCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
-              debugger;
+          .controller("TimeTableCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+              $scope.periodData = {
+                  WeekdayTimeTables: []
+              }
+              var BatchId = localStorage['selectedStudentBatch'];
+              var CourseId = localStorage['selectedStudentCourse'];
+              var OrgId = localStorage['selectedStudentOrgId'];
               $scope.loadMore = function () {
-                  $http.get('/more-items').success(function (items) {
+                  $http.post('/more-items').success(function (items) {
                       useItems(items);
                       $scope.$broadcast('scroll.infiniteScrollComplete');
                   });
               };
 
-              $http.get('http://' + IpConfig + '/SMSAPI/Timetable/GetByCourse?CourseId=17&BatchId=12&OrgId=1').then(function (res) {
-                  debugger;
-                  console.log(res);
-                  $scope.periodData = res.data;
+              $http.post(host + '/Timetable/GetByCourse', { BatchId: BatchId, CourseId: CourseId, OrgId: OrgId }).success(function (data) {
+                  $scope.periodData = data;
                   $scope.periodData.WeekdayTimeTables.forEach(function (value, index) {
                       value.Periods.forEach(function (value2, index2) {
                           console.log(value2.StartTime);
@@ -422,60 +498,68 @@
                       console.log(index, value);
                   });
               });
-
           }])
-            .controller("examinationDetailsCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
-                debugger;
-                $http.get('http://' + IpConfig + '//SMSAPI/Exam/GetByCourse?BatchId=12&CourseId=17&OrgId=1').then(function (res) {
-                    debugger;
-                    console.log(res);
-                    $scope.examinationDetail = res.data;
-                    $scope.examinationDetail.ExamSchedule.forEach(function (value, index) {
-                        console.log(value.ExamDate);
-                        console.log(value.Starttime);
-                        console.log(value.Duration);
-                        value.ExamDate = new Date(value.ExamDate);
-                        value.Starttime = new Date(value.Starttime);
-                        value.Duration = new Date(value.Duration);
-                        console.log(value, index);
-                    })
+            .controller("examinationDetailsCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+                var BatchId = localStorage['selectedStudentBatch'];
+                var CourseId = localStorage['selectedStudentCourse'];
+                var OrgId = localStorage['selectedStudentOrgId'];
+                $http.post(host + '/Exam/GetByCourse', { BatchId: BatchId, CourseId: CourseId, OrgId: OrgId }).success(function (data) {
+                    $scope.examinationDetail = data;
+                    //$scope.examinationDetail.ExamSchedule.forEach(function (value, index) {
+                    //    console.log(value.ExamDate);
+                    //    console.log(value.Starttime);
+                    //    console.log(value.Duration);
+                    //    value.ExamDate = new Date(value.ExamDate);
+                    //    value.Starttime = new Date(value.Starttime);
+                    //    value.Duration = new Date(value.Duration);
+                    //    console.log(value, index);
+                    //})
                 });
-
             }])
-           .controller("TeacherDetailsCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
-               debugger;
-               $http.post('http://' + IpConfig + '/SMSAPI/Faculty/GetFaculty?StudentId=10112').then(function (res) {
-                   debugger;
-                   console.log(res);
-                   $scope.TeacherDetail = res.data;
+           .controller("TeacherDetailsCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+               var studentId = localStorage['selectedStudent'];
+               $http.post(host + '/Faculty/GetFaculty', { StudentId: studentId }).success(function (data) {
+                   $scope.TeacherDetail = data;
                });
            }])
-              .controller("assesmentReportCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
-                  debugger;
-                  $http.get('http://' + IpConfig + '/SMSAPI/AssesmentReport/GetByStudent?StudentId=10112&OrgId=1').then(function (res) {
+              .controller("assesmentReportCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+                  var studentId = localStorage['selectedStudent'];
+                  $scope.assesmentDetails = {};
+                  var OrgId = localStorage['selectedStudentOrgId'];
+                  $http.post(host + '/AssesmentReport/GetByStudent', { StudentId: studentId, OrgId: OrgId }).success(function (data) {
                       debugger;
-                      console.log(res);
-                      $scope.assesmentReportDetail = res.data;
+                      $scope.assesmentReportDetail = data;
+                      data.Reports.forEach(function (e) {
+                          if (!$scope.assesmentDetails[e.Examtype]) {
+                              $scope.assesmentDetails[e.Examtype] = [];
+                          }
+                          $scope.assesmentDetails[e.Examtype].push({ 'Marks': e.Marks, 'SubjectName': e.SubjectName });
+                      });
                   })
-                  ;
               }])
+           .controller("EmployeeProfileCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+               $scope.user = $CustomLS.getObject('EmployeeloginUser');
+               $http.post(host + '/PersonalDetail/GetEmployeeDetail', { 'EmployeeId': $scope.user.UserId, 'OrgId': $scope.user.OrgId }).success(function (data) {
+                   $scope.Details = data;
+               })
+           }])
                 .controller("profileCtrl", ["$scope", "$state", function ($scope, $state, $http) {
 
                 }])
                 .controller("signoutCtrl", ["$scope", "$state", function ($scope, $state, $http) {
 
                 }])
-                .controller("GeolocationCtrl", ["$scope", "$state", "$http", "$cordovaGeolocation", "$interval", function ($scope, $state, $http, $cordovaGeolocation, $interval) {
+
+                .controller("GeolocationCtrl", ["$scope", "$state", "$http", "$cordovaGeolocation", "$interval", "$CustomLS", function ($scope, $state, $http, $cordovaGeolocation, $interval, $CustomLS) {
                     $scope.Routes = [];
                     $scope.data = {
                         code: [],
                     }
-                    $http.post('http://' + IpConfig + '/SMSAPI/GeoLocation/GetRouteCode?OrgId=1').then(function (res) {
-                        debugger;
-                        console.log(res);
-                        $scope.Routes = res.data;
-                    })
 
+                    $scope.user = $CustomLS.getObject('EmployeeloginUser');
+                    $http.post(host + '/GeoLocation/GetRouteCode', { 'OrgId': $scope.user.OrgId }).success(function (data) {
+                        $scope.Routes = data;
+                    })
 
                     $scope.getGeolocation = function () {
                         var posOptions = {
@@ -484,11 +568,10 @@
                         $cordovaGeolocation
                           .getCurrentPosition(posOptions)
                           .then(function (position) {
-                              var lat = position.coords.latitude;
-                              var long = position.coords.longitude;
-
+                              $scope.lat = position.coords.latitude;
+                              $scope.long = position.coords.longitude;
                               var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
+                              console.log(latLng);
                               var mapOptions = {
                                   center: latLng,
                                   zoom: 15,
@@ -527,65 +610,79 @@
                           }
                            )
                     }
-                    var Route = $scope.data.code;
+                    $scope.Route = $scope.data.code;
                     $scope.date = new Date();
-                    var jsonObj3 = JSON.stringify($scope.date);
+                    var jsonObj3 = ($scope.date).toString();
                     var setInterval = $interval(function () {
-                        $http.post('http://' + IpConfig + '/SMSAPI/GeoLocation/GetLocation?Lattitude=' + lat + '&Longitude=' + long + '&OrgId=1&Routecode=' + Route + '&nowDateTime=' + jsonObj3).then(function (res) {
+                        $http.post(host + '/GeoLocation/GetLocation', { 'Lattitude': $scope.lat, 'Longitude': $scope.long, 'OrgId': $scope.user.OrgId, 'nowDateTime': jsonObj3, 'Routecode': $scope.data.code }).success(function (data) {
                         }, function (err) {
                             // error
                         });
                     }, 300000);
                 }])
-          .controller("barCodeScannerCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", function ($scope, $state, $http, $cordovaBarcodeScanner) {
 
-              $scope.studentsList = [];
-              $http.post('http://' + IpConfig + '/SMSAPI/Attandance/getStudentsList?OrgId=1').then(function (res) {
-                  console.log(res);
-                  $scope.studentsList = res.data;
-              })
-              $scope.scannedStudents = {
-                  Id: [],
-                  Name: []
-              }
-              $scope.data = {
-              }
+        .controller("barCodeScannerCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
+            $scope.user = $CustomLS.getObject('EmployeeloginUser');
+            $scope.studentsList = [];
+            $http.post(host + '/Attandance/getStudentsList', { 'OrgId': $scope.user.OrgId }).then(function (res) {
+                console.log(res);
+                $scope.studentsList = res.data;
+            })
+            $scope.scannedStudents = {
+                Id: [],
+                Name: []
+            }
+            $scope.data = {
+            }
 
-              $scope.DeleteCurrentRow = function (index) {
-                  debugger;
-                  $scope.scannedStudents.Name.splice(index, 1);
-                  $scope.scannedStudents.Id.splice(index, 1);
-              }
-              $scope.scanBarCode = function () {
-                  $cordovaBarcodeScanner.scan().then(function (imageData) {
-                      var Id = imageData.text;
-                      $scope.studentsList.forEach(function (value, index) {
-                          if (value.Id == Id) {
-                              $scope.scannedStudents.Name.push(value.Name)
-                              $scope.scannedStudents.Id.push(value.Id)
-                          }
-                      })
-                      localStorage.setItem(JSON.stringify($scope.scannedStudents.Name), JSON.stringify($scope.scannedStudents.Id));
-                 
+            $scope.DeleteCurrentRow = function (index) {
+                debugger;
+                $scope.scannedStudents.Name.splice(index, 1);
+                $scope.scannedStudents.Id.splice(index, 1);
+            }
+            $scope.scanBarCode = function () {
+                $cordovaBarcodeScanner.scan().then(function (imageData) {
+                    var Id = imageData.text;
+                    $scope.studentsList.forEach(function (value, index) {
+                        if (value.Id == Id) {
+                            $scope.scannedStudents.Name.push(value.Name)
+                            $scope.scannedStudents.Id.push(value.Id)
+                        }
+                    })
+                    localStorage.setItem(JSON.stringify($scope.scannedStudents.Name), JSON.stringify($scope.scannedStudents.Id));
 
-                  }, function (error) {
-                      console.log("An error happened -> " + error);
-                  });
-              }
-              $scope.sendStudentsTimings = function () {
-                  debugger;
-                  var pick = $scope.data.choice;
-                  var jsonObj1 = $scope.scannedStudents.Id;
-                  var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedStudents.Name));
-                  $scope.date = new Date();
-                  var jsonObj2 = JSON.stringify($scope.date);
-                  $http.post('http://' + IpConfig + '/SMSAPI/Attandance/SaveAttendance?OrgId=1&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsPicUp=' + pick).then(function (res) {
-                      debugger;
-                  });
 
-              }
+                }, function (error) {
+                    console.log("An error happened -> " + error);
+                });
+            }
+            $scope.sendStudentsTimings = function () {
+                debugger;
+                var pick = $scope.data.choice;
+                var jsonObj1 = $scope.scannedStudents.Id;
+                var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedStudents.Name)).replace(']', '').replace('[', '');
+                $scope.date = new Date();
+                var jsonObj2 = JSON.stringify($scope.date);
+                $http.post(host + '/Attandance/SaveAttendance?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsPicUp=' + pick).success(function (data) {
+                    debugger;
+                    if (data.status) {
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'Success',
+                            template: 'Saved Successfully!'
+                        });
+                        $state.go('barCodeScanner');
+                    }
+                    else {
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'Failed',
+                            template: 'Error Occured!'
+                        });
+                    }
+                });
 
-          }])
+            }
+
+        }])
                             //errorCtrl managed the display of error messages bubbled up from other controllers, directives, myappService
     .controller("errorCtrl", ["$scope", "myappService", function ($scope, myappService) {
         //public properties that define the error message and if an error is present

@@ -79,8 +79,14 @@
                   .state("view-forgetPassword", {
                       url: "/view-forgetPassword",
                       templateUrl: "app/templates/view-forgetPassword.html",
-                      controller: "forgetPasswordCtrl"
+                      controller: "parentForgetPasswordCtrl"
                   })
+                .state("view-employeeForgetPassword", {
+                    url: "/view-employeeForgetPassword",
+                    templateUrl: "app/templates/view-employeeForgetPassword.html",
+                    controller: "employeeForgetPasswordCtrl"
+                })
+
             .state("view-getNewPassword", {
                 url: "/view-getNewPassword",
                 templateUrl: "app/templates/view-getNewPassword.html",
@@ -91,6 +97,11 @@
                 templateUrl: "app/templates/view-parent-home.html",
                 controller: "parentHomeCtrl"
             })
+                 .state("view-Employee-home", {
+                     url: "/view-Employee-home",
+                     templateUrl: "app/templates/view-Employee-home.html",
+                     controller: "employeeHomeCtrl"
+                 })
             .state("view-subject-details", {
                 url: "/view-subject-details",
                 templateUrl: "app/templates/view-subject-details.html",
@@ -185,19 +196,27 @@
                             templateUrl: "app/templates/Geolocation.html",
                             controller: "GeolocationCtrl"
                         })
+                        .state("EmployeeProfile", {
+                        url: "/EmployeeProfile",
+                        templateUrl: "app/templates/EmployeeProfile.html",
+                        controller: "EmployeeProfileCtrl"
+                         })
                           .state("barCodeScanner", {
                               url: "/barCodeScanner",
                               templateUrl: "app/templates/barCodeScanner.html",
                               controller: "barCodeScannerCtrl"
                           })
             ;
+            if (localStorage['LoginUser'] && localStorage['LoginType'] == 'Parent') {
+                $urlRouterProvider.otherwise("/view-parent-home");
+            }
+            else if (localStorage['LoginUser'] && localStorage['LoginType'] == 'Employee') {
+                $urlRouterProvider.otherwise("/view-Employee-home");
+            }
+            else {
+                $urlRouterProvider.otherwise("/login");
+            }
 
-            //if (localStorage['loginUser']) {
-            //    $urlRouterProvider.otherwise("/view-parent-home");
-            //} else {
-            //    $urlRouterProvider.otherwise("/login");
-            //}
-
-            $urlRouterProvider.otherwise("/login");
+            //$urlRouterProvider.otherwise("/login");
         });
 })();

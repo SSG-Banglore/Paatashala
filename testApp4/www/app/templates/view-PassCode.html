@@ -5,24 +5,15 @@
     <ion-content class="padding">
         <form name="VerificationForm">
         <div style="margin-top: 130px;">
-            <!--<label class="item item-input item-stacked-label">
-                <span class="input-label"><b>Email :</b></span>
-                <input type="email" placeholder="Email" name="Email" ng-model="data.email" required>
-            </label>
-            <span ng-show="VerificationForm.Email.$error.required" style="color:red;">Email-Id is required  </span>
-            <span ng-show="VerificationForm.Email.$touched && VerificationForm.Email.$invalid" style="color:red;">Invalid Mail</span>
-           
-            <br />
-            <br />-->
+            <h4>Verification code is sent to {{regEmail}}</h4>
             <label class="item item-input item-stacked-label">
                 <span class="input-label"><b>PassCode :</b></span>
                 <input type="text" placeholder="PassCode" name="passcode" ng-model="data.passcode" required>
             </label>
-                <span ng-show="VerificationForm.passcode.$error.required" style="color:red;">Passcode is required  </span>
-        
+                <span ng-show="VerificationForm.passcode.$error.required && VerificationForm.passcode.$dirty" style="color:red;">Passcode is required  </span>
         </div>
         <button class="button button-positive" style="margin-left:63px;margin-top:21px;width:60%;" ng-disabled="VerificationForm.$invalid" ng-click="verify(data)">
-         Verify
+         Verify Code
         </button>
         </form>
     </ion-content>

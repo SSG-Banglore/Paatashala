@@ -1,21 +1,28 @@
 ﻿<ion-view>
-    <div class="bar bar-header bar-positive" >
-        <a class="button icon-left ion-chevron-left button-clear button-dark" href="#/templates/view-parent-home.html"></a>
-        <h1 class="title"><strong> Assessment Report </strong></h1>
-    </div>
-    <ion-content style="margin-top: 44px;   margin-bottom: 48px;">
+    <ion-nav-title>
+        Assesment Report
+    </ion-nav-title>
+    <ion-content class="padding">
 
-        <div style="margin-top: 8px; margin-left: 17px;">
-            <div class="row">
-                <div class="col" style="font-size:20px; margin-right: 26px; margin-left: -17px;">Name</div>
-                <div class="col" style="font-size:20px; margin-right: 26px; margin-left: 16px;">SubjectName</div>
-                <div class="col" style="font-size:20px; margin-right: 26px; margin-left: 16px;">Marks</div>
+        <div ng-repeat="(examType, report) in assesmentDetails">
+            <div class="table-title">
+                <strong>{{examType}}</strong>
             </div>
-            <div class="row" ng-repeat="s in assesmentReportDetail.Reports">
-                <div class="col" style="padding-right: 4px;margin-left: -19px;">{{s.Examtype}}</div>
-                <div class="col" style="padding-right: 4px;margin-left: 6px;">{{s.SubjectName}}</div>
-                <div class="col" style="padding-right: 4px;margin-right: -76px;">{{s.Marks}}</div>
-            </div>
+            <table class="table-fill">
+                <thead>
+                    <tr>
+                        <th class="text-left">Subject</th>
+                        <th class="text-left">Marks</th>
+                    </tr>
+                </thead>
+                <tbody class="table-hover">
+                    <tr ng-repeat="s in report">
+                        <td class="text-left">{{ s.SubjectName}}</td>
+                        <td class="text-left">{{s.Marks}}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </ion-content>
 </ion-view>
+<link href="../../css/custom-table.css" rel="stylesheet" />

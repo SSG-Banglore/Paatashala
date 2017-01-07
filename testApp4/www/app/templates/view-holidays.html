@@ -1,20 +1,22 @@
 ﻿<ion-view>
-<div class="bar bar-header bar-positive">
-    <a class="button icon-left ion-chevron-left button-clear button-dark" href="#/templates/view-parent-home.html"></a>
-    <h1 class="title"><strong> Holidays </strong></h1>
-</div>
-<ion-content style="margin-top: 44px;   margin-bottom: 48px;">
-
-    <div style="margin-top: 8px; margin-left: 17px;">
-        <div class="row">
-            <div class="col" style="font-size:20px;">Date</div>
-            <div class="col" style="font-size:20px;">Holiday</div>
-        </div>
-        <div class="row" ng-repeat="s in HolidayDetail.HolidaysList">
-            <div class="col" style="padding-right:4px;">{{ s.Date|date: "yyyy-MM-dd"}} </div>
-            <div class="col" style="padding-right:4px;">{{s.Name}}</div>
-        </div>
-  
-    </div>
-</ion-content>
+    <ion-nav-title>
+        Holidays Details
+    </ion-nav-title>
+    <ion-content class="padding">
+        <table class="table-fill">
+            <thead>
+                <tr>
+                    <th class="text-left">Date</th>
+                    <th class="text-left">Holiday</th>
+                </tr>
+            </thead>
+            <tbody class="table-hover">
+                <tr ng-repeat="s in HolidayDetail.Holidays">
+                    <td class="text-left">{{ s.Date|date: "dd MMM yyyy"}}</td>
+                    <td class="text-left">{{s.Name}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </ion-content>
 </ion-view>
+<link href="../../css/custom-table.css" rel="stylesheet" />

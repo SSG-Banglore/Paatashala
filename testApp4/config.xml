@@ -115,4 +115,5 @@
   <plugin name="phonegap-plugin-barcodescanner" version="6.0.3" src="https://github.com/phonegap/phonegap-plugin-barcodescanner.git" />
   <plugin name="cordova-plugin-compat" version="1.1.0" />
   <plugin name="cordova-plugin-file" version="4.3.0" />
+  <plugin name="cordova-plugin-datepicker" version="0.9.2" src="https://github.com/VitaliiBlagodir/cordova-plugin-datepicker" />
 </widget>

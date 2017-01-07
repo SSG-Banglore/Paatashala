@@ -1,0 +1,14 @@
+﻿<ion-view>
+    <ion-nav-title>
+       Employee Home
+    </ion-nav-title>
+    <ion-content class="padding has-header">
+        <div class="list">
+            <a class="item item-icon-left" href="{{page.Href}}" ng-repeat="page in Pages">
+                <i class="icon {{page.Icon}}"></i>
+                {{page.Name}}
+            </a>
+        </div>
+        
+    </ion-content>
+</ion-view>

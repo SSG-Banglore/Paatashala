@@ -1,21 +1,24 @@
 ﻿<ion-view>
     <ion-nav-title>
-       Send-Email
+        Send-Email
     </ion-nav-title>
     <ion-content class="padding">
-        <form name="SendVerificationForm" >
+        <form name="SendVerificationForm">
             <div style="margin-top: 170px;">
-                <label class="item item-input item-stacked-label">
+                <div class="list list-inset">
+                    <label class="item item-input">
+                        <input type="email" name="Email" ng-model="data.email" placeholder="Email" required>
+                    </label>
+                </div>
+                <!--<label class="item item-input item-stacked-label">
                     <span class="input-label"><b>Email :</b></span>
                     <input type="email" placeholder="Email" ng-model="data.email" name="Email" required>
-                </label>
-                <span ng-show="SendVerificationForm.Email.$error.required" style="color:red;">Email id is required</span>
-                <span ng-show="SendVerificationForm.Email.$touched && SendVerificationForm.Email.$invalid" style="color:red;">Invalid Email</span>
-                        <!--<span ng-show="SendVerificationForm.Email.$error.required" style="color:red;">Email id is required</span>-->
-
-                <!--<span ng-show="addEmp.email.$touched && addEmp.email.$invalid " style="color:red">Invalid Email</span>
-                <span ng-show="addEmp.email.$error.required" style="color:red">*</span>-->
-               <br />
+                </label>-->
+                <span ng-show="SendVerificationForm.Email.$error.required && SendVerificationForm.Email.$dirty" style="color:red;">
+                Email is required</span>
+                <span ng-show="SendVerificationForm.Email.$touched && SendVerificationForm.Email.$invalid" style="color:red;">
+                Invalid Email</span>
+                <br />
                 <br />
                 <button class="button button-positive" style="margin-left:63px;margin-top: 21px;"
                         ng-disabled="SendVerificationForm.$invalid" ng-click="sendVerificationCode(data)">
