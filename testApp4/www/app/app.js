@@ -200,7 +200,17 @@
                         url: "/EmployeeProfile",
                         templateUrl: "app/templates/EmployeeProfile.html",
                         controller: "EmployeeProfileCtrl"
-                         })
+                        })
+                  .state("EmployeeSettings", {
+                      url: "/EmployeeSettings",
+                      templateUrl: "app/templates/view-EmployeeSettings.html",
+                      controller: "EmployeeSettingsCtrl"
+                  })
+                       .state("Employeeholidays", {
+                           url: "/Employeeholidays",
+                       templateUrl: "app/templates/view-EmployeeHolidays.html",
+                       controller: "EmployeeHolidaysCtrl"
+                        })
                           .state("barCodeScanner", {
                               url: "/barCodeScanner",
                               templateUrl: "app/templates/barCodeScanner.html",
@@ -214,7 +224,8 @@
                 $urlRouterProvider.otherwise("/view-Employee-home");
             }
             else {
-                $urlRouterProvider.otherwise("/login");
+                //$urlRouterProvider.otherwise("/login");
+                $urlRouterProvider.otherwise("/view-parent-home");
             }
 
             //$urlRouterProvider.otherwise("/login");

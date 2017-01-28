@@ -2,7 +2,7 @@
     "use strict";
     var host = "http://192.168.1.34/SMSAPI/";
     //var host = 'http://localhost:56623/';
-    angular.module("myapp.controllers", ['ionic-datepicker','tabSlideBox'])
+    angular.module("myapp.controllers", ['ionic-datepicker', 'tabSlideBox'])
 
     .controller("appCtrl", ["$scope", function ($scope) {
     }])
@@ -65,6 +65,7 @@
         }
     }])
     .controller('settingCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', function ($scope, $http, $CustomLS, $ionicLoading, $state) {
+        $scope.AppCurrentVersion = localStorage['AppCurrentVersion'];
         $scope.logout = function () {
             localStorage.clear();
             $state.go('login');
@@ -92,23 +93,23 @@
         $scope.data = {};
         $scope.currentStudents = $CustomLS.getObject('currentStudents', []);
 
-        $http.post(host + 'Course/GetAllByOrg', { 'OrgId': $scope.user.OrgId }).success(function (data) {
-            $scope.courses = data;
-            console.log(data);
-        });
-        $http.post(host + 'Batch/GetAllByOrg', { 'OrgId': $scope.user.OrgId }).success(function (data) {
-            $scope.batches = data;
-            console.log(data);
-        });
-        $scope.getStudents = function () {
-            if ($scope.data.batchId != undefined && $scope.data.courseId != undefined) {
-                $http.post(host + 'Student/GetStudents',
-                        { 'OrgId': $scope.user.OrgId, 'batchId': $scope.data.batchId, 'courseId': $scope.data.courseId }).success(function (data) {
-                            $scope.students = data;
-                            console.log(data);
-                        });
-            }
-        };
+        //$http.post(host + 'Course/GetAllByOrg', { 'OrgId': $scope.user.OrgId }).success(function (data) {
+        //    $scope.courses = data;
+        //    console.log(data);
+        //});
+        //$http.post(host + 'Batch/GetAllByOrg', { 'OrgId': $scope.user.OrgId }).success(function (data) {
+        //    $scope.batches = data;
+        //    console.log(data);
+        //});
+        //$scope.getStudents = function () {
+        //    if ($scope.data.batchId != undefined && $scope.data.courseId != undefined) {
+        //        $http.post(host + 'Student/GetStudents',
+        //                { 'OrgId': $scope.user.OrgId, 'batchId': $scope.data.batchId, 'courseId': $scope.data.courseId }).success(function (data) {
+        //                    $scope.students = data;
+        //                    console.log(data);
+        //                });
+        //    }
+        //};
         $scope.addSelectedStudents = function () {
             $scope.students.find(function (s) { return s.selected; });
             $scope.students.forEach(function (v, i) {
@@ -197,13 +198,13 @@
                          debugger;
                          if (data.status) {
                              //   $CustomLS.setObject('StudentLocalStorage', data.Students);
-                             $CustomLS.setObject('currentStudents', data.Students);
-                             $scope.values = $CustomLS.getObject('currentStudents');
-                             $scope.selectStudent = $scope.values[0];
-                             localStorage['selectedStudent'] = $scope.selectStudent.Id;
-                             localStorage['selectedStudentBatch'] = $scope.selectStudent.Batch;
-                             localStorage['selectedStudentCourse'] = $scope.selectStudent.Course;
-                             localStorage['selectedStudentOrgId'] = $scope.selectStudent.OrgId;
+                             //$CustomLS.setObject('currentStudents', data.Students);
+                             //$scope.values = $CustomLS.getObject('currentStudents');
+                             //$scope.selectStudent = $scope.values[0];
+                             //localStorage['selectedStudent'] = $scope.selectStudent.Id;
+                             //localStorage['selectedStudentBatch'] = $scope.selectStudent.Batch;
+                             //localStorage['selectedStudentCourse'] = $scope.selectStudent.Course;
+                             //localStorage['selectedStudentOrgId'] = $scope.selectStudent.OrgId;
                              $state.go('login');
                          }
                      })
@@ -260,7 +261,7 @@
 
 
         }])
-         .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate) {
+         .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http','$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
              $scope.Pages = [
              {
                  "Name": "Fee Details", "Href": "#/view-feeDeatils", "Icon": "ion-card"
@@ -305,6 +306,31 @@
              //    "Name": "Geo Location", "Href": "#/Geolocation", "Icon": "ion-location"
              //}
              ];
+             $scope.NewVersionData = {};
+             //debugger;
+             //cordova.getAppVersion.getVersionNumber().then(function (version) {
+             //    $('.version').text(version);
+             //});
+
+             document.addEventListener("deviceready", function () {
+                 $cordovaAppVersion.getVersionNumber().then(function (version) {
+                     localStorage['AppCurrentVersion'] = version;
+                     $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
+                         debugger;
+                         $scope.NewVersionData = data;
+                         $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+                         console.log(data);
+                         if (data.Version != version)
+                         {
+                             $ionicPopup.alert({
+                                 title: 'New Update Available!',
+                                 template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('"+$scope.NewVersionData.Url+"', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+                                 scope: $scope
+                             });
+                         }
+                     });
+                 });
+             }, false);
 
              $scope.submitEmail = function () {
                  $state.go('view-subject-details');
@@ -346,10 +372,13 @@
              "Name": "Geo Location", "Href": "#/Geolocation", "Icon": "ion-location"
          },
             {
-                "Name": "Holidays", "Href": "#/view-holidays", "Icon": "ion-android-bicycle"
+                "Name": "Holidays", "Href": "#/Employeeholidays", "Icon": "ion-android-bicycle"
             },
             {
                 "Name": "Personal Details", "Href": "#/EmployeeProfile", "Icon": "ion-android-person"
+            },
+            {
+                "Name": "Settings", "Href": "#/EmployeeSettings", "Icon": "ion-android-settings"
             }
             ];
         }])
@@ -363,7 +392,7 @@
             var studentId = localStorage['selectedStudent'];
             $scope.student = $CustomLS.getObject('currentStudents').find(function (f) { return f.Id == studentId });
             $scope.feeDetails = [];
-            $ionicLoading.show({ template: 'Loading Fee Details...', duration: 10000 });
+            $ionicLoading.show({ template: 'Loading Fee Details...' });
             $http.post(host + 'FeeDetail/GetByStudent', { StudentId: studentId }).success(function (data) {
                 $scope.feeDetails = data;
                 $ionicLoading.hide();
@@ -538,11 +567,24 @@
                   })
               }])
            .controller("EmployeeProfileCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
-               $scope.user = $CustomLS.getObject('EmployeeloginUser');
+               $scope.user = $CustomLS.getObject('LoginUser');
                $http.post(host + '/PersonalDetail/GetEmployeeDetail', { 'EmployeeId': $scope.user.UserId, 'OrgId': $scope.user.OrgId }).success(function (data) {
                    $scope.Details = data;
                })
            }])
+         .controller("EmployeeHolidaysCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+             $scope.user = $CustomLS.getObject('LoginUser');
+             $http.post(host + '/Holiday/GetEmployeeHolidays', { 'OrgId': $scope.user.OrgId }).success(function (data) {
+                 $scope.EmployeeHoliday = data;
+             });
+         }])
+
+        .controller("EmployeeSettingsCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+            $scope.Employeelogout = function () {
+                localStorage.clear();
+                $state.go('login');
+            };
+        }])
                 .controller("profileCtrl", ["$scope", "$state", function ($scope, $state, $http) {
 
                 }])
@@ -555,10 +597,9 @@
                     $scope.data = {
                         code: [],
                     }
-
-                    $scope.user = $CustomLS.getObject('EmployeeloginUser');
+                    $scope.user = $CustomLS.getObject('LoginUser');
                     $http.post(host + '/GeoLocation/GetRouteCode', { 'OrgId': $scope.user.OrgId }).success(function (data) {
-                        $scope.Routes = data;
+                        $scope.RouteCode = data;
                     })
 
                     $scope.getGeolocation = function () {
@@ -622,7 +663,7 @@
                 }])
 
         .controller("barCodeScannerCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
-            $scope.user = $CustomLS.getObject('EmployeeloginUser');
+            $scope.user = $CustomLS.getObject('LoginUser');
             $scope.studentsList = [];
             $http.post(host + '/Attandance/getStudentsList', { 'OrgId': $scope.user.OrgId }).then(function (res) {
                 console.log(res);
@@ -630,13 +671,14 @@
             })
             $scope.scannedStudents = {
                 Id: [],
-                Name: []
+                Name: [],
+                StudentId: []
             }
             $scope.data = {
             }
 
             $scope.DeleteCurrentRow = function (index) {
-                debugger;
+
                 $scope.scannedStudents.Name.splice(index, 1);
                 $scope.scannedStudents.Id.splice(index, 1);
             }
@@ -644,27 +686,27 @@
                 $cordovaBarcodeScanner.scan().then(function (imageData) {
                     var Id = imageData.text;
                     $scope.studentsList.forEach(function (value, index) {
-                        if (value.Id == Id) {
+                        if (value.StudentId == Id) {
                             $scope.scannedStudents.Name.push(value.Name)
                             $scope.scannedStudents.Id.push(value.Id)
+                            $scope.scannedStudents.StudentId.push(value.StudentId)
                         }
                     })
                     localStorage.setItem(JSON.stringify($scope.scannedStudents.Name), JSON.stringify($scope.scannedStudents.Id));
-
 
                 }, function (error) {
                     console.log("An error happened -> " + error);
                 });
             }
             $scope.sendStudentsTimings = function () {
-                debugger;
+
                 var pick = $scope.data.choice;
                 var jsonObj1 = $scope.scannedStudents.Id;
                 var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedStudents.Name)).replace(']', '').replace('[', '');
                 $scope.date = new Date();
                 var jsonObj2 = JSON.stringify($scope.date);
                 $http.post(host + '/Attandance/SaveAttendance?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsPicUp=' + pick).success(function (data) {
-                    debugger;
+
                     if (data.status) {
                         var alertPopup = $ionicPopup.alert({
                             title: 'Success',
