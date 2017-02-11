@@ -66,6 +66,7 @@
     }])
     .controller('settingCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', function ($scope, $http, $CustomLS, $ionicLoading, $state) {
         $scope.AppCurrentVersion = localStorage['AppCurrentVersion'];
+        $scope.AppToken = localStorage['token'];
         $scope.logout = function () {
             localStorage.clear();
             $state.go('login');
@@ -331,8 +332,18 @@
                          }
                      });
                  });
+                
+
 
              }, false);
+
+             if (localStorage['tokenType'] == "NEW")
+             {
+                 var userId = JSON.stringify(localStorage['LoginUser']).UserId;
+                 $http.post(host + 'User/UpdateToken', { UserId: userId, SenderId: localStorage['token'] }).success(function (data) {
+                     localStorage['tokenType'] == "UPDATED";
+                 });
+             }
 
              $scope.submitEmail = function () {
                  $state.go('view-subject-details');
