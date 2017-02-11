@@ -117,4 +117,7 @@
   <plugin name="cordova-plugin-file" version="4.3.0" />
   <plugin name="cordova-plugin-datepicker" version="0.9.2" src="https://github.com/VitaliiBlagodir/cordova-plugin-datepicker" />
   <plugin name="cordova-plugin-app-version" version="0.1.9" src="https://github.com/whiteoctober/cordova-plugin-app-version.git" />
+  <plugin name="pushbots-cordova-plugin" version="1.4.3" />
+  <preference name="phonegap-version" value="cli-6.3.0" />
+  <preference name="android-build-tool" value="gradle" />
 </widget>

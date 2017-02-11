@@ -315,6 +315,7 @@
              document.addEventListener("deviceready", function () {
                  $cordovaAppVersion.getVersionNumber().then(function (version) {
                      localStorage['AppCurrentVersion'] = version;
+                     alert(version);
                      $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
                          debugger;
                          $scope.NewVersionData = data;
@@ -330,6 +331,7 @@
                          }
                      });
                  });
+
              }, false);
 
              $scope.submitEmail = function () {

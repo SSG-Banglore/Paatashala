@@ -224,8 +224,8 @@
                 $urlRouterProvider.otherwise("/view-Employee-home");
             }
             else {
-                $urlRouterProvider.otherwise("/login");
-                //$urlRouterProvider.otherwise("/view-parent-home");
+                //$urlRouterProvider.otherwise("/login");
+                $urlRouterProvider.otherwise("/view-parent-home");
             }
 
             //$urlRouterProvider.otherwise("/login");
