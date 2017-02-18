@@ -3,7 +3,14 @@
         TimeTable Details
     </ion-nav-title>
     <ion-content class="has-header padding" scroll="false">
-        <tab-slide-box>
+
+        <div class="card" ng-if="!periodData.WeekdayTimeTables">
+            <div class="item item-text-wrap" style="text-align:center">
+                Time Table not available
+            </div>
+        </div>
+
+        <tab-slide-box ng-if="periodData.WeekdayTimeTables">
             <div class="tsb-icons">
                 <div class="tsb-ic-wrp">
                     <ion-scroll direction="x" class="tsb-hscroll">
@@ -34,15 +41,7 @@
             </ion-slide-box>
         </tab-slide-box>
 
-        <!--<div class="card" ng-repeat="pd in periodData.WeekdayTimeTables" ng-show="pd.Visible">
-            <div class="item item-text-wrap">
-                <p><h2><b>{{pd.Name}}</b></h2></p>
-                <div ng-repeat="per in pd.Periods">
-                    <p> <b>Subject : </b>{{per.Subject.Name}}</p>
-                    <p> {{per.StartTime | date:"HH:mm a"}} - {{per.EndTime | date:"HH:mm a"}}</p>
-                </div>
-            </div>
-        </div>-->
+      
     </ion-content>
 </ion-view>
 <link href="../../css/custom-table.css" rel="stylesheet" />

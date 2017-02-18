@@ -127,10 +127,10 @@
                    templateUrl: "app/templates/view-hostelDetails.html",
                    controller: "hostelDetailsCtrl"
                })
-                .state("view-personalDetails", {
-                    url: "/view-personalDetails",
-                    templateUrl: "app/templates/view-personalDetails.html",
-                    controller: "personalDetailsCtrl"
+                .state("view-studentDetail", {
+                    url: "/view-studentDetail",
+                    templateUrl: "app/templates/view-studentDetail.html",
+                    controller: "studentDetailsCtrl"
                 })
                  .state("view-HomeWork-Details", {
                      url: "/view-HomeWork-Details",
@@ -206,16 +206,16 @@
                       templateUrl: "app/templates/view-EmployeeSettings.html",
                       controller: "EmployeeSettingsCtrl"
                   })
-                       .state("Employeeholidays", {
-                           url: "/Employeeholidays",
-                       templateUrl: "app/templates/view-EmployeeHolidays.html",
-                       controller: "EmployeeHolidaysCtrl"
-                        })
-                          .state("barCodeScanner", {
-                              url: "/barCodeScanner",
-                              templateUrl: "app/templates/barCodeScanner.html",
-                              controller: "barCodeScannerCtrl"
-                          })
+                .state("Employeeholidays", {
+                    url: "/Employeeholidays",
+                templateUrl: "app/templates/view-EmployeeHolidays.html",
+                controller: "EmployeeHolidaysCtrl"
+                })
+                .state("barCodeScanner", {
+                    url: "/barCodeScanner",
+                    templateUrl: "app/templates/barCodeScanner.html",
+                    controller: "barCodeScannerCtrl"
+                })
             ;
             if (localStorage['LoginUser'] && localStorage['LoginType'] == 'Parent') {
                 $urlRouterProvider.otherwise("/view-parent-home");
@@ -224,8 +224,8 @@
                 $urlRouterProvider.otherwise("/view-Employee-home");
             }
             else {
-                //$urlRouterProvider.otherwise("/login");
-                $urlRouterProvider.otherwise("/view-parent-home");
+                $urlRouterProvider.otherwise("/login");
+                //$urlRouterProvider.otherwise("/view-parent-home");
             }
 
             //$urlRouterProvider.otherwise("/login");

@@ -3,7 +3,12 @@
         Subject Details
     </ion-nav-title>
     <ion-content class="padding">
-        <table class="table-fill">
+        <div class="card" ng-if="SubjectDetail.subjectsList.length == 0">
+            <div class="item item-text-wrap" style="text-align:center">
+                Subjects detail not available
+            </div>
+        </div>
+        <table class="table-fill" ng-if="SubjectDetail.subjectsList != undefined &&  SubjectDetail.subjectsList.length != 0">
             <thead>
                 <tr>
                     <th class="text-left">Subject</th>

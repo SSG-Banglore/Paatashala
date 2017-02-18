@@ -42,16 +42,22 @@
                 $ionicLoading.show({ template: 'Login...', duration: 10000 });
                 $http.post(host + 'User/Login', $scope.loginData).success(function (data) {
                     if (data.Status) {
-                        localStorage['LoginType'] = 'Parent';
-                        $CustomLS.setObject('LoginUser', data.User);
-                        $CustomLS.setObject('currentStudents', data.HasStudents);
-                        $scope.values = $CustomLS.getObject('currentStudents');
-                        $scope.selectStudent = data.HasStudents[0];
-                        localStorage['selectedStudent'] = $scope.selectStudent.Id;
-                        localStorage['selectedStudentBatch'] = $scope.selectStudent.Batch;
-                        localStorage['selectedStudentCourse'] = $scope.selectStudent.Course;
-                        localStorage['selectedStudentOrgId'] = $scope.selectStudent.OrgId;
-                        $state.go('view-parent-home');
+                        if (data.HasStudents.length == 0) {
+                            alert('No children tagged to the mail Id ' + data.User.Username);
+                        }
+                        else {
+                            localStorage['LoginType'] = 'Parent';
+                            $CustomLS.setObject('LoginUser', data.User);
+                            $CustomLS.setObject('currentStudents', data.HasStudents);
+                            $scope.values = $CustomLS.getObject('currentStudents');
+
+                            $scope.selectStudent = data.HasStudents[0];
+                            localStorage['selectedStudent'] = $scope.selectStudent.Id;
+                            localStorage['selectedStudentBatch'] = $scope.selectStudent.Batch;
+                            localStorage['selectedStudentCourse'] = $scope.selectStudent.Course;
+                            localStorage['selectedStudentOrgId'] = $scope.selectStudent.OrgId;
+                            $state.go('view-parent-home');
+                        }
                     }
                     else {
                         $scope.message = data.Message;
@@ -88,29 +94,11 @@
     }])
     .controller('manageChildrenCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', function ($scope, $http, $CustomLS, $ionicLoading, $state) {
         $scope.user = $CustomLS.getObject('loginUser');
-        $scope.courses = [];
+        $scope.courses = []
         $scope.batches = [];
         $scope.students = [];
         $scope.data = {};
         $scope.currentStudents = $CustomLS.getObject('currentStudents', []);
-
-        //$http.post(host + 'Course/GetAllByOrg', { 'OrgId': $scope.user.OrgId }).success(function (data) {
-        //    $scope.courses = data;
-        //    console.log(data);
-        //});
-        //$http.post(host + 'Batch/GetAllByOrg', { 'OrgId': $scope.user.OrgId }).success(function (data) {
-        //    $scope.batches = data;
-        //    console.log(data);
-        //});
-        //$scope.getStudents = function () {
-        //    if ($scope.data.batchId != undefined && $scope.data.courseId != undefined) {
-        //        $http.post(host + 'Student/GetStudents',
-        //                { 'OrgId': $scope.user.OrgId, 'batchId': $scope.data.batchId, 'courseId': $scope.data.courseId }).success(function (data) {
-        //                    $scope.students = data;
-        //                    console.log(data);
-        //                });
-        //    }
-        //};
         $scope.addSelectedStudents = function () {
             $scope.students.find(function (s) { return s.selected; });
             $scope.students.forEach(function (v, i) {
@@ -277,7 +265,7 @@
              //    "Name": "Hostel Details", "Href": "#/view-hostelDetails", "Icon": "ion-ios-home"
              //},
              {
-                 "Name": "Personal Details", "Href": "#/view-personalDetails", "Icon": "ion-android-person"
+                 "Name": "Student Details", "Href": "#/view-studentDetail", "Icon": "ion-android-person"
              },
              {
                  "Name": "Homework Details", "Href": "#/view-HomeWork-Details", "Icon": "ion-printer"
@@ -444,9 +432,10 @@
               });
 
           }])
-            .controller("personalDetailsCtrl", ["$scope", "$state", "$http", '$CustomLS', function ($scope, $state, $http, $CustomLS) {
+            .controller("studentDetailsCtrl", ["$scope", "$state", "$http", '$CustomLS', function ($scope, $state, $http, $CustomLS) {
                 var studentId = localStorage['selectedStudent'];
                 var OrgId = localStorage['selectedStudentOrgId'];
+                $scope.imageUrl = host + "Student/StudentImage?Id=" + studentId;
                 $http.post(host + '/PersonalDetail/GetAllDetail', { StudentId: studentId, OrgId: OrgId }).success(function (data) {
                     $scope.PersonalDetail = data;
                 });
@@ -532,16 +521,21 @@
 
               $http.post(host + '/Timetable/GetByCourse', { BatchId: BatchId, CourseId: CourseId, OrgId: OrgId }).success(function (data) {
                   debugger;
-                  $scope.periodData = data;
-                  $scope.periodData.WeekdayTimeTables.forEach(function (value, index) {
-                      value.Periods.forEach(function (value2, index2) {
-                          console.log(value2.StartTime);
-                          console.log(value2.EndTime);
-                          value2.StartTime = new Date(value2.StartTime);
-                          value2.EndTime = new Date(value2.EndTime);
+                  if (!data.WeekdayTimeTables) {
+
+                  }
+                  else {
+                      $scope.periodData = data;
+                      $scope.periodData.WeekdayTimeTables.forEach(function (value, index) {
+                          value.Periods.forEach(function (value2, index2) {
+                              console.log(value2.StartTime);
+                              console.log(value2.EndTime);
+                              value2.StartTime = new Date(value2.StartTime);
+                              value2.EndTime = new Date(value2.EndTime);
+                          });
+                          console.log(index, value);
                       });
-                      console.log(index, value);
-                  });
+                  }
               });
           }])
             .controller("examinationDetailsCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
