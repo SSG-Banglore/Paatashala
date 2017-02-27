@@ -6,8 +6,10 @@
     </ion-nav-title>
     <ion-content>
         <div class="card">
+            <div class="item item-image">
+                <img src="{{imageUrl}}" onerror="this.src='babyphoto.jpg';" />
+            </div>
             <div class="item item-text-wrap">
-                <img src="images/babyphoto.jpg">
                 <p>Name : <b>{{Details.Data.Name}}</b></p>
                 <p>Designation : <b>{{Details.Data.Designation}}</b></p>
                 <p>Employee Id : <b>{{Details.Data.EmpId}}</b></p>

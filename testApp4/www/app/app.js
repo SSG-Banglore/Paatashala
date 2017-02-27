@@ -216,6 +216,16 @@
                     templateUrl: "app/templates/barCodeScanner.html",
                     controller: "barCodeScannerCtrl"
                 })
+                 .state("Attendance", {
+                     url: "/Attendance",
+                    templateUrl: "app/templates/Attendance.html",
+                    controller: "AttendanceCtrl"
+                 })
+                  .state("view-ParentGeolocation", {
+                      url: "/view-ParentGeolocation",
+                      templateUrl: "app/templates/view-ParentGeolocation.html",
+                      controller: "ParentGeolocationCtrl"
+                  })
             ;
             if (localStorage['LoginUser'] && localStorage['LoginType'] == 'Parent') {
                 $urlRouterProvider.otherwise("/view-parent-home");
@@ -225,9 +235,9 @@
             }
             else {
                 $urlRouterProvider.otherwise("/login");
-                //$urlRouterProvider.otherwise("/view-parent-home");
+                $urlRouterProvider.otherwise("/view-parent-home");
             }
 
-            //$urlRouterProvider.otherwise("/login");
+            $urlRouterProvider.otherwise("/login");
         });
 })();
