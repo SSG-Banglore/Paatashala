@@ -1,0 +1,27 @@
+﻿<ion-view view-title="Track Student">
+    <ion-content class="padding">
+        <div id="map" data-tap-disabled="true"></div>
+        <label class="item item-input item-select">
+            <label class="input-label">
+                RouteCode
+            </label>
+            <select ng-model="selected.Route" ng-options="r.Id as r.RouteCode for r in RouteCode.Routes"></select>
+        </label>
+        <button class="button button-block button-positive" 
+                ng-click="getRouteLocation()">
+            Get Route Location
+        </button>
+        
+    </ion-content>
+</ion-view>   
+
+<style>
+    #map {
+  width: 100%;
+  height: 100%;
+}
+
+.scroll {
+  height: 80%;
+}
+</style>                           

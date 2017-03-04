@@ -1,7 +1,8 @@
 ﻿(function () {
     "use strict";
-   // var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
-     var host = "http://192.168.1.43/SampleAPI/";
+    //var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+    //var host = "http://192.168.1.43/SampleAPI/";
+    var host = "http://192.168.1.52/SampleAPI/";
     //var host = 'http://localhost:56623/';
     angular.module("myapp.controllers", ['ionic-datepicker', 'tabSlideBox'])
 
@@ -250,9 +251,51 @@
         }])
         .controller("getNewPasswordCtrl", ["$scope", "$state", function ($scope, $state) {
 
+        }])
+        .controller("TrackStudentCtrl", ["$scope", "$state", "$ionicLoading", "$http", function ($scope, $state, $ionicLoading, $http) {
+            $scope.map = {};
+            $scope.RouteCode = [];
+            $scope.selected = {};
+            $scope.locationData = {};
+            $http.post(host + '/GeoLocation/GetRouteCode', { 'OrgId': localStorage['selectedStudentOrgId'] }).success(function (data) {
+                $scope.RouteCode = data;
+            })
+            
+            $scope.getRouteLocation = function () {
+                $ionicLoading.show({ template: 'Loading ' });
+                $http.get(host + 'GeoLocation/ShowLocation?OrgId=' + localStorage['selectedStudentOrgId'] + '&Routecode=' + $scope.selected.Route).success(function (data) {//localStorage['selectedStudentOrgId']+, { OrgId: localStorage['selectedStudentOrgId'], Routecode: $scope.selected.Route }
+                    $ionicLoading.hide();
+                    $scope.locationData = data;
+                    $scope.map.setCenter(new google.maps.LatLng(data.Latitude, data.Longitude));
+
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(data.Latitude, data.Longitude),
+                        map: $scope.map,
+                        title: 'Route No: ' + $scope.selected.Route
+                    });
+
+                    google.maps.event.addListener(marker, 'click', function () {
+                        infowindow.open($scope.map, marker);
+                    });
+
+                }).error(function (err) {
+                    $ionicLoading.hide();
+                    alert("Error Getting Location")
+                });
+            };
+
+            var mapOptions = {
+                center: new google.maps.LatLng(43.07493, -89.381388),
+                zoom: 15,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            
 
         }])
-         .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http','$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
+         .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
              $scope.Pages = [
              {
                  "Name": "Fee Details", "Href": "#/view-feeDeatils", "Icon": "ion-card"
@@ -291,8 +334,8 @@
                  "Name": "Assesment Report", "Href": "#/view-assesmentReport", "Icon": "ion-ribbon-a"
              },
                {
-                   "Name": "Parent Geolocation", "Href": "#/view-ParentGeolocation", "Icon": "ion-location"
-             },
+                   "Name": "Track Student", "Href": "#/view-trackstudent", "Icon": "ion-location"
+               },
              // {
              //     "Name": "Bar Code Scanner", "Href": "#/barCodeScanner", "Icon": "ion-qr-scanner"
              // },
@@ -301,11 +344,6 @@
              //}
              ];
              $scope.NewVersionData = {};
-             //debugger;
-             //cordova.getAppVersion.getVersionNumber().then(function (version) {
-             //    $('.version').text(version);
-             //});
-
              document.addEventListener("deviceready", function () {
                  $cordovaAppVersion.getVersionNumber().then(function (version) {
                      localStorage['AppCurrentVersion'] = version;
@@ -315,23 +353,21 @@
                          $scope.NewVersionData = data;
                          $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
                          console.log(data);
-                         if (data.Version != version)
-                         {
+                         if (data.Version != version) {
                              $ionicPopup.alert({
                                  title: 'New Update Available!',
-                                 template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('"+$scope.NewVersionData.Url+"', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+                                 template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
                                  scope: $scope
                              });
                          }
                      });
                  });
-                
+
 
 
              }, false);
 
-             if (localStorage['tokenType'] == "NEW")
-             {
+             if (localStorage['tokenType'] == "NEW") {
                  var userId = JSON.stringify(localStorage['LoginUser']).UserId;
                  $http.post(host + 'User/UpdateToken', { UserId: userId, SenderId: localStorage['token'] }).success(function (data) {
                      localStorage['tokenType'] == "UPDATED";
@@ -348,24 +384,7 @@
              });
 
 
-             //$scope.openPopover = function ($event) {
-             //    $scope.popover.show($event);
-             //};
-             //$scope.closePopover = function () {
-             //    $scope.popover.hide();
-             //};
-             ////Cleanup the popover when we're done with it!
-             //$scope.$on('$destroy', function () {
-             //    $scope.popover.remove();
-             //});
-             //// Execute action on hidden popover
-             //$scope.$on('popover.hidden', function () {
-             //    // Execute action
-             //});
-             //// Execute action on remove popover
-             //$scope.$on('popover.removed', function () {
-             //    $scope.popover.remove();
-             //});
+
 
          }])
         .controller("employeeHomeCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
@@ -590,7 +609,7 @@
            .controller("EmployeeProfileCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
                $scope.user = $CustomLS.getObject('LoginUser');
                var EmpId = $scope.user.UserId;
-               $scope.imageUrl = host + "PersonalDetail/getEmployeeImage?Id="+EmpId;
+               $scope.imageUrl = host + "PersonalDetail/getEmployeeImage?Id=" + EmpId;
                $http.post(host + '/PersonalDetail/GetEmployeeDetail', { 'EmployeeId': $scope.user.UserId, 'OrgId': $scope.user.OrgId }).success(function (data) {
                    $scope.Details = data;
                })
@@ -616,73 +635,30 @@
                 }])
 
                 .controller("GeolocationCtrl", ["$scope", "$state", "$http", "$cordovaGeolocation", "$interval", "$CustomLS", function ($scope, $state, $http, $cordovaGeolocation, $interval, $CustomLS) {
+                    $scope.Button = {
+                        Text: "Start Location Update"
+                    }
                     $scope.Routes = [];
-                    $scope.data = {
-                        code: [],
-                    }
+                    $scope.data = {};
                     $scope.user = $CustomLS.getObject('LoginUser');
-                    $http.post(host + '/GeoLocation/GetRouteCode', { 'OrgId': $scope.user.OrgId }).success(function (data) {
+                    $http.post(host + '/GeoLocation/GetRouteCode', { 'OrgId': localStorage['selectedStudentOrgId'] }).success(function (data) {
                         $scope.RouteCode = data;
-                    })
+                    });
 
-                    $scope.getGeolocation = function () {
-                        var posOptions = {
-                            timeout: 300000, enableHighAccuracy: true
-                        };
-                        $cordovaGeolocation
-                          .getCurrentPosition(posOptions)
-                          .then(function (position) {
-                              $scope.lat = position.coords.latitude;
-                              $scope.long = position.coords.longitude;
-                              var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                              console.log(latLng);
-                              var mapOptions = {
-                                  center: latLng,
-                                  zoom: 15,
-                                  mapTypeId: google.maps.MapTypeId.ROADMAP
-                              };
-
-                              $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-                              google.maps.event.addListenerOnce($scope.map, 'idle', function () {
-
-                                  var marker = new google.maps.Marker({
-                                      map: $scope.map,
-                                      animation: google.maps.Animation.DROP,
-                                      position: latLng
-                                  });
-
-                              });
-                              google.maps.event.addListenerOnce($scope.map, 'idle', function () {
-
-                                  var marker = new google.maps.Marker({
-                                      map: $scope.map,
-                                      animation: google.maps.Animation.DROP,
-                                      position: latLng
-                                  });
-
-                                  var infoWindow = new google.maps.InfoWindow({
-                                      content: "Here I am!"
-                                  });
-
-                                  google.maps.event.addListener(marker, 'click', function () {
-                                      infoWindow.open($scope.map, marker);
-                                  });
-
-                              });
-                          }, function (error) {
-                              console.log("Could not get location");
-                          }
-                           )
-                    }
+                    $scope.StartUpdateLocation = function () {
+                        if ($scope.Button.Text == "Start Location Update") {
+                            $scope.Button.Text == "Stop Location Update";
+                            alert(JSON.stringify(backgroundGeolocation));
+                        }
+                        else {
+                            $scope.Button.Text == "Start Location Update";
+                            alert(JSON.stringify(backgroundGeolocation));
+                        }
+                    };
                     $scope.Route = $scope.data.code;
-                    $scope.date = new Date();
-                    var jsonObj3 = ($scope.date).toString();
-                    var setInterval = $interval(function () {
-                        $http.post(host + '/GeoLocation/GetLocation', { 'Lattitude': $scope.lat, 'Longitude': $scope.long, 'OrgId': $scope.user.OrgId, 'nowDateTime': jsonObj3, 'Routecode': $scope.data.code }).success(function (data) {
-                        }, function (err) {
-                            // error
-                        });
-                    }, 300000);
+
+
+
                 }])
             .controller("AttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
                 $scope.user = $CustomLS.getObject('LoginUser');
@@ -748,13 +724,18 @@
                 }
 
             }])
-         
+
         .controller("barCodeScannerCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
             $scope.user = $CustomLS.getObject('LoginUser');
+            $scope.RouteCode = [];
+            $scope.selected = {};
             $scope.studentsList = [];
             $http.post(host + '/Attandance/getStudentsList', { 'OrgId': $scope.user.OrgId }).then(function (res) {
                 console.log(res);
                 $scope.studentsList = res.data.AdmStudents;
+            })
+            $http.post(host + '/GeoLocation/GetRouteCode', { 'OrgId': $scope.user.OrgId }).success(function (data) {
+                $scope.RouteCode = data;
             })
             $scope.scannedStudents = {
                 Id: [],
@@ -786,11 +767,15 @@
                 });
             }
             $scope.sendStudentsTimings = function () {
-
+                if (!$scope.selected.Route) {
+                    alert("Please select the Route Code!");
+                    return;
+                }
                 var pick = $scope.data.choice;
                 var jsonObj1 = $scope.scannedStudents.Id;
                 var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedStudents.Name)).replace(']', '').replace('[', '');
                 $scope.date = new Date();
+
                 var jsonObj2 = JSON.stringify($scope.date);
                 $http.post(host + '/Attandance/SaveTransport?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsPickUp=' + pick).success(function (data) {
                     debugger;
@@ -809,7 +794,41 @@
                         });
                     }
                 });
-                                                                                                                                                                                 
+
+
+
+                var callbackFn = function (location) {
+                    $http.get(host + 'GeoLocation/UpdateRouteLocation?RouteCode=' + $scope.selected.Route + '&OrgId=' + $scope.user.OrgId + '&Lattitude=' + location.latitude + '&Longitude=' + location.longitude)
+                        .success(function (data) {
+                            alert('location updated');
+                        }).error(function () {
+                            alert('error updating location');
+                        });
+
+                    //alert('Location:' + location.latitude + ',' + location.longitude);
+                    backgroundGeolocation.finish();
+                };
+
+                var failureFn = function (error) {
+                    alert('BackgroundGeolocation error');
+                };
+
+                backgroundGeolocation.configure(callbackFn, failureFn, {
+                    desiredAccuracy: 100,
+                    stationaryRadius: 20,
+                    distanceFilter: 30,
+                    interval: 5000,
+                    //debug: true,
+                    //startOnBoot: true,
+                    //stopOnTerminate: false
+                });
+
+                if (pick) {
+                    backgroundGeolocation.start();
+                }
+                else {
+                    backgroundGeolocation.stop();
+                }
             }
 
         }])

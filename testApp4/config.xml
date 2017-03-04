@@ -123,4 +123,9 @@
   <preference name="WindowsStoreDisplayName" value="" />
   <plugin name="cordova-plugin-ms-adal" version="0.9.0" />
   <plugin name="cordova-plugin-console" version="1.0.5" />
+  <plugin name="cordova-plugin-mauron85-background-geolocation" version="2.2.5">
+    <variable name="ACCOUNT_TYPE" value="Developer" />
+    <variable name="CONTENT_AUTHORITY" value="SSG" />
+    <variable name="ALWAYS_USAGE_DESCRIPTION" value="Testing" />
+  </plugin>
 </widget>

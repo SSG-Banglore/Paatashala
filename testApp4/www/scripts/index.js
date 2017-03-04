@@ -36,6 +36,37 @@
             localStorage["token"] = token;
         }, errorFun);
         
+        //var callbackFn = function (location) {
+        //    console.log('['+new Date()+'] GL:  ' + location.latitude + ',' + location.longitude);
+
+        //    $.ajax({
+        //        url: 'http://192.168.1.52/SampleAPI/GeoLocation/UpdateRouteLocation?RouteCode=16&OrgId=1&Lattitude=10&Longitude=15',
+        //        async: false,
+        //        type: 'get',
+        //        success: function () { alert("Success") },
+        //        error: function () { alert("error") }
+        //    });
+
+        //    backgroundGeolocation.finish();
+        //};
+
+        //var failureFn = function (error) {
+        //    console.log('BackgroundGeolocation error');
+        //};
+
+        //backgroundGeolocation.configure(callbackFn, failureFn, {
+        //    desiredAccuracy: 10,
+        //    //stationaryRadius: 1,
+        //    distanceFilter: 1,
+        //    interval: 5000,
+        //    stopOnStillActivity: false,
+        //    debug: true,
+        //    stopOnTerminate: false,
+        //    startOnBoot: true
+        //});
+
+        //backgroundGeolocation.start();
+
     };
 
     function onPause() {

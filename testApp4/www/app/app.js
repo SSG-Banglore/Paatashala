@@ -193,7 +193,7 @@
                         })
                         .state("Geolocation", {
                             url: "/Geolocation",
-                            templateUrl: "app/templates/Geolocation.html",
+                            templateUrl: "app/templates/view-geolocation.html",
                             controller: "GeolocationCtrl"
                         })
                         .state("EmployeeProfile", {
@@ -221,10 +221,10 @@
                     templateUrl: "app/templates/Attendance.html",
                     controller: "AttendanceCtrl"
                  })
-                  .state("view-ParentGeolocation", {
-                      url: "/view-ParentGeolocation",
-                      templateUrl: "app/templates/view-ParentGeolocation.html",
-                      controller: "ParentGeolocationCtrl"
+                  .state("view-trackstudent", {
+                      url: "/view-trackstudent",
+                      templateUrl: "app/templates/view-trackstudent.html",
+                      controller: "TrackStudentCtrl"
                   })
             ;
             if (localStorage['LoginUser'] && localStorage['LoginType'] == 'Parent') {
@@ -236,6 +236,7 @@
             else {
                 $urlRouterProvider.otherwise("/login");
                 //$urlRouterProvider.otherwise("/view-parent-home");
+                //$urlRouterProvider.otherwise("/view-Employee-home");
             }
 
             //$urlRouterProvider.otherwise("/login");

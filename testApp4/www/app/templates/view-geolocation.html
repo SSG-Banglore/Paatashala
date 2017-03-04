@@ -1,21 +1,17 @@
-﻿<ion-view>
-
-    <ion-content>
-        <button class="button button-block button-positive" ng-click="getGeolocation()">
-            geolocation
-        </button>
-        <!--<button id="geolocation" ng-click="getGeolocation()" style="width:100px; height: 30px;"> geolocation</button>-->
+﻿<ion-view view-title="Location Update">
+    <ion-content class="padding">
         <div>
             <label class="item item-input item-select">
                 <label class="input-label">
                     RouteCode
                 </label>
-             
                 <select ng-model="data.code"  ng-options="r.Id as r.RouteCode for r in RouteCode.Routes">
                   
                 </select>
             </label>
-            <div id="map" data-tap-disabled="true"></div>    
+            <button class="button button-block button-positive" ng-click="StartUpdateLocation()">
+                {{Button.Text}}
+            </button> 
         </div>
         
     </ion-content>
