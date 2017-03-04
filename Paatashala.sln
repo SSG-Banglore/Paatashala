@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "SMSMobileApp", "testApp4\SMSMobileApp.jsproj", "{13987A1E-3C19-47BB-97FB-E3A00BADE78D}"
+Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "Paatashala", "testApp4\Paatashala.jsproj", "{13987A1E-3C19-47BB-97FB-E3A00BADE78D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
