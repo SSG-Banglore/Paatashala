@@ -122,4 +122,5 @@
   <preference name="android-build-tool" value="gradle" />
   <preference name="WindowsStoreDisplayName" value="" />
   <plugin name="cordova-plugin-ms-adal" version="0.9.0" />
+  <plugin name="cordova-plugin-console" version="1.0.5" />
 </widget>

@@ -290,6 +290,9 @@
              {
                  "Name": "Assesment Report", "Href": "#/view-assesmentReport", "Icon": "ion-ribbon-a"
              },
+               {
+                   "Name": "Parent Geolocation", "Href": "#/view-ParentGeolocation", "Icon": "ion-location"
+             },
              // {
              //     "Name": "Bar Code Scanner", "Href": "#/barCodeScanner", "Icon": "ion-qr-scanner"
              // },
