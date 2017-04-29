@@ -216,6 +216,11 @@
                     templateUrl: "app/templates/barCodeScanner.html",
                     controller: "barCodeScannerCtrl"
                 })
+                .state("EmployeeGallery", {
+                    url: "/EmployeeGallery",
+                    templateUrl: "app/templates/EmployeeGallery.html",
+                    controller: "EmployeeGalleryCtrl"
+                })
                  .state("Attendance", {
                      url: "/Attendance",
                     templateUrl: "app/templates/Attendance.html",

@@ -24,14 +24,24 @@
                         No students scanned yet
                     </div>
                 </div>
-
             </div>
+
+            <div class="button-bar" ng-init="data.postion = 'School'">
+                <a class="button"
+                   ng-class="{'button-positive': data.postion == 'School' }"
+                   ng-click="data.postion='School'">School</a>
+                <a class="button"
+                   ng-class="{'button-positive': data.postion == 'Home' }"
+                   ng-click="data.postion='Home'">Home</a>
+            </div>
+
             <ion-list>
-                <ion-radio ng-model="data.choice" name="PickDropRadio" ng-value="true">Pick Up</ion-radio>
+                <ion-radio ng-model="data.choice" name="PickDropRadio" ng-value="true" style="margin-top: 14px;">Pick Up</ion-radio>
                 <ion-radio ng-model="data.choice" name="PickDropRadio" ng-value="false" ng-required="!(data.choice)">Drop</ion-radio>
                 <span style="color:red" ng-show="BarCodeForm.PickDropRadio.$error.required">You have to choose pick up or drop</span>
             </ion-list>
-            <label class="item item-input item-select">
+
+            <label class="item item-input item-select" style="margin-top: 14px;">
                 <label class="input-label">
                     RouteCode
                 </label>

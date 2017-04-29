@@ -33,6 +33,11 @@
                 Get Homework
             </button>
         </ion-item>
+        <div class="card" ng-if="HomeworkDetail.assignmentsList.length == 0">
+            <div class="item item-text-wrap" style="text-align:center">
+                Homework Not assigned today
+            </div>
+        </div>
         <div class="card" ng-repeat="s in HomeworkDetail.assignmentsList">
             <div class="item item-text-wrap">
                 <p>Subject: {{s.SubjectName}}</p>

@@ -1,8 +1,9 @@
 ﻿(function () {
     "use strict";
-    //var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
-    //var host = "http://192.168.1.43/SampleAPI/";
-    var host = "http://192.168.1.52/SampleAPI/";
+   // var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+  // var host = "http://192.168.29/SampleAPI/";
+   var host = "http://192.168.1.43/SampleAPI/";
+    //var host = "http://192.168.1.34/SampleAPI/";
     //var host = 'http://localhost:56623/';
     angular.module("myapp.controllers", ['ionic-datepicker', 'tabSlideBox'])
 
@@ -22,7 +23,7 @@
         }
         $scope.login = function () {
             if ($scope.loginData.Usertype == 'Employee') {
-                $ionicLoading.show({ template: 'Login...', duration: 10000 });
+                $ionicLoading.show({ template:'<ion-spinner icon="spiral"></ion-spinner>', duration: 10000 });
                 $http.post(host + 'User/EmployeeLogin', $scope.loginData).success(function (data) {
                     debugger;
                     if (data.Status) {
@@ -99,6 +100,7 @@
         $scope.courses = []
         $scope.batches = [];
         $scope.students = [];
+
         $scope.data = {};
         $scope.currentStudents = $CustomLS.getObject('currentStudents', []);
         $scope.addSelectedStudents = function () {
@@ -406,6 +408,9 @@
             {
                 "Name": "Personal Details", "Href": "#/EmployeeProfile", "Icon": "ion-android-person"
             },
+             {
+                 "Name": "Gallery", "Href": "#/EmployeeGallery", "Icon": "ion-images"
+             },
             {
                 "Name": "Settings", "Href": "#/EmployeeSettings", "Icon": "ion-android-settings"
             }
@@ -424,7 +429,6 @@
             $scope.feeDetails = [];
             $ionicLoading.show({ template: 'Loading Fee Details...' });
             $http.post(host + 'FeeDetail/GetByStudent', { StudentId: studentId }).success(function (data) {
-                debugger;
                 $scope.feeDetails = data;
                 $ionicLoading.hide();
             });
@@ -614,6 +618,47 @@
                    $scope.Details = data;
                })
            }])
+        .controller("EmployeeGalleryCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
+
+            $scope.Image = {
+                Photo:[]
+            }
+
+            $scope.uploadFile = function (input) {
+                debugger;
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        //Sets the Old Image to new New Image
+                        $('#photo-id').attr('src', e.target.result);
+
+                        //Create a canvas and draw image on Client Side to get the byte[] equivalent
+                        var canvas = document.createElement("canvas");
+                        var imageElement = document.createElement("img");
+                        imageElement.setAttribute('src', e.target.result);
+                        var dd = imageElement.outerHTML;
+                        $scope.vat = dd;
+                        canvas.width = imageElement.width;
+                        canvas.height = imageElement.height;
+                        var context = canvas.getContext("2d");
+                        context.drawImage(imageElement, 0, 0);
+                        var base64Image = canvas.toDataURL("image/jpeg");
+
+                        //Removes the Data Type Prefix
+                        //And set the view model to the new value
+                        $scope.Image.Photo = base64Image.replace(/data:image\/jpeg;base64,/g, '');
+                    }
+                    //Renders Image on Page
+                    reader.readAsDataURL(input.files[0]);
+                }
+            };
+            $scope.UploadGalleryImages = function (data) {
+                debugger;
+                var a = $scope.Image;
+            }
+        }])
+
+
          .controller("EmployeeHolidaysCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
              $scope.user = $CustomLS.getObject('LoginUser');
              $http.post(host + '/Holiday/GetEmployeeHolidays', { 'OrgId': $scope.user.OrgId }).success(function (data) {
@@ -640,25 +685,59 @@
                     }
                     $scope.Routes = [];
                     $scope.data = {};
+                    debugger;
                     $scope.user = $CustomLS.getObject('LoginUser');
-                    $http.post(host + '/GeoLocation/GetRouteCode', { 'OrgId': localStorage['selectedStudentOrgId'] }).success(function (data) {
+                    $http.post(host + '/GeoLocation/GetRouteCode', { 'OrgId': $scope.user.OrgId }).success(function (data) {
+                        debugger;
                         $scope.RouteCode = data;
                     });
 
                     $scope.StartUpdateLocation = function () {
+                        debugger;
+                        var callbackFn = function (location) {
+                            $http.get(host + 'GeoLocation/UpdateRouteLocation?RouteCode=' + $scope.data.code + '&OrgId=' + $scope.user.OrgId + '&Lattitude=' + location.latitude + '&Longitude=' + location.longitude)
+                                .success(function (data) {
+                                    alert('location updated');
+                                }).error(function () {
+                                    alert('error updating location');
+                                });
+
+                            //alert('Location:' + location.latitude + ',' + location.longitude);
+                            backgroundGeolocation.finish();
+                        };
+
+                        var failureFn = function (error) {
+                            alert('BackgroundGeolocation error');
+                        };
+
+                        backgroundGeolocation.configure(callbackFn, failureFn, {
+                            desiredAccuracy: 100,
+                            stationaryRadius: 20,
+                            distanceFilter: 30,
+                            interval: 5000,
+                            //debug: true,
+                            //startOnBoot: true,
+                            //stopOnTerminate: false
+                        });
                         if ($scope.Button.Text == "Start Location Update") {
                             $scope.Button.Text == "Stop Location Update";
                             alert(JSON.stringify(backgroundGeolocation));
+                            backgroundGeolocation.start();
+                            var timeoutDate = new Date();
+                            timeoutDate.setMinutes(0);
+                            timeoutDate.setHours(22);
+                            setTimeout(function () {
+                                backgroundGeolocation.stop();
+                            }, (timeoutDate - new Date()))
                         }
                         else {
                             $scope.Button.Text == "Start Location Update";
                             alert(JSON.stringify(backgroundGeolocation));
-                        }
+                            backgroundGeolocation.stop();
+                        } 
                     };
+
                     $scope.Route = $scope.data.code;
-
-
-
                 }])
             .controller("AttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
                 $scope.user = $CustomLS.getObject('LoginUser');
@@ -706,6 +785,7 @@
                     $http.post(host + '/Attandance/SaveAttendance?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsCheckIn=' + pick).success(function (data) {
                         debugger;
                         if (data.status) {
+
                             var alertPopup = $ionicPopup.alert({
                                 title: 'Success',
                                 template: 'Saved Successfully!'
@@ -767,17 +847,19 @@
                 });
             }
             $scope.sendStudentsTimings = function () {
+                debugger;
                 if (!$scope.selected.Route) {
                     alert("Please select the Route Code!");
                     return;
                 }
                 var pick = $scope.data.choice;
+                var Position = $scope.data.postion;
                 var jsonObj1 = $scope.scannedStudents.Id;
                 var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedStudents.Name)).replace(']', '').replace('[', '');
                 $scope.date = new Date();
 
                 var jsonObj2 = JSON.stringify($scope.date);
-                $http.post(host + '/Attandance/SaveTransport?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsPickUp=' + pick).success(function (data) {
+                $http.post(host + '/Attandance/SaveTransport?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsPickUp=' + pick + '&Position=' +Position).success(function (data) {
                     debugger;
                     if (data.status) {
                         var alertPopup = $ionicPopup.alert({
