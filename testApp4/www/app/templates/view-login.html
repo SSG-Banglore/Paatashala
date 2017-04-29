@@ -24,10 +24,10 @@
         <label class="radio-inline"><input type="radio" ng-model="data.Usertype" value="Parent">Parent</label>-->
         <div class="list list-inset">        
             <label class="item item-input">
-                <input type="text" ng-model="loginData.Username" placeholder="Username" ng-init="loginData.Username = 'adiraj1194@gmail.com'">
+                <input type="text" ng-model="loginData.Username" placeholder="Username" ng-init="loginData.Username = ''">
             </label>
             <label class="item item-input">
-                <input type="password" ng-model="loginData.Password" placeholder="Password" ng-init="loginData.Password = '12345'">
+                <input type="password" ng-model="loginData.Password" placeholder="Password" ng-init="loginData.Password = ''">
             </label>
             <label class="item item-input" ng-show="loginData.Usertype == 'Employee'" >
                 <input type="text" ng-model="loginData.OrgName" placeholder="Organization Name">

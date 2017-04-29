@@ -9,9 +9,20 @@
                   
                 </select>
             </label>
-            <button class="button button-block button-positive" ng-click="StartUpdateLocation()">
+            <!--<button class="button button-block button-positive" ng-click="StartUpdateLocation()">
                 {{Button.Text}}
-            </button> 
+            </button>--> 
+            <ul class="list">
+                <li class="item item-toggle">
+                    Location Update
+                    <label class="toggle toggle-positive">
+                        <input type="checkbox" ng-model="Button.LocationUpdate" ng-change="StartUpdateLocation()">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </li>
+            </ul>
         </div>
         
     </ion-content>

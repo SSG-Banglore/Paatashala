@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
-   // var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+   var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
   // var host = "http://192.168.29/SampleAPI/";
-   var host = "http://192.168.1.43/SampleAPI/";
+   //var host = "http://192.168.1.43/SampleAPI/";
     //var host = "http://192.168.1.34/SampleAPI/";
     //var host = 'http://localhost:56623/';
     angular.module("myapp.controllers", ['ionic-datepicker', 'tabSlideBox'])
@@ -681,8 +681,12 @@
 
                 .controller("GeolocationCtrl", ["$scope", "$state", "$http", "$cordovaGeolocation", "$interval", "$CustomLS", function ($scope, $state, $http, $cordovaGeolocation, $interval, $CustomLS) {
                     $scope.Button = {
-                        Text: "Start Location Update"
+                        Text: "Start Location Update",
+                        LocationUpdate: localStorage['locationUpdate'] == "true"
                     }
+
+                    //$scope.Button.LocationUpdate = $scope.Button.IsLocationUpading == "true";
+                    debugger;
                     $scope.Routes = [];
                     $scope.data = {};
                     debugger;
@@ -718,9 +722,11 @@
                             //debug: true,
                             //startOnBoot: true,
                             //stopOnTerminate: false
+                        }, function (state) {
+                            debugger;
                         });
-                        if ($scope.Button.Text == "Start Location Update") {
-                            $scope.Button.Text == "Stop Location Update";
+                        if ($scope.Button.LocationUpdate == true) {
+                            localStorage["locationUpdate"] = "true";
                             alert(JSON.stringify(backgroundGeolocation));
                             backgroundGeolocation.start();
                             var timeoutDate = new Date();
@@ -731,7 +737,7 @@
                             }, (timeoutDate - new Date()))
                         }
                         else {
-                            $scope.Button.Text == "Start Location Update";
+                            localStorage["locationUpdate"] = "false";
                             alert(JSON.stringify(backgroundGeolocation));
                             backgroundGeolocation.stop();
                         } 
@@ -879,38 +885,38 @@
 
 
 
-                var callbackFn = function (location) {
-                    $http.get(host + 'GeoLocation/UpdateRouteLocation?RouteCode=' + $scope.selected.Route + '&OrgId=' + $scope.user.OrgId + '&Lattitude=' + location.latitude + '&Longitude=' + location.longitude)
-                        .success(function (data) {
-                            alert('location updated');
-                        }).error(function () {
-                            alert('error updating location');
-                        });
+                //var callbackFn = function (location) {
+                //    $http.get(host + 'GeoLocation/UpdateRouteLocation?RouteCode=' + $scope.selected.Route + '&OrgId=' + $scope.user.OrgId + '&Lattitude=' + location.latitude + '&Longitude=' + location.longitude)
+                //        .success(function (data) {
+                //            alert('location updated');
+                //        }).error(function () {
+                //            alert('error updating location');
+                //        });
 
-                    //alert('Location:' + location.latitude + ',' + location.longitude);
-                    backgroundGeolocation.finish();
-                };
+                //    //alert('Location:' + location.latitude + ',' + location.longitude);
+                //    backgroundGeolocation.finish();
+                //};
 
-                var failureFn = function (error) {
-                    alert('BackgroundGeolocation error');
-                };
+                //var failureFn = function (error) {
+                //    alert('BackgroundGeolocation error');
+                //};
 
-                backgroundGeolocation.configure(callbackFn, failureFn, {
-                    desiredAccuracy: 100,
-                    stationaryRadius: 20,
-                    distanceFilter: 30,
-                    interval: 5000,
-                    //debug: true,
-                    //startOnBoot: true,
-                    //stopOnTerminate: false
-                });
+                //backgroundGeolocation.configure(callbackFn, failureFn, {
+                //    desiredAccuracy: 100,
+                //    stationaryRadius: 20,
+                //    distanceFilter: 30,
+                //    interval: 5000,
+                //    //debug: true,
+                //    //startOnBoot: true,
+                //    //stopOnTerminate: false
+                //});
 
-                if (pick) {
-                    backgroundGeolocation.start();
-                }
-                else {
-                    backgroundGeolocation.stop();
-                }
+                //if (pick) {
+                //    backgroundGeolocation.start();
+                //}
+                //else {
+                //    backgroundGeolocation.stop();
+                //}
             }
 
         }])
