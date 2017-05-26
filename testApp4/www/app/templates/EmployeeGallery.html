@@ -3,7 +3,7 @@
         Gallery Details
     </ion-nav-title>
     <ion-content>
-        <div>
+        <!--<div>
             <label class="item item-input item-select">
                 <label class="input-label">
                     Batch
@@ -16,12 +16,24 @@
                     Course
                     </label>
                 </label>
-        </div>
-       <div>{{vat}}</div>
+        </div>-->
+        <label class="item item-input item-select" style="margin-top: 14px;">
+            <label class="input-label">
+                Batch
+            </label>
+            <select ng-model="selected.Batch" ng-options="r.Id as r.Name for r in Batchlist"></select>
+        </label>
+        <label class="item item-input item-select" style="margin-top: 14px;">
+            <label class="input-label">
+                Course
+            </label>
+            <select ng-model="selected.Course" ng-options="r.Id as r.Name for r in CourseList"></select>
+        </label>
+        <!--<div>{{vat}}</div>-->
         <img ng-src="data:image/jpeg;base64,{{Image.Photo}}" id="photo-id" style="max-width:100px; max-height:100px;" />
         <input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this)" id="photo-upload" />
         <!--<input type="file" />
-        <img src="{{imageUrl}}" />-->
+        <img src="{{imageurl}}" />-->
         <button class="button button-block button-positive" ng-click="UploadGalleryImages(Image)">
             Upload
         </button>

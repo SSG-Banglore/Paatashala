@@ -1,0 +1,112 @@
+﻿<ion-view>
+    <ion-nav-title>
+       Enquiry Details
+    </ion-nav-title>
+    <ion-content>
+        <div class="list">
+            <div class="item item-divider">
+                <strong>  Student Info</strong>
+            </div>
+            <div class="row">
+                <a class="col">
+                    <label class="item item-input">
+                        <input type="text" placeholder="First Name">
+                    </label>
+                </a>
+                <a class="col">
+                    <label class="item item-input">
+                        <input type="text" placeholder="Last Name">
+                    </label>
+                </a>
+            </div>
+            <div>
+                <label class="item item-input">
+                    <span> <label>D O B : &nbsp;</label>  </span>
+                    <input type="text" ng-model="FormattedDate" placeholder="Date" ng-click="setDateTime()">
+                </label>
+            </div>
+            <br />
+            <div>
+                <label class="item item-input">
+                    <textarea placeholder="Address"></textarea>
+                </label>
+            </div>
+ </div>
+
+        <!--<div class="list">-->
+            <div class="item item-divider">
+                <strong>  Parents Info</strong>
+            </div>
+            <div class="row">
+                <a class="col">
+                    <label class="item item-input">
+                        <input type="text" placeholder="Father's Name">
+                    </label>
+                </a>
+                <a class="col">
+                    <label class="item item-input">
+                        <input type="text" placeholder="Mother's Name">
+                    </label>
+                </a>
+            </div>
+            <div class="row">
+                <a class="col">
+                    <label class="item item-input">
+                        <input type="text" placeholder="Contact">
+                    </label>
+                </a>
+                <a class="col">
+                    <label class="item item-input">
+                        <input type="text" placeholder="Contact">
+                    </label>
+                </a>
+            </div>
+            <div class="row">
+                <a class="col">
+                    <label class="item item-input">
+                        <input type="email" placeholder="Email-id">
+                    </label>
+                </a>
+                <a class="col">
+                    <label class="item item-input">
+                        <input type="email" placeholder="Email-id">
+                    </label>
+                </a>
+            </div>
+        <!--</div>-->
+        <div class="list">
+            <div class="item item-divider">
+                <strong>  Personal Details</strong>
+            </div>
+        </div>
+        <div>
+            <strong><p>&nbsp;What activities does your child like</p></strong>
+            <label class="item item-input">
+                <textarea></textarea>
+            </label>
+        </div>
+        <div>
+            <strong><p>&nbsp;Your expectations from this institute for your child's development:</p></strong>
+            <label class="item item-input">
+                <textarea></textarea>
+            </label>
+        </div>
+        <div>
+            <strong><p>&nbsp;Any special concern that you would like us to address for your child's development:</p></strong>
+            <label class="item item-input">
+                <textarea></textarea>
+            </label>
+        </div>
+        <div>
+            <strong><p>&nbsp;When would you like to take admission of your child:</p></strong>
+            <label class="item item-input">
+                <textarea></textarea>
+            </label>
+        </div>
+         <button class="button button-block button-positive"  ng-click="NextPageEnquiry()">
+                Next
+            </button>
+        <!--<button class="button button-block button-positive">Submit</button>-->
+
+</ion-content>
+    </ion-view>

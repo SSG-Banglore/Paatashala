@@ -226,6 +226,27 @@
                     templateUrl: "app/templates/Attendance.html",
                     controller: "AttendanceCtrl"
                  })
+                 .state("EmployeeAttendance", {
+                url: "/EmployeeAttendance",
+                templateUrl: "app/templates/EmployeeAttendance.html",
+                controller: "employeeAttendenceCtrl"
+            })
+                .state("NextEnquiryForm", {
+                url: "/NextEnquiryForm",
+                templateUrl: "app/templates/NextEnquiryForm.html",
+                controller: "nextEnquiryFormCtrl"
+            })
+            .state("NextEmployeeAttendanceScreen", {
+                url: "/NextEmployeeAttendance",
+                params: { BatchId: '', CourseId: '',Date:'' },
+                templateUrl: "app/templates/NextEmployeeAttendance.html",
+                controller: "nextEmployeeAttendanceCtrl"
+            })
+                         .state("EnquiryFormScreen", {
+                             url: "/EnquiryForm",
+                             templateUrl: "app/templates/EnquiryForm.html",
+                             controller: "enquiryFormCtrl"
+                         })
                   .state("view-trackstudent", {
                       url: "/view-trackstudent",
                       templateUrl: "app/templates/view-trackstudent.html",
