@@ -14,8 +14,7 @@
                 if (authData) {
                     debugger;
                     config.headers["Token"] = authData;
-                }idfu.lohjtui
-
+                }
             }
 
             return config;
