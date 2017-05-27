@@ -197,9 +197,9 @@
                             controller: "GeolocationCtrl"
                         })
                         .state("EmployeeProfile", {
-                        url: "/EmployeeProfile",
-                        templateUrl: "app/templates/EmployeeProfile.html",
-                        controller: "EmployeeProfileCtrl"
+                            url: "/EmployeeProfile",
+                            templateUrl: "app/templates/EmployeeProfile.html",
+                            controller: "EmployeeProfileCtrl"
                         })
                   .state("EmployeeSettings", {
                       url: "/EmployeeSettings",
@@ -208,8 +208,8 @@
                   })
                 .state("Employeeholidays", {
                     url: "/Employeeholidays",
-                templateUrl: "app/templates/view-EmployeeHolidays.html",
-                controller: "EmployeeHolidaysCtrl"
+                    templateUrl: "app/templates/view-EmployeeHolidays.html",
+                    controller: "EmployeeHolidaysCtrl"
                 })
                 .state("barCodeScanner", {
                     url: "/barCodeScanner",
@@ -223,22 +223,22 @@
                 })
                  .state("Attendance", {
                      url: "/Attendance",
-                    templateUrl: "app/templates/Attendance.html",
-                    controller: "AttendanceCtrl"
+                     templateUrl: "app/templates/Attendance.html",
+                     controller: "AttendanceCtrl"
                  })
                  .state("EmployeeAttendance", {
-                url: "/EmployeeAttendance",
-                templateUrl: "app/templates/EmployeeAttendance.html",
-                controller: "employeeAttendenceCtrl"
-            })
+                     url: "/EmployeeAttendance",
+                     templateUrl: "app/templates/EmployeeAttendance.html",
+                     controller: "employeeAttendenceCtrl"
+                 })
                 .state("NextEnquiryForm", {
-                url: "/NextEnquiryForm",
-                templateUrl: "app/templates/NextEnquiryForm.html",
-                controller: "nextEnquiryFormCtrl"
-            })
+                    url: "/NextEnquiryForm",
+                    templateUrl: "app/templates/NextEnquiryForm.html",
+                    controller: "nextEnquiryFormCtrl"
+                })
             .state("NextEmployeeAttendanceScreen", {
                 url: "/NextEmployeeAttendance",
-                params: { BatchId: '', CourseId: '',Date:'' },
+                params: { BatchId: '', CourseId: '', Date: '' },
                 templateUrl: "app/templates/NextEmployeeAttendance.html",
                 controller: "nextEmployeeAttendanceCtrl"
             })
@@ -266,5 +266,8 @@
             }
 
             //$urlRouterProvider.otherwise("/login");
-        });
+        })
+    .config(function ($httpProvider) {
+        $httpProvider.interceptors.push('authInterceptorService');
+    });
 })();

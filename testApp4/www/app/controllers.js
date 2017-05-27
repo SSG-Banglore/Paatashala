@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
-   var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
-  // var host = "http://192.168.29/SampleAPI/";
-  // var host = "http://192.168.1.43/SampleAPI/";
+    //var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+    // var host = "http://192.168.29/SampleAPI/";
+    var host = "http://192.168.1.43/SampleAPI/";
     //var host = "http://192.168.1.34/SampleAPI/";
     //var host = 'http://localhost:56623/';
     angular.module("myapp.controllers", ['ionic-datepicker', 'tabSlideBox'])
@@ -23,13 +23,14 @@
         }
         $scope.login = function () {
             if ($scope.loginData.Usertype == 'Employee') {
-                $ionicLoading.show({ template:'<ion-spinner icon="spiral"></ion-spinner>', duration: 10000 });
+                $ionicLoading.show({ template: '<ion-spinner icon="spiral"></ion-spinner>', duration: 10000 });
                 $http.post(host + 'User/EmployeeLogin', $scope.loginData).success(function (data) {
                     debugger;
                     if (data.Status) {
                         localStorage['LoginType'] = 'Employee';
                         $CustomLS.setObject('LoginUser', data.User);
                         $CustomLS.setObject('currentStudents', data.HasStudents);
+                        localStorage['token'] = data.Token;
                         $state.go('view-Employee-home');
                     }
                     else {
@@ -52,6 +53,7 @@
                             localStorage['LoginType'] = 'Parent';
                             $CustomLS.setObject('LoginUser', data.User);
                             $CustomLS.setObject('currentStudents', data.HasStudents);
+                            localStorage['token'] = data.Token;
                             $scope.values = $CustomLS.getObject('currentStudents');
 
                             $scope.selectStudent = data.HasStudents[0];
@@ -262,7 +264,7 @@
             $http.post(host + '/GeoLocation/GetRouteCode', { 'OrgId': localStorage['selectedStudentOrgId'] }).success(function (data) {
                 $scope.RouteCode = data;
             })
-            
+
             $scope.getRouteLocation = function () {
                 $ionicLoading.show({ template: 'Loading ' });
                 $http.get(host + 'GeoLocation/ShowLocation?OrgId=' + localStorage['selectedStudentOrgId'] + '&Routecode=' + $scope.selected.Route).success(function (data) {//localStorage['selectedStudentOrgId']+, { OrgId: localStorage['selectedStudentOrgId'], Routecode: $scope.selected.Route }
@@ -294,7 +296,7 @@
 
             $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-            
+
 
         }])
          .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
@@ -454,17 +456,33 @@
              $scope.dropdownValues = [
               { Name: 'Present', Id: true },
               { Name: 'Absent', Id: false }]
-
-
+             $scope.dropdown = {};
+             $scope.data = {};
+             $scope.BackupStudentsList = {};
              $scope.user = $CustomLS.getObject('LoginUser');
              $scope.BatchId = $stateParams.BatchId;
              $scope.CourseId = $stateParams.CourseId;
              $scope.Date = $stateParams.Date;
              $http.post(host + '/Attandance/getStudentsBasedOnFiler', { BatchId: $scope.BatchId, CourseId: $scope.CourseId, OrgId: $scope.user.OrgId }).success(function (data) {
-                 $scope.StudentsList = data;
+                 $scope.BackupStudentsList = $scope.StudentsList = data;
                  //   $scope.StudentsList = StudentName.all();
                  // $scope.listlength = data;
              });
+             $scope.dropvalueChange = function(){
+                 console.log($scope.dropdown.value);
+                 debugger;
+                 if($scope.dropdown.value != "-1")
+                 {
+                     $scope.StudentsList.forEach(function (e, i) {
+                         e.isPresent = $scope.dropdown.value == "0" ? false : true;
+                         $scope.BackupStudentsList.filter(function (e2) { return e2.Id == e.Id; })[0].isPresent = e.isPresent;
+                     });
+                 }
+             };
+             $scope.searchTextChanged = function ()
+             {
+                 $scope.StudentsList = $scope.BackupStudentsList.filter(function (e) { return e.StudentName.toUpperCase().indexOf($scope.data.searchText.toUpperCase()) != -1; });
+             }
              $scope.SubmittingAttendance = function () {
                  debugger;
                  $scope.StudentsList;
@@ -541,14 +559,14 @@
                  ionicDatePicker.openDatePicker(ipObj1);
              };
              $scope.NextPageEnquiry = function () {
-                  debugger;   
-                  $state.go('NextEnquiryForm');
-            };
-           $http.get(host + '/School/GetAll').then(function (res) {
-               debugger;
-               console.log(res);
-               $scope.SchoolList = res.data;
-           });
+                 debugger;
+                 $state.go('NextEnquiryForm');
+             };
+             $http.get(host + '/School/GetAll').then(function (res) {
+                 debugger;
+                 console.log(res);
+                 $scope.SchoolList = res.data;
+             });
 
          }])
          .controller("nextEnquiryFormCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
@@ -662,10 +680,14 @@
               };
               $scope.getHomework();
           }])
-             .controller("holidaysCtrl", ["$scope", "$state", "$http", '$CustomLS', function ($scope, $state, $http, $CustomLS) {
+             .controller("holidaysCtrl", ["$scope", "$state", "$http", '$CustomLS', '$ionicLoading', function ($scope, $state, $http, $CustomLS, $ionicLoading) {
                  var OrgId = localStorage['selectedStudentOrgId'];
+
+                 $ionicLoading.show({ template: "Loading holidays..." });
+
                  $http.post(host + '/Holiday/GetAll', { OrgId: OrgId }).success(function (data) {
                      $scope.HolidayDetail = data;
+                     $ionicLoading.hide();
                      //$scope.HolidayDetail.HolidaysList.forEach(function (value, index) {
                      //    console.log(value.Date); 
                      //    value.Date = new Date(value.Date);
@@ -754,12 +776,14 @@
                       });
                   })
               }])
-           .controller("EmployeeProfileCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+           .controller("EmployeeProfileCtrl", ["$scope", "$state", "$http", "$CustomLS", "$ionicLoading", function ($scope, $state, $http, $CustomLS, $ionicLoading) {
                $scope.user = $CustomLS.getObject('LoginUser');
                var EmpId = $scope.user.UserId;
                $scope.imageUrl = host + "PersonalDetail/getEmployeeImage?Id=" + EmpId;
+               $ionicLoading.show({ template: 'Loading Personal Details..', duration: 10000 });
                $http.post(host + '/PersonalDetail/GetEmployeeDetail', { 'EmployeeId': $scope.user.UserId, 'OrgId': $scope.user.OrgId }).success(function (data) {
                    $scope.Details = data;
+                   $ionicLoading.hide();
                })
            }])
         .controller("EmployeeGalleryCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
@@ -810,10 +834,12 @@
         }])
 
 
-         .controller("EmployeeHolidaysCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+         .controller("EmployeeHolidaysCtrl", ["$scope", "$state", "$http", "$CustomLS", '$ionicLoading', function ($scope, $state, $http, $CustomLS, $ionicLoading) {
              $scope.user = $CustomLS.getObject('LoginUser');
+             $ionicLoading.show({ template: "Loading holidays..." });
              $http.post(host + '/Holiday/GetEmployeeHolidays', { 'OrgId': $scope.user.OrgId }).success(function (data) {
                  $scope.EmployeeHoliday = data;
+                 $ionicLoading.hide();
              });
          }])
 
@@ -891,7 +917,7 @@
                             localStorage["locationUpdate"] = "false";
                             alert(JSON.stringify(backgroundGeolocation));
                             backgroundGeolocation.stop();
-                        } 
+                        }
                     };
 
                     $scope.Route = $scope.data.code;
@@ -1016,7 +1042,7 @@
                 $scope.date = new Date();
 
                 var jsonObj2 = JSON.stringify($scope.date);
-                $http.post(host + '/Attandance/SaveTransport?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsPickUp=' + pick + '&Position=' +Position).success(function (data) {
+                $http.post(host + '/Attandance/SaveTransport?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsPickUp=' + pick + '&Position=' + Position).success(function (data) {
                     debugger;
                     if (data.status) {
                         var alertPopup = $ionicPopup.alert({

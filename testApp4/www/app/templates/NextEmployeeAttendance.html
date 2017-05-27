@@ -2,7 +2,7 @@
     <ion-nav-title>
         Attendance Entry
     </ion-nav-title>
-    <ion-content>
+    <ion-content class="padding">
         <!--<ion-item class="item-input-inset">
             <label class="item-input-wrapper">
                 <i class="icon ion-ios7-search placeholder-icon"></i>
@@ -14,7 +14,7 @@
         </ion-item>-->
             <label class="item item-input">
                 <i class="icon ion-search placeholder-icon"></i>
-                <input type="text" placeholder="Search">
+                <input type="text" ng-model="data.searchText" ng-change="searchTextChanged()" placeholder="Search">
             </label>
             <div class="list">
                 <!--<select ng-model="SelectedVal" ng-change="dropvalueChange()" ng-options="u.Id as u.Name u in dropdownValues"></select>-->
@@ -22,10 +22,10 @@
                     <div class="input-label">
                        Mark All As
                     </div>
-                    <select ng-model="dropdown.value" ng-change="dropvalueChange()">
-                        <option selected></option>
-                        <option id="1">Present</option>
-                        <option id="0">Absent</option>
+                    <select ng-model="dropdown.value" ng-change="dropvalueChange()" ng-init="dropdown.value='-1'">
+                        <option value="-1" selected>--Select--</option>
+                        <option value="1">Present</option>
+                        <option value="0">Absent</option>
                     </select>
                 </label>
             </div>

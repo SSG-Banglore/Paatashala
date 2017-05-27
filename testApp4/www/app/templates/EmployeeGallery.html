@@ -31,7 +31,7 @@
         </label>
         <!--<div>{{vat}}</div>-->
         <img ng-src="data:image/jpeg;base64,{{Image.Photo}}" id="photo-id" style="max-width:100px; max-height:100px;" />
-        <input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this)" id="photo-upload" />
+        <input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this)" id="photo-upload" multiple />
         <!--<input type="file" />
         <img src="{{imageurl}}" />-->
         <button class="button button-block button-positive" ng-click="UploadGalleryImages(Image)">
