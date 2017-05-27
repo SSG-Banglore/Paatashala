@@ -211,10 +211,10 @@
                     templateUrl: "app/templates/view-EmployeeHolidays.html",
                     controller: "EmployeeHolidaysCtrl"
                 })
-                .state("barCodeScanner", {
-                    url: "/barCodeScanner",
-                    templateUrl: "app/templates/barCodeScanner.html",
-                    controller: "barCodeScannerCtrl"
+                .state("Transport", {
+                    url: "/Transport",
+                    templateUrl: "app/templates/view-transport.html",
+                    controller: "TransportCtrl"
                 })
                 .state("EmployeeGallery", {
                     url: "/EmployeeGallery",

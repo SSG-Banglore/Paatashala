@@ -41,12 +41,12 @@
                 <span style="color:red" ng-show="BarCodeForm.PickDropRadio.$error.required">You have to choose pick up or drop</span>
             </ion-list>
 
-            <label class="item item-input item-select" style="margin-top: 14px;">
+            <!--<label class="item item-input item-select" style="margin-top: 14px;">
                 <label class="input-label">
                     RouteCode
                 </label>
                 <select ng-model="selected.Route" ng-options="r.Id as r.RouteCode for r in RouteCode.Routes"></select>
-            </label>
+            </label>-->
             <button class="button button-block button-positive" ng-disabled="BarCodeForm.$invalid" ng-click="sendStudentsTimings()">
                 Submit Student List
             </button>

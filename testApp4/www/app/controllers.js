@@ -395,7 +395,7 @@
             $scope.Pages = [
 
          {
-             "Name": "Transport ", "Href": "#/barCodeScanner", "Icon": "ion-qr-scanner"
+             "Name": "Transport ", "Href": "#/Transport", "Icon": "ion-qr-scanner"
          },
            {
                "Name": "Attendance", "Href": "#/Attendance", "Icon": "ion-qr-scanner"
@@ -959,7 +959,6 @@
                     });
                 }
                 $scope.sendStudentsTimings = function () {
-
                     var pick = $scope.data.choice;
                     var jsonObj1 = $scope.scannedStudents.Id;
                     var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedStudents.Name)).replace(']', '').replace('[', '');
@@ -983,12 +982,10 @@
                             });
                         }
                     });
-
                 }
-
             }])
 
-        .controller("barCodeScannerCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
+        .controller("TransportCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
             $scope.user = $CustomLS.getObject('LoginUser');
             $scope.RouteCode = [];
             $scope.selected = {};
@@ -1031,10 +1028,10 @@
             }
             $scope.sendStudentsTimings = function () {
                 debugger;
-                if (!$scope.selected.Route) {
-                    alert("Please select the Route Code!");
-                    return;
-                }
+                //if (!$scope.selected.Route) {
+                //    alert("Please select the Route Code!");
+                //    return;
+                //}
                 var pick = $scope.data.choice;
                 var Position = $scope.data.postion;
                 var jsonObj1 = $scope.scannedStudents.Id;

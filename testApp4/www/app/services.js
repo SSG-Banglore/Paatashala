@@ -14,7 +14,8 @@
                 if (authData) {
                     debugger;
                     config.headers["Token"] = authData;
-                }
+                }idfu.lohjtui
+
             }
 
             return config;
@@ -26,7 +27,8 @@
                 //localStorage.removeItem("LoginUser");
                 localStorage.removeItem("LoginType");
                 //localStorage.clear();
-                location.reload();
+                //location.reload();
+                document.location.href = 'index.html';
             }
             return $q.reject(rejection);
         }
