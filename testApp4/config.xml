@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<widget xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:vs="http://schemas.microsoft.com/appx/2014/htmlapps" id="io.cordova.myapp2f6bd8" version="1.1.102" xmlns="http://www.w3.org/ns/widgets" defaultlocale="en-US">
+<widget xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:vs="http://schemas.microsoft.com/appx/2014/htmlapps" id="io.cordova.myapp2f6bd8" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" defaultlocale="en-US">
   <name>Paatashala</name>
   <description>Patashal School Management app helps parent to track and get the update on their children about the curriculum</description>
   <author href="http://cordova.io" email="dev@cordova.apache.org">Soft Serve Global</author>
@@ -128,6 +128,5 @@
     <variable name="CONTENT_AUTHORITY" value="SSG" />
     <variable name="ALWAYS_USAGE_DESCRIPTION" value="Testing" />
   </plugin>
-  <preference name="android-minSdkVersion" value="14" />
-  <preference name="android-targetSdkVersion" value="14" />
+  <preference name="android-minSdkVersion" value="16" />
 </widget>

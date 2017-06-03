@@ -10,7 +10,7 @@
         var _request = function (config) {
             config.headers = config.headers || {};
             if (config.url.startsWith('http://')) {
-                var authData = localStorage['token'];
+                var authData = localStorage['LoginToken'];
                 if (authData) {
                     debugger;
                     config.headers["Token"] = authData;

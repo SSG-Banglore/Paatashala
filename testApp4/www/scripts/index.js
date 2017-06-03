@@ -30,10 +30,12 @@
 
         window.plugins.PushbotsPlugin.on("registered", function (token) {
             localStorage["token"] = token;
+            localStorage['tokenType'] = "NEW";
         },errorFun);
 
         window.plugins.PushbotsPlugin.getRegistrationId(function (token) {
             localStorage["token"] = token;
+            localStorage['tokenType'] = "NEW";
         }, errorFun);
         
         //var callbackFn = function (location) {

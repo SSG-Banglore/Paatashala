@@ -236,6 +236,11 @@
                     templateUrl: "app/templates/NextEnquiryForm.html",
                     controller: "nextEnquiryFormCtrl"
                 })
+                .state("debug", {
+                    url: '/debug',
+                    templateUrl: 'app/templates/view-debug.html',
+                    controller: 'debugCtrl'
+                })
             .state("NextEmployeeAttendanceScreen", {
                 url: "/NextEmployeeAttendance",
                 params: { BatchId: '', CourseId: '', Date: '' },

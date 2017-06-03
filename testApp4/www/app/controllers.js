@@ -2,7 +2,8 @@
     "use strict";
     //var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
     // var host = "http://192.168.29/SampleAPI/";
-    var host = "http://192.168.1.43/SampleAPI/";
+     var host = "http://192.168.1.43/SampleAPI/";
+    //var host = "http://192.168.1.43/SampleAPI/";
     //var host = "http://192.168.1.34/SampleAPI/";
     //var host = 'http://localhost:56623/';
     angular.module("myapp.controllers", ['ionic-datepicker', 'tabSlideBox'])
@@ -30,7 +31,7 @@
                         localStorage['LoginType'] = 'Employee';
                         $CustomLS.setObject('LoginUser', data.User);
                         $CustomLS.setObject('currentStudents', data.HasStudents);
-                        localStorage['token'] = data.Token;
+                        localStorage['LoginToken'] = data.Token;
                         $state.go('view-Employee-home');
                     }
                     else {
@@ -53,7 +54,7 @@
                             localStorage['LoginType'] = 'Parent';
                             $CustomLS.setObject('LoginUser', data.User);
                             $CustomLS.setObject('currentStudents', data.HasStudents);
-                            localStorage['token'] = data.Token;
+                            localStorage['LoginToken'] = data.Token;
                             $scope.values = $CustomLS.getObject('currentStudents');
 
                             $scope.selectStudent = data.HasStudents[0];
@@ -350,6 +351,7 @@
              $scope.NewVersionData = {};
              document.addEventListener("deviceready", function () {
                  $cordovaAppVersion.getVersionNumber().then(function (version) {
+                     debugger;
                      localStorage['AppCurrentVersion'] = version;
                      alert(version);
                      $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
@@ -451,7 +453,7 @@
             });
 
         }])
-         .controller("nextEmployeeAttendanceCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", function ($scope, $state, $http, $CustomLS, $stateParams) {
+         .controller("nextEmployeeAttendanceCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
              debugger;
              $scope.dropdownValues = [
               { Name: 'Present', Id: true },
@@ -486,8 +488,20 @@
              $scope.SubmittingAttendance = function () {
                  debugger;
                  $scope.StudentsList;
-                 $http.post(host + '/Attandance/saveDailyStudentAttendance', { Students: $scope.StudentsList, Date: $scope.Date }).success(function (data) {
-
+                 $http.post(host + '/Attandance/saveDailyStudentAttendance', { DailyAttendanceObj: $scope.StudentsList, dateAttendance: $scope.Date, OrgId: $scope.user.OrgId }).success(function (data) {
+                     debugger;
+                     if (data.status) {
+                         var alertPopup = $ionicPopup.alert({
+                             title: 'Success',
+                             template: 'Saved Successfully!'
+                         });
+                     }
+                     else {
+                         var alertPopup = $ionicPopup.alert({
+                             title: 'Failed',
+                             template: 'Error Occured!'
+                         });
+                     }
                  });
              };
 
@@ -844,6 +858,7 @@
          }])
 
         .controller("EmployeeSettingsCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+            $scope.AppCurrentVersion = localStorage['AppCurrentVersion'];
             $scope.Employeelogout = function () {
                 localStorage.clear();
                 $state.go('login');
@@ -964,7 +979,7 @@
                     var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedStudents.Name)).replace(']', '').replace('[', '');
                     $scope.date = new Date();
                     var jsonObj2 = JSON.stringify($scope.date);
-                    $http.post(host + '/Attandance/SaveAttendance?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsCheckIn=' + pick).success(function (data) {
+                    $http.post(host + '/Attandance/SaveAttendance?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + $scope.date + '&IsCheckIn=' + pick).success(function (data) {
                         debugger;
                         if (data.status) {
 
@@ -1037,9 +1052,8 @@
                 var jsonObj1 = $scope.scannedStudents.Id;
                 var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedStudents.Name)).replace(']', '').replace('[', '');
                 $scope.date = new Date();
-
                 var jsonObj2 = JSON.stringify($scope.date);
-                $http.post(host + '/Attandance/SaveTransport?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + jsonObj2 + '&IsPickUp=' + pick + '&Position=' + Position).success(function (data) {
+                $http.post(host + '/Attandance/SaveTransport?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + $scope.date + '&IsPickUp=' + pick + '&Position=' + Position).success(function (data) {
                     debugger;
                     if (data.status) {
                         var alertPopup = $ionicPopup.alert({
@@ -1093,6 +1107,14 @@
                 //}
             }
 
+        }])
+        .controller('debugCtrl',['$scope', function ($scope) {
+            $scope.localstorageItems = [];
+            for(var key in localStorage)
+            {
+                $scope.localstorageItems.push({"Key": key, "Value": localStorage[key] });
+            }
+            
         }])
                             //errorCtrl managed the display of error messages bubbled up from other controllers, directives, myappService
     .controller("errorCtrl", ["$scope", "myappService", function ($scope, myappService) {
