@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
-    //var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+    var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
     // var host = "http://192.168.29/SampleAPI/";
-     var host = "http://192.168.1.43/SampleAPI/";
+    // var host = "http://192.168.43.164/SampleAPI/";
     //var host = "http://192.168.1.43/SampleAPI/";
     //var host = "http://192.168.1.34/SampleAPI/";
     //var host = 'http://localhost:56623/';
@@ -465,7 +465,9 @@
              $scope.BatchId = $stateParams.BatchId;
              $scope.CourseId = $stateParams.CourseId;
              $scope.Date = $stateParams.Date;
-             $http.post(host + '/Attandance/getStudentsBasedOnFiler', { BatchId: $scope.BatchId, CourseId: $scope.CourseId, OrgId: $scope.user.OrgId }).success(function (data) {
+             $http.post(host + '/Attandance/getStudentsBasedOnFiler', { BatchId: $scope.BatchId, CourseId: $scope.CourseId, OrgId: $scope.user.OrgId, AttendanceDate: $scope.Date }).success(function (data) {
+                 debugger;
+                 $scope.StudentsList = {};
                  $scope.BackupStudentsList = $scope.StudentsList = data;
                  //   $scope.StudentsList = StudentName.all();
                  // $scope.listlength = data;
@@ -506,7 +508,6 @@
              };
 
          }])
-
         .controller("employeeAttendenceCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
 
             $scope.selected = {}
@@ -846,8 +847,6 @@
                 var a = $scope.Image;
             }
         }])
-
-
          .controller("EmployeeHolidaysCtrl", ["$scope", "$state", "$http", "$CustomLS", '$ionicLoading', function ($scope, $state, $http, $CustomLS, $ionicLoading) {
              $scope.user = $CustomLS.getObject('LoginUser');
              $ionicLoading.show({ template: "Loading holidays..." });
@@ -856,7 +855,6 @@
                  $ionicLoading.hide();
              });
          }])
-
         .controller("EmployeeSettingsCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
             $scope.AppCurrentVersion = localStorage['AppCurrentVersion'];
             $scope.Employeelogout = function () {
@@ -870,7 +868,6 @@
                 .controller("signoutCtrl", ["$scope", "$state", function ($scope, $state, $http) {
 
                 }])
-
                 .controller("GeolocationCtrl", ["$scope", "$state", "$http", "$cordovaGeolocation", "$interval", "$CustomLS", function ($scope, $state, $http, $cordovaGeolocation, $interval, $CustomLS) {
                     $scope.Button = {
                         Text: "Start Location Update",
@@ -999,7 +996,6 @@
                     });
                 }
             }])
-
         .controller("TransportCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
             $scope.user = $CustomLS.getObject('LoginUser');
             $scope.RouteCode = [];

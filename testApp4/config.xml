@@ -128,5 +128,4 @@
     <variable name="CONTENT_AUTHORITY" value="SSG" />
     <variable name="ALWAYS_USAGE_DESCRIPTION" value="Testing" />
   </plugin>
-  <preference name="android-minSdkVersion" value="16" />
 </widget>
