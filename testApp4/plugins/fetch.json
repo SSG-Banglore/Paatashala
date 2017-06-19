@@ -133,5 +133,13 @@
             "CONTENT_AUTHORITY": "SSG",
             "ALWAYS_USAGE_DESCRIPTION": "Testing"
         }
+    },
+    "cordova-plugin-firebase": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-firebase"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

@@ -128,4 +128,5 @@
     <variable name="CONTENT_AUTHORITY" value="SSG" />
     <variable name="ALWAYS_USAGE_DESCRIPTION" value="Testing" />
   </plugin>
+  <plugin name="cordova-plugin-firebase" version="0.1.21" />
 </widget>
