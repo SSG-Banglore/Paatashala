@@ -12,7 +12,6 @@
             if (config.url.startsWith('http://')) {
                 var authData = localStorage['LoginToken'];
                 if (authData) {
-                    debugger;
                     config.headers["Token"] = authData;
                 }
             }
@@ -21,7 +20,6 @@
         }
 
         var _responseError = function (rejection) {
-            debugger;
             if (rejection.status === 401) {
                 //localStorage.removeItem("LoginUser");
                 localStorage.removeItem("LoginType");

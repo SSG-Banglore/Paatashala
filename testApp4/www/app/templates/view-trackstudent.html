@@ -5,23 +5,27 @@
             <label class="input-label">
                 RouteCode
             </label>
-            <select ng-model="selected.Route" ng-options="r.Id as r.RouteCode for r in RouteCode.Routes"></select>
+            <select ng-model="selected.Route" ng-change="routeChanged()" ng-options="r.Id as r.RouteCode for r in RouteCode.Routes"></select>
         </label>
-        <button class="button button-block button-positive" 
+        <!--<button class="button button-block button-positive"
                 ng-click="getRouteLocation()">
             Get Route Location
-        </button>
-        
+        </button>-->
+        <div>
+            <p>
+                {{time.refreshMessage}}
+            </p>
+        </div>
     </ion-content>
-</ion-view>   
+</ion-view>
 
 <style>
     #map {
-  width: 100%;
-  height: 100%;
-}
+        width: 100%;
+        height: 100%;
+    }
 
-.scroll {
-  height: 80%;
-}
+    .scroll {
+        height: 80%;
+    }
 </style>                           

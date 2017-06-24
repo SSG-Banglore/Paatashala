@@ -22,6 +22,13 @@
         }, function (error) {
             console.error(error);
         });
+
+        FirebasePlugin.onNotificationOpen(function (notification) {
+            console.log(notification);
+            alert(JSON.stringify(notification));
+        }, function (error) {
+            console.error(error);
+        });
     };
 
     function onPause() {

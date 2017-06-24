@@ -1,16 +1,36 @@
 ﻿//var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
-var host = "http://192.168.31.100/SampleAPI/";
+//var host = "http://192.168.31.100/SampleAPI/";
 //var host = "http://192.168.43.164/SampleAPI/";
-//var host = "http://192.168.1.43/SampleAPI/";
+var host = "http://192.168.1.43/SampleAPI/";
 //var host = "http://192.168.1.34/SampleAPI/";
 //var host = 'http://192.168.31.100:4261/';
 (function () {
     "use strict";
-    
+
     angular.module("myapp.controllers", ['ionic-datepicker', 'tabSlideBox'])
 
-	.controller("appCtrl", ["$scope", function ($scope) { }
-	])
+	.controller("appCtrl", ["$scope", function ($scope) {
+	    $scope.menu = {
+	        user: {
+	            name: "User",
+	            type: "Type"
+	        },
+	        student: {
+	            name: "Student"
+	        }
+	    };
+	    var students = JSON.parse(localStorage["currentStudents"]);
+	    var stud = students.find(function (e) {
+	        return e.Id == localStorage["selectedStudent"];
+	    });
+	    $scope.menu.student.name = stud ? stud.Name: "No Student selected!";
+
+	    var user = JSON.parse(localStorage["LoginUser"]);
+
+	    $scope.menu.user.name = user.Username;
+	    $scope.menu.user.type = localStorage["LoginType"];
+
+	}])
 	.controller('loginCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', '$ionicHistory', function ($scope, $http, $CustomLS, $ionicLoading, $state, $ionicHistory) {
 	    $scope.loginData = {};
 	    $scope.message = "";
@@ -26,7 +46,7 @@ var host = "http://192.168.31.100/SampleAPI/";
 	    $scope.login = function () {
 	        if ($scope.loginData.Usertype == 'Employee') {
 	            $ionicLoading.show({
-	                template: '<ion-spinner icon="spiral"></ion-spinner>',
+	                template: 'Loging In...',
 	                duration: 10000
 	            });
 	            $http.post(host + 'User/EmployeeLogin', $scope.loginData).success(function (data) {
@@ -47,7 +67,7 @@ var host = "http://192.168.31.100/SampleAPI/";
 	            });
 	        } else {
 	            $ionicLoading.show({
-	                template: 'Login...',
+	                template: 'Loging In...',
 	                duration: 10000
 	            });
 	            $http.post(host + 'User/Login', $scope.loginData).success(function (data) {
@@ -66,7 +86,7 @@ var host = "http://192.168.31.100/SampleAPI/";
 	                        localStorage['selectedStudentBatch'] = $scope.selectStudent.Batch;
 	                        localStorage['selectedStudentCourse'] = $scope.selectStudent.Course;
 	                        localStorage['selectedStudentOrgId'] = $scope.selectStudent.OrgId;
-	                        $state.go('view-parent-home');
+	                        $state.go('app.view-parent-home');
 	                    }
 	                } else {
 	                    $scope.message = data.Message;
@@ -80,13 +100,38 @@ var host = "http://192.168.31.100/SampleAPI/";
 	    }
 	}
 	])
-	.controller('settingCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', function ($scope, $http, $CustomLS, $ionicLoading, $state) {
+	.controller('settingCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', '$ionicPopup', function ($scope, $http, $CustomLS, $ionicLoading, $state, $ionicPopup) {
 	    $scope.AppCurrentVersion = localStorage['AppCurrentVersion'];
 	    $scope.AppToken = localStorage['token'];
 	    $scope.logout = function () {
 	        localStorage.clear();
 	        $state.go('login');
 	    };
+	    $scope.NewVersionData = {};
+	    $scope.checkForUpdate = function () {
+	        debugger;
+	        $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
+	            debugger;
+	            $scope.NewVersionData = data;
+	            $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+	            console.log(data);
+	            var version = localStorage['AppCurrentVersion'];
+	            if (data.Version != version) {
+	                $ionicPopup.alert({
+	                    title: 'New Update Available!',
+	                    template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+	                    scope: $scope
+	                });
+	            }
+	            else {
+	                $ionicPopup.alert({
+	                    title: 'App is up to date.',
+	                    template: "<strong>Great! You are using the latest Version.",
+	                    scope: $scope
+	                });
+	            }
+	        });
+	    }
 	}
 	])
 	.controller('changeStudentCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', function ($scope, $http, $CustomLS, $ionicLoading, $state) {
@@ -294,6 +339,11 @@ var host = "http://192.168.31.100/SampleAPI/";
 	])
 	.controller("TrackStudentCtrl", ["$scope", "$state", "$ionicLoading", "$http", function ($scope, $state, $ionicLoading, $http) {
 	    $scope.map = {};
+	    $scope.time = {
+	        timeToRefresh: 1000,
+	        refreshMessage: 'Please select the Route Code!',
+	        refreshInterval: 10000
+	    };
 	    $scope.RouteCode = [];
 	    $scope.selected = {};
 	    $scope.locationData = {};
@@ -302,13 +352,12 @@ var host = "http://192.168.31.100/SampleAPI/";
 	    }).success(function (data) {
 	        $scope.RouteCode = data;
 	    })
-
+	    $scope.routeChanged = function () {
+	        $scope.time.refreshMessage = "";
+	        $scope.getRouteLocation();
+	    };
 	    $scope.getRouteLocation = function () {
-	        $ionicLoading.show({
-	            template: 'Loading '
-	        });
 	        $http.get(host + 'GeoLocation/ShowLocation?OrgId=' + localStorage['selectedStudentOrgId'] + '&Routecode=' + $scope.selected.Route).success(function (data) { //localStorage['selectedStudentOrgId']+, { OrgId: localStorage['selectedStudentOrgId'], Routecode: $scope.selected.Route }
-	            $ionicLoading.hide();
 	            $scope.locationData = data;
 	            $scope.map.setCenter(new google.maps.LatLng(data.Latitude, data.Longitude));
 
@@ -335,7 +384,20 @@ var host = "http://192.168.31.100/SampleAPI/";
 	    };
 
 	    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
+	    var timer;
+	    if (!timer) {
+	        timer = setInterval(function () {
+	            if ($scope.time.timeToRefresh >= $scope.time.refreshInterval) {
+	                $scope.time.timeToRefresh = 0;
+	                if ($scope.selected.Route) {
+	                    $scope.getRouteLocation();
+	                }
+	                console.log($scope.time.timeToRefresh);
+	            }
+	            $scope.time.timeToRefresh += $scope.time.refreshInterval;
+	            $scope.$apply();
+	        }, $scope.time.refreshInterval);
+	    }
 	}
 	])
 	.controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
