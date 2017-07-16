@@ -1,12 +1,40 @@
-﻿<ion-view title="Message Box">
-<div class="bar bar-header bar-positive">
-    <h1 class="title"><strong> Message Box </strong></h1>
-</div>
-<ion-content style="margin-top: 44px;   margin-bottom: 48px;">
-    <div class="card">
-        <div class="item item-text-wrap" style="text-align:center">
-            No Messages Found
-        </div>
+﻿<ion-view>
+
+    <ion-nav-title>
+        <img src="Paatashala.png" style="height:100%;">
+        <div style="vertical-align: top;display:inline"> Message Box</div>
+    </ion-nav-title>
+
+    <div class="bar bar-header bar-positive">
+        <h1 class="title"><strong> Message Box</strong></h1>
     </div>
-</ion-content>
+    <ion-content>
+        <div class="card" ng-repeat="s in MessageContents">
+            <div class="item item-text-wrap">
+                <p> <b>{{s.Contents}}</b></p>
+                <p text-align="center" >{{s.CreatedOn}}</p>
+            </div>
+        </div>
+    </ion-content>
 </ion-view>
+<!--<link href="../../css/custom-table.css" rel="stylesheet" />-->
+<style>
+    .rwd-table {
+        background: #34495E;
+        color: #fff;
+        border-radius: .4em;
+        overflow: hidden;
+    }
+
+        .rwd-table tr {
+            border-color: gold;
+        }
+
+        .rwd-table th, td {
+            margin: .5em 1em;
+        }
+
+            .rwd-table th, td:before {
+                color: #dd5;
+            }
+</style>

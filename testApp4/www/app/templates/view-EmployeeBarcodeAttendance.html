@@ -1,7 +1,7 @@
-﻿<ion-view>
+﻿<ion-view >
     <ion-nav-title>
         <img src="Paatashala.png" style="height:100%;">
-        <div style="vertical-align: top;display:inline"> Attendance</div>
+        <div style="vertical-align: top;display:inline"> Employee Attendance</div>
     </ion-nav-title>
     <div class="bar bar-header bar-positive">
         <a class="button icon-left ion-chevron-left button-clear button-dark" href="#/templates/view-parent-home.html"></a>
@@ -16,16 +16,16 @@
             </button>
             <div class="card">
                 <div class="item item-divider">
-                    Scanned Students
+                    Scanned Employees
                 </div>
                 <div class="list list-inset">
-                    <div class="item" ng-repeat="ss in scannedStudents.Name">
-                        {{ss}}
+                    <div class="item" ng-repeat="es in scannedEmployees.Name">
+                        {{es}}
                         <button style="float:right" class="button button-small button-assertive  pull-right" ng-click="DeleteCurrentRow($index)">Delete</button>
 
                     </div>
-                    <div class="item" ng-show="scannedStudents.Id.length == 0">
-                        No students scanned yet
+                    <div class="item" ng-show="scannedEmployees.Id.length == 0">
+                        No Employee scanned yet
                     </div>
                 </div>
 
@@ -35,8 +35,8 @@
                 <ion-radio ng-model="data.choice" name="PickDropRadio" ng-value="false" ng-required="!(data.choice)">Check-Out</ion-radio>
                 <span style="color:red" ng-show="BarCodeForm.PickDropRadio.$error.required">You have to choose pick up or drop</span>
             </ion-list>
-            <button class="button button-block button-positive" ng-disabled="BarCodeForm.$invalid" ng-click="sendStudentsTimings()">
-                Submit Student List
+            <button class="button button-block button-positive" ng-disabled="BarCodeForm.$invalid" ng-click="sendEmployeesTimings()">
+                Submit Employees List
             </button>
         </form>
     </ion-content>

@@ -41,6 +41,14 @@
 		    templateUrl: "app/templates/view-menu.html",
 		    controller: "appCtrl"
 		})
+
+        .state("app.employee", {
+		    url: "/employee",
+		    abstract: true,
+		    templateUrl: "app/templates/view-employee-menu.html",
+		    controller: "appEmpCtrl"
+		})
+
 		.state("app.home", {
 		    url: "/home",
 		    templateUrl: "app/templates/view-home.html",
@@ -101,6 +109,7 @@
 		    templateUrl: "app/templates/view-Employee-home.html",
 		    controller: "employeeHomeCtrl"
 		})
+
 		.state("view-subject-details", {
 		    url: "/view-subject-details",
 		    templateUrl: "app/templates/view-subject-details.html",
@@ -225,15 +234,20 @@
 		    templateUrl: "app/templates/Attendance.html",
 		    controller: "AttendanceCtrl"
 		})
+        .state("EmployeeBarcodeAttendance", {
+                url: "/EmployeeBarcodeAttendance",
+                templateUrl: "app/templates/view-EmployeeBarcodeAttendance.html",
+                controller: "employeeBarcodeAttendanceCtrl"
+            })
 		.state("EmployeeAttendance", {
 		    url: "/EmployeeAttendance",
 		    templateUrl: "app/templates/EmployeeAttendance.html",
 		    controller: "employeeAttendenceCtrl"
 		})
-		.state("NextEnquiryForm", {
-		    url: "/NextEnquiryForm",
-		    templateUrl: "app/templates/NextEnquiryForm.html",
-		    controller: "nextEnquiryFormCtrl"
+        .state("EmployeeManualAttendance1", {
+		    url: "/EmployeeManualAttendance",
+		    templateUrl: "app/templates/view-EmployeeManualAttandance.html",
+		    controller: "employeeManualAttendenceCtrl"
 		})
 		.state("debug", {
 		    url: '/debug',
@@ -250,11 +264,25 @@
 		    templateUrl: "app/templates/NextEmployeeAttendance.html",
 		    controller: "nextEmployeeAttendanceCtrl"
 		})
+        .state("NextEmployeeManualAttendanceScreen", {
+		    url: "/NextEmployeeManualAttendance",
+		    params: {
+		        RoleId: '',
+		        Date: ''
+		    },
+		    templateUrl: "app/templates/view-NextEmployeeManualAttandance.html",
+		    controller: "nextEmployeeManualAttendanceCtrl"
+		})
 		.state("EnquiryFormScreen", {
 		    url: "/EnquiryForm",
 		    templateUrl: "app/templates/EnquiryForm.html",
 		    controller: "enquiryFormCtrl"
 		})
+        //.state("NextEnquiryForm", {
+		//    url: "/NextEnquiryForm",
+		//    templateUrl: "app/templates/NextEnquiryForm.html",
+		//    controller: "nextEnquiryFormCtrl"
+		//})
 		.state("view-trackstudent", {
 		    url: "/view-trackstudent",
 		    templateUrl: "app/templates/view-trackstudent.html",
