@@ -104,7 +104,7 @@
 		    templateUrl: "app/templates/view-parent-home.html",
 		    controller: "parentHomeCtrl"
 		})
-		.state("view-Employee-home", {
+		.state("view-Employee-home1", {
 		    url: "/view-Employee-home",
 		    templateUrl: "app/templates/view-Employee-home.html",
 		    controller: "employeeHomeCtrl"

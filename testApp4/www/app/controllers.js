@@ -1,8 +1,8 @@
-﻿//13-07-2017
-//var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+﻿//18-07-2017
+var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 //var host = "http://192.168.31.100/SampleAPI/";
 //var host = "http://192.168.43.164/SampleAPI/";
-var host = "http://192.168.1.43/SampleAPI/";
+//var host = "http://192.168.1.43/SampleAPI/";
 //var host = "http://192.168.1.34/SampleAPI/";
 //var host = 'http://192.168.31.100:4261/';
 (function () {
@@ -57,7 +57,7 @@ var host = "http://192.168.1.43/SampleAPI/";
 	                    $CustomLS.setObject('LoginUser', data.User);
 	                    //$CustomLS.setObject('currentStudents', data.HasStudents);
 	                    localStorage['LoginToken'] = data.Token;
-	                    $state.go('view-Employee-home');
+	                    $state.go('view-Employee-home1');
 	                } else {
 	                    $scope.message = data.Message;
 	                }
@@ -477,7 +477,7 @@ var host = "http://192.168.1.43/SampleAPI/";
 	    });
 	}
 	])
-	.controller("employeeHomeCtrl", ["$scope", "$state", "$http", "$CustomLS","$ionicPopover", function ($scope, $state, $http, $CustomLS, $ionicPopover) {
+	.controller("employeeHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
 	    $scope.Pages = [
             {
                 "Name": "Transport ",
@@ -528,26 +528,33 @@ var host = "http://192.168.1.43/SampleAPI/";
             }
 	    ];
 
-	    //$scope.NewVersionData = {};
-	    //document.addEventListener("deviceready", function () {
-	    //    debugger;
-	    //    $cordovaAppVersion.getVersionNumber().then(function (version) {
-	    //        localStorage['AppCurrentVersion'] = version;
-	    //        $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
-	    //            debugger;
-	    //            $scope.NewVersionData = data;
-	    //            $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
-	    //            console.log(data);
-	    //            if (data.Version != version) {
-	    //                $ionicPopup.alert({
-	    //                    title: 'New Update Available!',
-	    //                    template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
-	    //                    scope: $scope
-	    //                });
-	    //            }
-	    //        });
-	    //    });
-	    //}, false);
+	//   $scope.NewVersionData = {
+	//};
+	//    if (localStorage['LastToken']!= localStorage["FCMToken"]) {
+	//        var userId = JSON.parse(localStorage['LoginUser']).UserId;
+	//        $http.get(host + 'User/UpdateToken?UserId=' +userId + '&SenderId=' +localStorage["FCMToken"]).success(function (data) {
+	//            localStorage['LastToken']= localStorage["FCMToken"];
+	//}).error(function (err) {
+	//});
+	//}
+	//    document.addEventListener("deviceready", function () {
+	//        $cordovaAppVersion.getVersionNumber().then(function (version) {
+	//            localStorage['AppCurrentVersion']= version;
+	//            $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
+	//                debugger;
+	//                $scope.NewVersionData = data;
+	//                $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+	//                console.log(data);
+	//                if (data.Version != version) {
+	//                    $ionicPopup.alert({
+	//    title: 'New Update Available!',
+	//    template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" +$scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+	//                            scope: $scope
+	//                    });
+	//                    }
+	//                    });
+	//                    });
+	//                    }, false);
 	    $ionicPopover.fromTemplateUrl('my-popover.html', {
 	        scope: $scope
 	    }).then(function (popover) {
@@ -706,6 +713,7 @@ var host = "http://192.168.1.43/SampleAPI/";
 	}
 	])
     .controller("employeeManualAttendenceCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
+        debugger;
         $scope.selected = {}
         $scope.Rolelist = {}
 	    $scope.user = $CustomLS.getObject('LoginUser');
@@ -1178,12 +1186,38 @@ var host = "http://192.168.1.43/SampleAPI/";
 	    });
 	}
 	])
-	.controller("EmployeeSettingsCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+	.controller("EmployeeSettingsCtrl", ["$scope", "$state", "$http", "$CustomLS","$ionicPopup", function ($scope, $state, $http, $CustomLS,$ionicPopup) {
 	    $scope.AppCurrentVersion = localStorage['AppCurrentVersion'];
+        $scope.AppToken = localStorage['token'];
 	    $scope.Employeelogout = function () {
 	        localStorage.clear();
 	        $state.go('login');
 	    };
+         $scope.NewVersionData = { };
+	    $scope.checkForUpdate = function () {
+	        debugger;
+	        $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
+	            debugger;
+	            $scope.NewVersionData = data;
+	            $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+	            console.log(data);
+	            var version = localStorage['AppCurrentVersion'];
+	            if (data.Version != version) {
+	                $ionicPopup.alert({
+	                title: 'New Update Available!',
+	                template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+	                        scope: $scope
+	                    });
+	            }
+	                    else {
+	                $ionicPopup.alert({
+	                    title: 'App is up to date.',
+	                        template: "<strong>Great! You are using the latest Version.",
+	                            scope : $scope
+	                        });
+	                        }
+	                        });
+	                        }
 	}
 	])
 	.controller("profileCtrl", ["$scope", "$state", function ($scope, $state, $http) { }
