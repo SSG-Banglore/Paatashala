@@ -1,7 +1,7 @@
 ﻿<ion-view>
     <ion-nav-title>
         <img src="Paatashala.png" style="height:100%;">
-        <div style="vertical-align: top;display:inline">Attendance Entry</div>
+        <div style="vertical-align: top;display:inline">Dairy</div>
     </ion-nav-title>
     <ion-content class="padding">
         <!--<ion-item class="item-input-inset">
@@ -13,23 +13,23 @@
             </label>
             <button class="button button-clear" ng-show="searchFocused" ng-click="cancel()">CANCEL</button>
         </ion-item>-->
-            <label class="item item-input">
-                <i class="icon ion-search placeholder-icon"></i>
-                <input type="text" ng-model="data.searchText" ng-change="searchTextChanged()" placeholder="Search">
+        <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" ng-model="data.searchText" ng-change="searchTextChanged()" placeholder="Search">
+        </label>
+        <div class="list">
+            <!--<select ng-model="SelectedVal" ng-change="dropvalueChange()" ng-options="u.Id as u.Name u in dropdownValues"></select>-->
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    Select
+                </div>
+                <select ng-model="dropdown.value" ng-change="dropvalueChange()" ng-init="dropdown.value='-1'">
+                    <option value="-1" selected>--Select--</option>
+                    <option value="1">All</option>
+                    <option value="0">None</option>
+                </select>
             </label>
-            <div class="list">
-                <!--<select ng-model="SelectedVal" ng-change="dropvalueChange()" ng-options="u.Id as u.Name u in dropdownValues"></select>-->
-                <label class="item item-input item-select">
-                    <div class="input-label">
-                       Mark All As
-                    </div>
-                    <select ng-model="dropdown.value" ng-change="dropvalueChange()" ng-init="dropdown.value='-1'">
-                        <option value="-1" selected>--Select--</option>
-                        <option value="1">Present</option>
-                        <option value="0">Absent</option>
-                    </select>
-                </label>
-            </div>
+        </div>
         <br />
 
         <ul class="list" collection-repeat="i in StudentsList">
@@ -44,11 +44,20 @@
                 </label>
             </li>
         </ul>
-            <!--</ion-item>-->
+        <br />
+        <br />
+        <div>
+            <p>Dairy Details:</p>
+            <label class="item item-input">
+                <textarea ng-model="data.DairyDetails"></textarea>
+            </label>
+        </div>
+        <br />
+        <!--</ion-item>-->
         <button class="button button-block button-positive" ng-click="SubmittingAttendance()">
-          Submit
+            Submit
         </button>
-</ion-content>
+    </ion-content>
 </ion-view>
 <!--<style type="text/css">
     .item-toggle {

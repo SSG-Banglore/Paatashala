@@ -41,7 +41,7 @@
             </div>
             <div>
                 <label class="item item-input">
-                    <textarea placeholder="Address" ng-model="data.Address"></textarea>
+                    <textarea placeholder="Address" ng-model="data.CurrentAddress"></textarea>
                 </label>
             </div>
         </div>
@@ -87,7 +87,7 @@
         <div class="item item-divider">
             <strong>Academic Details</strong>
         </div>
-        <div class="row">
+        <!--<div class="row">-->
             <div class="col">
                 <label class="item item-input item-select" style="margin-top: 14px;">
                     <label class="input-label">
@@ -104,8 +104,8 @@
                     <select ng-model="reg.Batch" ng-options="r.Id as r.Name for r in Batchlist"></select>
                 </label>
             </div>   
-        </div>
-        <div class="row">
+        <!--</div>-->
+        <!--<div class="row">-->
             <div class="col">
                 <label class="item item-input item-select" style="margin-top: 14px;">
                     <label class="input-label">
@@ -122,7 +122,7 @@
                     <select ng-model="reg.OtherPrograms" ng-options="r.Id as r.Name for r in OtherProgramList"></select>
                 </label>
             </div>
-            </div>
+            <!--</div>-->
             <br />
             <div class="item item-divider">
                 <strong>Lead Details</strong>
