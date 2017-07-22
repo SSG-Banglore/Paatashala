@@ -1,5 +1,4 @@
 ﻿<ion-view>
-
     <ion-nav-title>
         <img src="Paatashala.png" style="height:100%;">
         <div style="vertical-align: top;display:inline"> Message Box</div>
@@ -9,11 +8,21 @@
         <h1 class="title"><strong> Message Box</strong></h1>
     </div>
     <ion-content>
-        <div class="card" ng-repeat="s in MessageContents">
-            <div class="item item-text-wrap">
-                <p> <b>{{s.Contents}}</b></p>
-                <p text-align="center" >{{s.CreatedOn}}</p>
-            </div>
+        <ion-refresher on-refresh="doRefresh()">
+            Pull to refresh
+        </ion-refresher>
+        <ion-spinner icon="bubbles" class="spinner-balanced"></ion-spinner>
+        <div class="list">
+            <a class="item item-icon-left item-text-wrap" ng-click="showMessage(s)" ng-repeat="s in MessageContents">
+                <i class="icon ion-android-mail"></i>
+                <span>{{s.Contents}}</span>
+                <span class="item-note">
+                    {{s.CreatedOn}}
+                </span>
+            </a>
+            <a class="item item-icon-left item-text-wrap" ng-click="loadMessages()">
+                <span>Load older messages</span>
+            </a>
         </div>
     </ion-content>
 </ion-view>

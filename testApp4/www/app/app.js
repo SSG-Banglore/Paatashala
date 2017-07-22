@@ -41,13 +41,12 @@
 		    templateUrl: "app/templates/view-menu.html",
 		    controller: "appCtrl"
 		})
-
-        .state("app.employee", {
-		    url: "/employee",
-		    abstract: true,
-		    templateUrl: "app/templates/view-employee-menu.html",
-		    controller: "appEmpCtrl"
-		})
+        .state("appemp", {
+            url: "/appemp",
+            abstract: true,
+            templateUrl: "app/templates/view-menu-employee.html",
+            controller: "appempCtrl"
+        })
 
 		.state("app.home", {
 		    url: "/home",
@@ -104,7 +103,7 @@
 		    templateUrl: "app/templates/view-parent-home.html",
 		    controller: "parentHomeCtrl"
 		})
-		.state("view-Employee-home1", {
+		.state("appemp.view-Employee-home", {
 		    url: "/view-Employee-home",
 		    templateUrl: "app/templates/view-Employee-home.html",
 		    controller: "employeeHomeCtrl"
@@ -209,7 +208,7 @@
 		    templateUrl: "app/templates/EmployeeProfile.html",
 		    controller: "EmployeeProfileCtrl"
 		})
-		.state("EmployeeSettings", {
+		.state("appemp.EmployeeSettings", {
 		    url: "/EmployeeSettings",
 		    templateUrl: "app/templates/view-EmployeeSettings.html",
 		    controller: "EmployeeSettingsCtrl"
@@ -235,20 +234,20 @@
 		    controller: "AttendanceCtrl"
 		})
         .state("EmployeeBarcodeAttendance", {
-                url: "/EmployeeBarcodeAttendance",
-                templateUrl: "app/templates/view-EmployeeBarcodeAttendance.html",
-                controller: "employeeBarcodeAttendanceCtrl"
-            })
+            url: "/EmployeeBarcodeAttendance",
+            templateUrl: "app/templates/view-EmployeeBarcodeAttendance.html",
+            controller: "employeeBarcodeAttendanceCtrl"
+        })
 		.state("EmployeeAttendance", {
 		    url: "/EmployeeAttendance",
 		    templateUrl: "app/templates/EmployeeAttendance.html",
 		    controller: "employeeAttendenceCtrl"
 		})
         .state("EmployeeManualAttendance1", {
-		    url: "/EmployeeManualAttendance",
-		    templateUrl: "app/templates/view-EmployeeManualAttandance.html",
-		    controller: "employeeManualAttendenceCtrl"
-		})
+            url: "/EmployeeManualAttendance",
+            templateUrl: "app/templates/view-EmployeeManualAttandance.html",
+            controller: "employeeManualAttendenceCtrl"
+        })
 		.state("debug", {
 		    url: '/debug',
 		    templateUrl: 'app/templates/view-debug.html',
@@ -265,14 +264,14 @@
 		    controller: "nextEmployeeAttendanceCtrl"
 		})
         .state("NextEmployeeManualAttendanceScreen", {
-		    url: "/NextEmployeeManualAttendance",
-		    params: {
-		        RoleId: '',
-		        Date: ''
-		    },
-		    templateUrl: "app/templates/view-NextEmployeeManualAttandance.html",
-		    controller: "nextEmployeeManualAttendanceCtrl"
-		})
+            url: "/NextEmployeeManualAttendance",
+            params: {
+                RoleId: '',
+                Date: ''
+            },
+            templateUrl: "app/templates/view-NextEmployeeManualAttandance.html",
+            controller: "nextEmployeeManualAttendanceCtrl"
+        })
 		.state("EnquiryFormScreen", {
 		    url: "/EnquiryForm",
 		    templateUrl: "app/templates/EnquiryForm.html",
@@ -287,11 +286,18 @@
 		    url: "/view-trackstudent",
 		    templateUrl: "app/templates/view-trackstudent.html",
 		    controller: "TrackStudentCtrl"
-		});
+		})
+	    .state("messageShow", {
+	        url: "/messageShow",
+	        templateUrl: "app/templates/view-message-show.html",
+	        controller: "messageShowCtrl",
+	        params: { data: null }
+	    });
+
 	    if (localStorage['LoginUser'] && localStorage['LoginType'] == 'Parent') {
 	        $urlRouterProvider.otherwise("/app/view-parent-home");
 	    } else if (localStorage['LoginUser'] && localStorage['LoginType'] == 'Employee') {
-	        $urlRouterProvider.otherwise("/view-Employee-home");
+	        $urlRouterProvider.otherwise("/appemp/view-Employee-home");
 	    } else {
 	        $urlRouterProvider.otherwise("/login");
 	        //$urlRouterProvider.otherwise("/view-parent-home");

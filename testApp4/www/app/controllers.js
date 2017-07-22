@@ -30,8 +30,25 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    $scope.menu.user.type = localStorage["LoginType"];
 
 	}])
-      .controller("appEmpCtrl", ["$scope", function ($scope) {
-	}])
+    .controller("appempCtrl", ["$scope", function ($scope) {
+        $scope.menu = {
+            user: {
+                name: "User",
+                type: "Type"
+            },
+            student: {
+                name: "Student"
+            }
+        };
+
+        var user = JSON.parse(localStorage["LoginUser"]);
+
+        $scope.menu.user.name = user.Username;
+        $scope.menu.user.type = localStorage["LoginType"];
+
+    }])
+    .controller("appEmpCtrl", ["$scope", function ($scope) {
+    }])
 	.controller('loginCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', '$ionicHistory', function ($scope, $http, $CustomLS, $ionicLoading, $state, $ionicHistory) {
 	    $scope.loginData = {};
 	    $scope.message = "";
@@ -57,7 +74,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	                    $CustomLS.setObject('LoginUser', data.User);
 	                    //$CustomLS.setObject('currentStudents', data.HasStudents);
 	                    localStorage['LoginToken'] = data.Token;
-	                    $state.go('view-Employee-home1');
+	                    $state.go('appemp.view-Employee-home');
 	                } else {
 	                    $scope.message = data.Message;
 	                }
@@ -106,6 +123,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    $scope.AppToken = localStorage['token'];
 	    $scope.logout = function () {
 	        localStorage.clear();
+	        location.reload();
 	        $state.go('login');
 	    };
 	    $scope.NewVersionData = {};
@@ -117,7 +135,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	            $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
 	            console.log(data);
 	            var version = localStorage['AppCurrentVersion'];
-	            if (data.Version != version) {
+	            if (data.Version.trim() != version.trim()) {
 	                $ionicPopup.alert({
 	                    title: 'New Update Available!',
 	                    template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
@@ -440,7 +458,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        "Icon": "ion-location"
 	    },
 	    ];
-
+	    
 	    $scope.NewVersionData = {};
 	    if (localStorage['LastToken'] != localStorage["FCMToken"]) {
 	        var userId = JSON.parse(localStorage['LoginUser']).UserId;
@@ -449,40 +467,47 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        }).error(function (err) {
 	        });
 	    }
-	    document.addEventListener("deviceready", function () {
-	        $cordovaAppVersion.getVersionNumber().then(function (version) {
-	            localStorage['AppCurrentVersion'] = version;
-	            $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
-	                debugger;
-	                $scope.NewVersionData = data;
-	                $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
-	                console.log(data);
-	                if (data.Version != version) {
-	                    $ionicPopup.alert({
-	                        title: 'New Update Available!',
-	                        template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
-	                        scope: $scope
-	                    });
-	                }
-	            });
-	        });
-	    }, false);
+
 	    $scope.submitEmail = function () {
 	        $state.go('view-subject-details');
 	    }
+
 	    $ionicPopover.fromTemplateUrl('my-popover.html', {
 	        scope: $scope
 	    }).then(function (popover) {
 	        $scope.popover = popover;
 	    });
+	    if (localStorage["Message"]) {
+	        $state.go('view-MessageBox');
+	    }
+	    else {
+	        document.addEventListener("deviceready", function () {
+	            $cordovaAppVersion.getVersionNumber().then(function (version) {
+	                localStorage['AppCurrentVersion'] = version;
+	                $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
+	                    debugger;
+	                    $scope.NewVersionData = data;
+	                    $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+	                    console.log(data);
+	                    if (data.Version.trim() != version.trim()) {
+	                        $ionicPopup.alert({
+	                            title: 'New Update Available!',
+	                            template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+	                            scope: $scope
+	                        });
+	                    }
+	                });
+	            });
+	        }, false);
+	    }
 	}
 	])
 	.controller("employeeHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
 	    $scope.Pages = [
             {
-                "Name": "Transport ",
+                "Name": "Transport",
                 "Href": "#/Transport",
-                "Icon": "ion-qr-scanner"
+                "Icon": "ion-android-bus"
             }, {
                 "Name": "Attendance",
                 "Href": "#/Attendance",
@@ -490,7 +515,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
             }, {
                 "Name": "Employee Attendance",
                 "Href": "#/EmployeeBarcodeAttendance",
-                "Icon": "ion-qr-scanner"
+                "Icon": "ion-android-time"
             }, {
                 "Name": "Geo Location",
                 "Href": "#/Geolocation",
@@ -521,44 +546,36 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
                 "Name": "Enquiry Form",
                 "Href": "#/EnquiryForm",
                 "Icon": " ion-card"
-            }, {
-                "Name": "Settings",
-                "Href": "#/EmployeeSettings",
-                "Icon": "ion-android-settings"
             }
 	    ];
+	    debugger;
+	    var user = JSON.parse(localStorage["LoginUser"]);
+	    if (user.Role != "Admin1") {
+	        $scope.Pages = $scope.Pages.filter(function (e) {
+	            return e.Name != "Transport";
+	        });
+	    }
 
-	//   $scope.NewVersionData = {
-	//};
-	//    if (localStorage['LastToken']!= localStorage["FCMToken"]) {
-	//        var userId = JSON.parse(localStorage['LoginUser']).UserId;
-	//        $http.get(host + 'User/UpdateToken?UserId=' +userId + '&SenderId=' +localStorage["FCMToken"]).success(function (data) {
-	//            localStorage['LastToken']= localStorage["FCMToken"];
-	//}).error(function (err) {
-	//});
-	//}
-	//    document.addEventListener("deviceready", function () {
-	//        $cordovaAppVersion.getVersionNumber().then(function (version) {
-	//            localStorage['AppCurrentVersion']= version;
-	//            $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
-	//                debugger;
-	//                $scope.NewVersionData = data;
-	//                $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
-	//                console.log(data);
-	//                if (data.Version != version) {
-	//                    $ionicPopup.alert({
-	//    title: 'New Update Available!',
-	//    template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" +$scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
-	//                            scope: $scope
-	//                    });
-	//                    }
-	//                    });
-	//                    });
-	//                    }, false);
-	    $ionicPopover.fromTemplateUrl('my-popover.html', {
-	        scope: $scope
-	    }).then(function (popover) {
-	        $scope.popover = popover;
+	    $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
+	        debugger;
+	        $scope.NewVersionData = data;
+	        $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+	        console.log(data);
+	        var version = localStorage['AppCurrentVersion'];
+	        if (data.Version.trim() != version.trim()) {
+	            $ionicPopup.alert({
+	                title: 'New Update Available!',
+	                template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+	                scope: $scope
+	            });
+	        }
+	        else {
+	            $ionicPopup.alert({
+	                title: 'App is up to date.',
+	                template: "<strong>Great! You are using the latest Version.",
+	                scope: $scope
+	            });
+	        }
 	    });
 	}
 	])
@@ -716,120 +733,120 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
         debugger;
         $scope.selected = {}
         $scope.Rolelist = {}
-	    $scope.user = $CustomLS.getObject('LoginUser');
-	    debugger;
+        $scope.user = $CustomLS.getObject('LoginUser');
+        debugger;
         $http.post(host + '/EmployeeAttendance/getRoloes', {
             OrgId: $scope.user.OrgId
 
-	    }).success(function (data) {
-	        debugger;
-	        $scope.Rolelist =data;
-	    });
-
-	    $scope.date = new Date();
-	    $scope.FormattedDate = $scope.date.toLocaleDateString();
-	    $scope.setDateTime = function () {
-	        var ipObj1 = {
-	            callback: function (val) { //Mandatory
-	                var date = new Date(val);
-	                $scope.date = date;
-	                $scope.FormattedDate = date.toLocaleDateString();
-	            },
-	            inputDate: new Date(),
-	            showTodayButton: true,
-	            to: new Date(), //Optional
-	            inputDate: new Date(), //Optional
-	            mondayFirst: false, //Optional
-	            closeOnSelect: false, //Optional
-	            templateType: 'popup' //Optional
-	        };
-	        ionicDatePicker.openDatePicker(ipObj1);
-	    };
-	    $scope.GiveAttendanceList = function () {
-	        debugger;
-
-	        $state.go('NextEmployeeManualAttendanceScreen', {
-	            RoleId: $scope.selected.Role,
-	            Date: $scope.date
-	        });
-	    };
-	}
-        ])
-    .controller("nextEmployeeManualAttendanceCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
+        }).success(function (data) {
             debugger;
-            $scope.dropdownValues = [{
-                Name: 'Present',
-                Id: true
-            }, {
-                Name: 'Absent',
-                Id: false
-            }
-            ]
-            $scope.dropdown = {};
-            $scope.data = {};
-            $scope.BackupEmployeesList = {};
-            $scope.user = $CustomLS.getObject('LoginUser');
-            $scope.RoleId = $stateParams.RoleId;
-            $scope.Date = $stateParams.Date;
+            $scope.Rolelist = data;
+        });
+
+        $scope.date = new Date();
+        $scope.FormattedDate = $scope.date.toLocaleDateString();
+        $scope.setDateTime = function () {
+            var ipObj1 = {
+                callback: function (val) { //Mandatory
+                    var date = new Date(val);
+                    $scope.date = date;
+                    $scope.FormattedDate = date.toLocaleDateString();
+                },
+                inputDate: new Date(),
+                showTodayButton: true,
+                to: new Date(), //Optional
+                inputDate: new Date(), //Optional
+                mondayFirst: false, //Optional
+                closeOnSelect: false, //Optional
+                templateType: 'popup' //Optional
+            };
+            ionicDatePicker.openDatePicker(ipObj1);
+        };
+        $scope.GiveAttendanceList = function () {
+            debugger;
+
+            $state.go('NextEmployeeManualAttendanceScreen', {
+                RoleId: $scope.selected.Role,
+                Date: $scope.date
+            });
+        };
+    }
+    ])
+    .controller("nextEmployeeManualAttendanceCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
+        debugger;
+        $scope.dropdownValues = [{
+            Name: 'Present',
+            Id: true
+        }, {
+            Name: 'Absent',
+            Id: false
+        }
+        ]
+        $scope.dropdown = {};
+        $scope.data = {};
+        $scope.BackupEmployeesList = {};
+        $scope.user = $CustomLS.getObject('LoginUser');
+        $scope.RoleId = $stateParams.RoleId;
+        $scope.Date = $stateParams.Date;
         debugger;
         $http.post(host + '/EmployeeAttendance/getEmployeesOnRole', {
-                RoleId: $scope.RoleId,
-                OrgId: $scope.user.OrgId,
-                AttendanceDate: $scope.Date
-            }).success(function (data) {
-                debugger;
-                $scope.EmployeesList={};
-                $scope.BackupEmployeesList = $scope.EmployeesList = data;
-            });
-            $scope.dropvalueChange = function () {
-                console.log($scope.dropdown.value);
-                debugger;
-                if ($scope.dropdown.value != "-1") {
-                    $scope.EmployeesList.forEach(function (e, i) {
-                        e.isPresent = $scope.dropdown.value == "0" ? false : true;
-                        $scope.BackupEmployeesList.filter(function (e2) {
-                            return e2.Id == e.Id;
-                        })[0].isPresent = e.isPresent;
-                    });
-                }
-            };
-            $scope.searchTextChanged = function () {
-                $scope.EmployeesList = $scope.BackupEmployeesList.filter(function (e) {
-                    return e.Name.toUpperCase().indexOf($scope.data.searchText.toUpperCase()) != -1;
+            RoleId: $scope.RoleId,
+            OrgId: $scope.user.OrgId,
+            AttendanceDate: $scope.Date
+        }).success(function (data) {
+            debugger;
+            $scope.EmployeesList = {};
+            $scope.BackupEmployeesList = $scope.EmployeesList = data;
+        });
+        $scope.dropvalueChange = function () {
+            console.log($scope.dropdown.value);
+            debugger;
+            if ($scope.dropdown.value != "-1") {
+                $scope.EmployeesList.forEach(function (e, i) {
+                    e.isPresent = $scope.dropdown.value == "0" ? false : true;
+                    $scope.BackupEmployeesList.filter(function (e2) {
+                        return e2.Id == e.Id;
+                    })[0].isPresent = e.isPresent;
                 });
             }
-            $scope.SubmittingAttendance = function () {
-                debugger;
-                $scope.EmployeesList;
-                $http.post(host + '/EmployeeAttendance/AddManualEmployeeAttendance', {
-                    AttendaceObj: $scope.EmployeesList,
-                    dateAttendance: $scope.Date,
-                    OrgId: $scope.user.OrgId
-                }).success(function (data) {
-                    debugger;
-                    if (data.status) {
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'Success',
-                            template: 'Saved Successfully!'
-                        });
-                    } else {
-                           
-                             var alertPopup = $ionicPopup.alert({
-                            title: 'Failed',
-                            template: 'Error Occured!'
-                        });
-                    }
-                });
-            };
-
+        };
+        $scope.searchTextChanged = function () {
+            $scope.EmployeesList = $scope.BackupEmployeesList.filter(function (e) {
+                return e.Name.toUpperCase().indexOf($scope.data.searchText.toUpperCase()) != -1;
+            });
         }
-        ])
+        $scope.SubmittingAttendance = function () {
+            debugger;
+            $scope.EmployeesList;
+            $http.post(host + '/EmployeeAttendance/AddManualEmployeeAttendance', {
+                AttendaceObj: $scope.EmployeesList,
+                dateAttendance: $scope.Date,
+                OrgId: $scope.user.OrgId
+            }).success(function (data) {
+                debugger;
+                if (data.status) {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Success',
+                        template: 'Saved Successfully!'
+                    });
+                } else {
+
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Failed',
+                        template: 'Error Occured!'
+                    });
+                }
+            });
+        };
+
+    }
+    ])
 	.controller("enquiryFormCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", "$stateParams", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS, $stateParams) {
 	    var OrgId = localStorage['selectedStudentOrgId'];
 	    $scope.dropdown = {};
 	    $scope.data = {};
-	    $scope.lead={};
-        debugger;
+	    $scope.lead = {};
+	    debugger;
 	    $scope.date = new Date();
 	    $scope.data.DateOfBirth = $scope.date.toLocaleDateString();
 	    $scope.setDateTime = function () {
@@ -873,10 +890,10 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        $scope.EmployeeList = data2.EmployeesList;
 	        $scope.OtherProgramList = data2.OtherPrograms;
 	    });
-        debugger;
+	    debugger;
 	    $scope.date = new Date();
 	    $scope.lead.FollowupTime = $scope.date.toLocaleDateString();
-	    $scope.setDateTime1= function () {
+	    $scope.setDateTime1 = function () {
 	        var ipObj2 = {
 	            callback: function (val) { //Mandatory
 	                var date = new Date(val);
@@ -898,15 +915,15 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        debugger;
 	        $http.post(host + '/LeadMgt/AddNewLead', {
 	            student: $scope.data, reg: $scope.reg, LeadFollowUp: $scope.lead, OrgId: $scope.user.OrgId, EmployeeId: $scope.user.UserId
-	        }).success(function (data ) {
+	        }).success(function (data) {
 	            debugger;
 	            if (data.status) {
 	                var alertPopup = $ionicPopup.alert({
-	                        title: 'Success',
-	                        template: 'Saved Successfully!'
+	                    title: 'Success',
+	                    template: 'Saved Successfully!'
 	                });
 	            } else {
-                             var alertPopup = $ionicPopup.alert({
+	                var alertPopup = $ionicPopup.alert({
 	                    title: 'Failed',
 	                    template: 'Error Occured!'
 	                });
@@ -1012,20 +1029,64 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    });
 	}
 	])
-	.controller("MessageBoxCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
-	    debugger;
-	 
+	.controller("MessageBoxCtrl", ["$scope", "$state", "$http", "$CustomLS", "$ionicLoading", function ($scope, $state, $http, $CustomLS, $ionicLoading) {
 	    var OrgId = localStorage['selectedStudentOrgId'];
 	    var studentId = localStorage['selectedStudent'];
-	    $http.post(host + '/MessageBox/getStudentMessage', {
-	        StudentId: studentId,
-	        OrgId:OrgId
-	    }).success(function (data) {
-	        debugger;
-	        $scope.MessageContents = data;
-	    })
+	    var index = 0, count = 10;
+	    $scope.data = {
+            loadingComplete: false
+	    };
+	    $scope.MessageContents = [];
+
+	    $scope.doRefresh = function () {
+	        count = $scope.MessageContents.length;
+	        index = 0;
+	        $scope.MessageContents = [];
+	        $scope.loadMessages();
+	        count = 10;
+	    };
+
+	    $scope.loadMessages = function () {
+	        $ionicLoading.show({
+	            template: '<p>Loading Messages...</p><ion-spinner></ion-spinner>',
+	            duration: 10000
+	        });
+	        $http.post(host + '/MessageBox/getStudentMessage', {
+	            StudentId: studentId,
+	            OrgId: OrgId,
+	            Index: index,
+                Count: count
+	        }).success(function (data) {
+	            if (data.length == 0) {
+
+	            }
+	            else {
+	                $scope.MessageContents = $scope.MessageContents.concat(data);
+	                $scope.MessageContents.sort(function (a, b) {
+	                    return new Date(b.CreatedOn) - new Date(a.CreatedOn);
+	                });
+	                index = $scope.MessageContents.length + 1;
+	                if (localStorage["Message"] && $scope.MessageContents && $scope.MessageContents.length > 0) {
+	                    $state.go('messageShow', { data: $scope.MessageContents[0] });
+	                }
+	            }
+	            $ionicLoading.hide();
+	        });
+	    };
+	    $scope.loadMessages();
+
+	    $scope.showMessage = function (message) {
+	        $state.go('messageShow', { data: message });
+	    };
 	}
 	])
+        .controller("messageShowCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", function ($scope, $state, $http, $CustomLS, $stateParams) {
+            $scope.data = $stateParams.data;
+            if (localStorage["Message"]) {
+                localStorage["Message"] = "";
+            }
+        }
+        ])
 	.controller("TimeTableCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
 	    $scope.periodData = {
 	        WeekdayTimeTables: []
@@ -1186,14 +1247,15 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    });
 	}
 	])
-	.controller("EmployeeSettingsCtrl", ["$scope", "$state", "$http", "$CustomLS","$ionicPopup", function ($scope, $state, $http, $CustomLS,$ionicPopup) {
+	.controller("EmployeeSettingsCtrl", ["$scope", "$state", "$http", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $ionicPopup) {
 	    $scope.AppCurrentVersion = localStorage['AppCurrentVersion'];
-        $scope.AppToken = localStorage['token'];
+	    $scope.AppToken = localStorage['token'];
 	    $scope.Employeelogout = function () {
 	        localStorage.clear();
+	        location.reload();
 	        $state.go('login');
 	    };
-         $scope.NewVersionData = { };
+	    $scope.NewVersionData = {};
 	    $scope.checkForUpdate = function () {
 	        debugger;
 	        $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
@@ -1202,22 +1264,22 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	            $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
 	            console.log(data);
 	            var version = localStorage['AppCurrentVersion'];
-	            if (data.Version != version) {
+	            if (data.Version.trim() != version.trim()) {
 	                $ionicPopup.alert({
-	                title: 'New Update Available!',
-	                template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
-	                        scope: $scope
-	                    });
+	                    title: 'New Update Available!',
+	                    template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+	                    scope: $scope
+	                });
 	            }
-	                    else {
+	            else {
 	                $ionicPopup.alert({
 	                    title: 'App is up to date.',
-	                        template: "<strong>Great! You are using the latest Version.",
-	                            scope : $scope
-	                        });
-	                        }
-	                        });
-	                        }
+	                    template: "<strong>Great! You are using the latest Version.",
+	                    scope: $scope
+	                });
+	            }
+	        });
+	    }
 	}
 	])
 	.controller("profileCtrl", ["$scope", "$state", function ($scope, $state, $http) { }
@@ -1258,7 +1320,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        };
 
 	        var failureFn = function (error) {
-	            alert('BackgroundGeolocation error');
+	            alert('BackgroundGeolocation error' + JSON.stringify(error));
 	        };
 
 	        backgroundGeolocation.configure(callbackFn, failureFn, {
@@ -1356,70 +1418,70 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	}
 	])
     .controller("employeeBarcodeAttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", "$ionicLoading", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup, $ionicLoading) {
+        debugger;
+        $ionicLoading.show({ template: 'Loading Attendance...', duration: 3000 });
+        $scope.user = $CustomLS.getObject('LoginUser');
+        $scope.EmployeesList = [];
+        $http.post(host + '/EmpAttandance/getEmployeesList', { 'OrgId': $scope.user.OrgId }).then(function (res) {
+            console.log(res);
+            $scope.EmployeesList = res.data;
+        })
+        $scope.scannedEmployees = {
+            Id: [],
+            Name: [],
+            EmployeeId: []
+        }
+        $scope.data = {
+        }
+
+        $scope.DeleteCurrentRow = function (index) {
+            $scope.scannedEmployees.Name.splice(index, 1);
+            $scope.scannedEmployees.Id.splice(index, 1);
+        }
+        $scope.scanBarCode = function () {
+            $cordovaBarcodeScanner.scan().then(function (imageData) {
+                var Id = imageData.text;
+                $scope.EmployeesList.forEach(function (value, index) {
+                    if (value.EmpId == Id) {
+                        debugger;
+                        $scope.scannedEmployees.Name.push(value.Name)
+                        $scope.scannedEmployees.Id.push(value.Id)
+                        $scope.scannedEmployees.EmployeeId.push(value.EmpId)
+                    }
+                })
+                localStorage.setItem(JSON.stringify($scope.scannedEmployees.Name), JSON.stringify($scope.scannedEmployees.Id));
+
+            }, function (error) {
+                console.log("An error happened -> " + error);
+                $ionicLoading.hide();
+            });
+        }
+        $scope.sendEmployeesTimings = function () {
             debugger;
-            $ionicLoading.show({ template: 'Loading Attendance...', duration: 3000 });
-            $scope.user = $CustomLS.getObject('LoginUser');
-            $scope.EmployeesList = [];
-            $http.post(host + '/EmpAttandance/getEmployeesList', { 'OrgId': $scope.user.OrgId }).then(function (res) {
-                console.log(res);
-                $scope.EmployeesList = res.data;
-            })
-            $scope.scannedEmployees = {
-                Id: [],
-                Name: [],
-                EmployeeId: []
-            }
-            $scope.data = {
-            }
-
-            $scope.DeleteCurrentRow = function (index) {
-                $scope.scannedEmployees.Name.splice(index, 1);
-                $scope.scannedEmployees.Id.splice(index, 1);
-            }
-            $scope.scanBarCode = function () {
-                $cordovaBarcodeScanner.scan().then(function (imageData) {
-                    var Id = imageData.text;
-                    $scope.EmployeesList.forEach(function (value, index) {
-                        if (value.EmpId == Id) {
-                            debugger;
-                            $scope.scannedEmployees.Name.push(value.Name)
-                            $scope.scannedEmployees.Id.push(value.Id)
-                            $scope.scannedEmployees.EmployeeId.push(value.EmpId)
-                        }
-                    })
-                    localStorage.setItem(JSON.stringify($scope.scannedEmployees.Name), JSON.stringify($scope.scannedEmployees.Id));
-
-                }, function (error) {
-                    console.log("An error happened -> " + error);
-                    $ionicLoading.hide();
-                });
-            }
-            $scope.sendEmployeesTimings = function () {
+            var pick = $scope.data.choice;
+            var jsonObj1 = $scope.scannedEmployees.Id;
+            var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedEmployees.Name)).replace(']', '').replace('[', '');
+            $scope.date = new Date();
+            var jsonObj2 = JSON.stringify($scope.date);
+            $http.post(host + '/EmpAttandance/SaveEmployeeAttendance', { 'OrgId': $scope.user.OrgId, 'EmpId': $scope.scannedEmployees.Id, 'scanDateTime': $scope.date, 'IsCheckIn': pick }).success(function (data) {
                 debugger;
-                var pick = $scope.data.choice;
-                var jsonObj1 = $scope.scannedEmployees.Id;
-                var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedEmployees.Name)).replace(']', '').replace('[', '');
-                $scope.date = new Date();
-                var jsonObj2 = JSON.stringify($scope.date);
-                $http.post(host + '/EmpAttandance/SaveEmployeeAttendance', { 'OrgId': $scope.user.OrgId, 'EmpId': $scope.scannedEmployees.Id, 'scanDateTime': $scope.date, 'IsCheckIn': pick }).success(function (data) {
-                    debugger;
-                    if (data.status) {
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'Success',
-                            template: 'Saved Successfully!'
-                        });
-                        $state.go('EmployeeBarcodeAttendance');
-                        $scope.scannedEmployees = {};
-                    }
-                    else {
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'Failed',
-                            template: 'Error Occured!'
-                        });
-                    }
-                });
-            }
-        }])
+                if (data.status) {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Success',
+                        template: 'Saved Successfully!'
+                    });
+                    $state.go('EmployeeBarcodeAttendance');
+                    $scope.scannedEmployees = {};
+                }
+                else {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Failed',
+                        template: 'Error Occured!'
+                    });
+                }
+            });
+        }
+    }])
 	.controller("TransportCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
 	    $scope.user = $CustomLS.getObject('LoginUser');
 	    $scope.RouteCode = [];

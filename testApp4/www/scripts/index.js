@@ -15,19 +15,26 @@
             localStorage["FCMToken"] = token;
         }, function (error) {
             console.error(error);
+            alert(JSON.stringify(error));
         });
 
         FirebasePlugin.onTokenRefresh(function (token) {
             localStorage["FCMToken"] = token;
         }, function (error) {
             console.error(error);
+            alert(JSON.stringify(error));
         });
 
         FirebasePlugin.onNotificationOpen(function (notification) {
             console.log(notification);
-            alert(JSON.stringify(notification));
+            if (notification.tap) {
+                localStorage["Message"] = JSON.stringify(notification);
+                //location.reload();
+                location.href = "index.html";
+            }
         }, function (error) {
             console.error(error);
+            alert(JSON.stringify(error));
         });
     };
 
