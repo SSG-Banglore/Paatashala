@@ -458,7 +458,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        "Icon": "ion-location"
 	    },
 	    ];
-	    
+
 	    $scope.NewVersionData = {};
 	    if (localStorage['LastToken'] != localStorage["FCMToken"]) {
 	        var userId = JSON.parse(localStorage['LoginUser']).UserId;
@@ -480,26 +480,24 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    if (localStorage["Message"]) {
 	        $state.go('view-MessageBox');
 	    }
-	    else {
-	        document.addEventListener("deviceready", function () {
-	            $cordovaAppVersion.getVersionNumber().then(function (version) {
-	                localStorage['AppCurrentVersion'] = version;
-	                $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
-	                    debugger;
-	                    $scope.NewVersionData = data;
-	                    $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
-	                    console.log(data);
-	                    if (data.Version.trim() != version.trim()) {
-	                        $ionicPopup.alert({
-	                            title: 'New Update Available!',
-	                            template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
-	                            scope: $scope
-	                        });
-	                    }
-	                });
+	    document.addEventListener("deviceready", function () {
+	        $cordovaAppVersion.getVersionNumber().then(function (version) {
+	            localStorage['AppCurrentVersion'] = version;
+	            $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
+	                debugger;
+	                $scope.NewVersionData = data;
+	                $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+	                console.log(data);
+	                if (data.Version.trim() != version.trim()) {
+	                    $ionicPopup.alert({
+	                        title: 'New Update Available!',
+	                        template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+	                        scope: $scope
+	                    });
+	                }
 	            });
-	        }, false);
-	    }
+	        });
+	    }, false);
 	}
 	])
 	.controller("employeeHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
@@ -550,32 +548,27 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    ];
 	    debugger;
 	    var user = JSON.parse(localStorage["LoginUser"]);
-	    if (user.Role != "Admin1") {
+	    if (user.Role != "Admin") {
 	        $scope.Pages = $scope.Pages.filter(function (e) {
 	            return e.Name != "Transport";
 	        });
 	    }
 
-	    $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
-	        debugger;
-	        $scope.NewVersionData = data;
-	        $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
-	        console.log(data);
-	        var version = localStorage['AppCurrentVersion'];
-	        if (data.Version.trim() != version.trim()) {
-	            $ionicPopup.alert({
-	                title: 'New Update Available!',
-	                template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
-	                scope: $scope
-	            });
-	        }
-	        else {
-	            $ionicPopup.alert({
-	                title: 'App is up to date.',
-	                template: "<strong>Great! You are using the latest Version.",
-	                scope: $scope
-	            });
-	        }
+	    $cordovaAppVersion.getVersionNumber().then(function (version) {
+	        localStorage['AppCurrentVersion'] = version;
+	        $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
+	            debugger;
+	            $scope.NewVersionData = data;
+	            $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+	            console.log(data);
+	            if (data.Version.trim() != version.trim()) {
+	                $ionicPopup.alert({
+	                    title: 'New Update Available!',
+	                    template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+	                    scope: $scope
+	                });
+	            }
+	        });
 	    });
 	}
 	])
@@ -1034,7 +1027,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    var studentId = localStorage['selectedStudent'];
 	    var index = 0, count = 10;
 	    $scope.data = {
-            loadingComplete: false
+	        loadingComplete: false
 	    };
 	    $scope.MessageContents = [];
 
@@ -1055,7 +1048,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	            StudentId: studentId,
 	            OrgId: OrgId,
 	            Index: index,
-                Count: count
+	            Count: count
 	        }).success(function (data) {
 	            if (data.length == 0) {
 
