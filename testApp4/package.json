@@ -19,7 +19,8 @@
         "cordova-plugin-network-information": "1.2.1",
         "cordova-plugin-whitelist": "1",
         "phonegap-plugin-barcodescanner": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git",
-        "pushbots-cordova-plugin": "1.4.3"
+        "pushbots-cordova-plugin": "1.4.3",
+        "cordova-plugin-file-transfer": "1.6.3"
     },
     "cordova": {
         "plugins": {
@@ -43,7 +44,8 @@
             "cordova-plugin-network-information": {},
             "cordova-plugin-whitelist": {},
             "phonegap-plugin-barcodescanner": {},
-            "pushbots-cordova-plugin": {}
+            "pushbots-cordova-plugin": {},
+            "cordova-plugin-file-transfer": {}
         }
     }
 }

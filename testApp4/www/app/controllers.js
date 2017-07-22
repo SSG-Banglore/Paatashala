@@ -1,4 +1,4 @@
-﻿//18-07-2017
+﻿//18-07-2017 can be Edited
 var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 //var host = "http://192.168.31.100/SampleAPI/";
 //var host = "http://192.168.43.164/SampleAPI/";
@@ -30,8 +30,125 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    $scope.menu.user.type = localStorage["LoginType"];
 
 	}])
-      .controller("appEmpCtrl", ["$scope", function ($scope) {
-	}])
+    .controller("appEmpCtrl", ["$scope", function ($scope) {
+    }])
+    .controller("ParentGalleryCtrl", ["$scope", function ($scope) {
+    }])
+    .controller("EmployeeDairyCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
+
+        $scope.selected = {}
+        $scope.user = $CustomLS.getObject('LoginUser');
+        debugger;
+        $http.post(host + '/Attandance/getBatchAndCourse', {
+            OrgId: $scope.user.OrgId
+        }).success(function (data) {
+            debugger;
+            $scope.Batchlist = data.Batches;
+            $scope.CourseList = data.Courses;
+        });
+
+        $scope.date = new Date();
+        $scope.FormattedDate = $scope.date.toLocaleDateString();
+        $scope.setDateTime = function () {
+            var ipObj1 = {
+                callback: function (val) { //Mandatory
+                    var date = new Date(val);
+                    $scope.date = date;
+                    $scope.FormattedDate = date.toLocaleDateString();
+                },
+                inputDate: new Date(),
+                showTodayButton: true,
+                to: new Date(), //Optional
+                inputDate: new Date(), //Optional
+                mondayFirst: false, //Optional
+                closeOnSelect: false, //Optional
+                templateType: 'popup' //Optional
+            };
+            ionicDatePicker.openDatePicker(ipObj1);
+        };
+        $scope.GiveAttendanceList = function () {
+            debugger;
+
+            $state.go('NextEmployeeDairy', {
+                BatchId: $scope.selected.Batch,
+                CourseId: $scope.selected.Course,
+                DairyDetails:$scope.selected.DairyDetails,
+                Date: $scope.date
+            });
+        };
+    }
+    ])
+    .controller("nextEmployeeDairyCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
+        debugger;
+        $scope.dropdownValues = [{
+            Name: 'Present',
+            Id: true
+        }, {
+            Name: 'Absent',
+            Id: false
+        }
+        ]
+        $scope.dropdown = {};
+        $scope.data = {};
+        $scope.BackupStudentsList = {};
+        $scope.user = $CustomLS.getObject('LoginUser');
+        $scope.BatchId = $stateParams.BatchId;
+        $scope.CourseId = $stateParams.CourseId;
+        $scope.Date = $stateParams.Date;
+        $http.post(host + '/Attandance/getStudentsBasedOnFiler', {
+            BatchId: $scope.BatchId,
+            CourseId: $scope.CourseId,
+            OrgId: $scope.user.OrgId,
+            AttendanceDate: $scope.Date
+        }).success(function (data) {
+            debugger;
+            $scope.StudentsList = {};
+            $scope.BackupStudentsList = $scope.StudentsList = data;
+        });
+        $scope.dropvalueChange = function () {
+            console.log($scope.dropdown.value);
+            debugger;
+            if ($scope.dropdown.value != "-1") {
+                $scope.StudentsList.forEach(function (e, i) {
+                    e.isPresent = $scope.dropdown.value == "0" ? false : true;
+                    $scope.BackupStudentsList.filter(function (e2) {
+                        return e2.Id == e.Id;
+                    })[0].isPresent = e.isPresent;
+                });
+            }
+        };
+        $scope.searchTextChanged = function () {
+            $scope.StudentsList = $scope.BackupStudentsList.filter(function (e) {
+                return e.StudentName.toUpperCase().indexOf($scope.data.searchText.toUpperCase()) != -1;
+            });
+        }
+        $scope.SubmittingAttendance = function () {
+            debugger;
+            $scope.StudentsList;
+            $http.post(host + '/Attandance/saveDailyStudentAttendance', {
+                DailyAttendanceObj: $scope.StudentsList,
+                dateAttendance: $scope.Date,
+                OrgId: $scope.user.OrgId,
+                DairyDetails: $scope.DairyDetails
+            }).success(function (data) {
+                debugger;
+                if (data.status) {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Success',
+                        template: 'Saved Successfully!'
+                    });
+                } else {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Failed',
+                        template: 'Error Occured!'
+                    });
+                }
+            });
+        };
+    }
+    ])
+    .controller("ParentDairyCtrl", ["$scope", function ($scope) {
+    }])
 	.controller('loginCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', '$ionicHistory', function ($scope, $http, $CustomLS, $ionicLoading, $state, $ionicHistory) {
 	    $scope.loginData = {};
 	    $scope.message = "";
@@ -418,7 +535,15 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        "Name": "Message Box",
 	        "Href": "#/view-MessageBox",
 	        "Icon": "ion-android-chat"
+	    },{
+	        "Name": "Gallery",
+	        "Href": "#/view-ParentGallery",
+	        "Icon": "ion-images"
 	    }, {
+	        "Name": "Diary",
+	        "Href": "#/view-ParentDairy",
+	        "Icon": "ion-ribbon-a"
+	    },{
 	        "Name": "Time Table",
 	        "Href": "#/view-TimeTable",
 	        "Icon": "ion-android-clipboard"
@@ -507,7 +632,11 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
                 "Name": "Gallery",
                 "Href": "#/EmployeeGallery",
                 "Icon": "ion-images"
-            }, {
+            },{
+                "Name": "Diary",
+                "Href": "#/view-EmployeeDairy",
+                "Icon": "ion-ribbon-a"
+            },{
                 "Name": "Student Attendance Entry",
                 "Href": "#/EmployeeAttendance",
                 "Icon": "ion-ios-people"
@@ -828,8 +957,9 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    var OrgId = localStorage['selectedStudentOrgId'];
 	    $scope.dropdown = {};
 	    $scope.data = {};
-	    $scope.lead={};
-        debugger;
+	    $scope.lead = {};
+	    $scope.reg = {};
+	    debugger;
 	    $scope.date = new Date();
 	    $scope.data.DateOfBirth = $scope.date.toLocaleDateString();
 	    $scope.setDateTime = function () {
@@ -873,10 +1003,10 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        $scope.EmployeeList = data2.EmployeesList;
 	        $scope.OtherProgramList = data2.OtherPrograms;
 	    });
-        debugger;
+	    debugger;
 	    $scope.date = new Date();
 	    $scope.lead.FollowupTime = $scope.date.toLocaleDateString();
-	    $scope.setDateTime1= function () {
+	    $scope.setDateTime1 = function () {
 	        var ipObj2 = {
 	            callback: function (val) { //Mandatory
 	                var date = new Date(val);
@@ -897,16 +1027,16 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    $scope.LeadFormsubmit = function (data, reg, lead) {
 	        debugger;
 	        $http.post(host + '/LeadMgt/AddNewLead', {
-	            student: $scope.data, reg: $scope.reg, LeadFollowUp: $scope.lead, OrgId: $scope.user.OrgId, EmployeeId: $scope.user.UserId
-	        }).success(function (data ) {
+	            student: $scope.data, registration: $scope.reg, LeadFollowUp: $scope.lead, OrgId: $scope.user.OrgId, EmployeeId: $scope.user.UserId
+	        }).success(function (data) {
 	            debugger;
 	            if (data.status) {
 	                var alertPopup = $ionicPopup.alert({
-	                        title: 'Success',
-	                        template: 'Saved Successfully!'
+	                    title: 'Success',
+	                    template: 'Saved Successfully!'
 	                });
 	            } else {
-                             var alertPopup = $ionicPopup.alert({
+	                var alertPopup = $ionicPopup.alert({
 	                    title: 'Failed',
 	                    template: 'Error Occured!'
 	                });
@@ -1124,53 +1254,55 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    })
 	}
 	])
-	.controller("EmployeeGalleryCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
+	.controller("EmployeeGalleryCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS","$cordovaImagePicker", "$cordovaCamera", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS, $cordovaImagePicker, $cordovaCamera) {
 	    $scope.selected = {}
+
+	    var EntireDetails = new FormData();
+
 	    $scope.user = $CustomLS.getObject('LoginUser');
 	    debugger;
 	    $http.post(host + '/Attandance/getBatchAndCourse', {
 	        OrgId: $scope.user.OrgId
 	    }).success(function (data) {
-	        debugger;
 	        $scope.Batchlist = data.Batches;
 	        $scope.CourseList = data.Courses;
 	    });
-	    $scope.Image = {
-	        Photo: []
-	    }
 
-	    $scope.uploadFile = function (input) {
+	    $scope.galleryUpload = function () {
 	        debugger;
-	        if (input.files && input.files[0]) {
+	        var files = $("#GalleryImageId").get(0).files;
+	        if (files.length > 0) {
+	            EntireDetails.append("qjuaslpzxweyyImage", files[0]);
+	        }
+	        var url = 'http://192.168.1.43/SampleAPI/Gallery/UploadImage'
+	        $.ajax({
+	            url: url,
+	            type: "POST",
+	            processData: false,
+	            contentType: false,
+	            data: EntireDetails,
+	            success: function (response) {
+
+	                debugger;
+	            },
+	            error: function (er) {
+	                alert(er);
+	            }
+	        });
+	    }
+	 
+	   
+	    $("#GalleryImageId").change(function () {
+	        debugger;
+	        var files = $("#GalleryImageId").get(0).files;
+	        if (this.files && this.files[0]) {
 	            var reader = new FileReader();
 	            reader.onload = function (e) {
-	                //Sets the Old Image to new New Image
-	                $('#photo-id').attr('src', e.target.result);
-
-	                //Create a canvas and draw image on Client Side to get the byte[] equivalent
-	                var canvas = document.createElement("canvas");
-	                var imageElement = document.createElement("img");
-	                imageElement.setAttribute('src', e.target.result);
-	                var dd = imageElement.outerHTML;
-	                $scope.vat = dd;
-	                canvas.width = imageElement.width;
-	                canvas.height = imageElement.height;
-	                var context = canvas.getContext("2d");
-	                context.drawImage(imageElement, 0, 0);
-	                var base64Image = canvas.toDataURL("image/jpeg");
-
-	                //Removes the Data Type Prefix
-	                //And set the view model to the new value
-	                $scope.Image.Photo = base64Image.replace(/data:image\/jpeg;base64,/g, '');
+	                $('#GalleryPreview').attr('src', e.target.result);
 	            }
-	            //Renders Image on Page
-	            reader.readAsDataURL(input.files[0]);
+	            reader.readAsDataURL(this.files[0]);
 	        }
-	    };
-	    $scope.UploadGalleryImages = function (data) {
-	        debugger;
-	        var a = $scope.Image;
-	    }
+	    });
 	}
 	])
 	.controller("EmployeeHolidaysCtrl", ["$scope", "$state", "$http", "$CustomLS", '$ionicLoading', function ($scope, $state, $http, $CustomLS, $ionicLoading) {
