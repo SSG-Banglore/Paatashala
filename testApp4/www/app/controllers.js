@@ -1,8 +1,8 @@
 ﻿//18-07-2017
-//var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 //var host = "http://192.168.31.100/SampleAPI/";
 //var host = "http://192.168.43.164/SampleAPI/";
-var host = "http://192.168.1.43/SampleAPI/";
+//var host = "http://192.168.1.43/SampleAPI/";
 //var host = "http://192.168.1.34/SampleAPI/";
 //var host = 'http://192.168.31.100:4261/';
 (function () {
@@ -49,7 +49,7 @@ var host = "http://192.168.1.43/SampleAPI/";
     }])
     .controller("appEmpCtrl", ["$scope", function ($scope) {
     }])
-	.controller('loginCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', '$ionicHistory', function ($scope, $http, $CustomLS, $ionicLoading, $state, $ionicHistory) {
+	.controller('loginCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', '$ionicHistory', '$cordovaToast', function ($scope, $http, $CustomLS, $ionicLoading, $state, $ionicHistory, $cordovaToast) {
 	    $scope.loginData = {};
 	    $scope.message = "";
 	    $scope.newUser = function () {
@@ -75,13 +75,15 @@ var host = "http://192.168.1.43/SampleAPI/";
 	                    //$CustomLS.setObject('currentStudents', data.HasStudents);
 	                    localStorage['LoginToken'] = data.Token;
 	                    $state.go('appemp.view-Employee-home');
+                        $cordovaToast.showShortCenter('Login Success');
 	                } else {
-	                    $scope.message = data.Message;
+	                    $cordovaToast.showShortCenter(data.Message);
 	                }
 	                $ionicLoading.hide();
 	            }).error(function (errData) {
 	                console.log(errData);
 	                $ionicLoading.hide();
+                    alert(errData);
 	            });
 	        } else {
 	            $ionicLoading.show({
@@ -106,13 +108,15 @@ var host = "http://192.168.1.43/SampleAPI/";
 	                        localStorage['selectedStudentOrgId'] = $scope.selectStudent.OrgId;
 	                        $state.go('app.view-parent-home');
 	                    }
+	                    $cordovaToast.showShortCenter('Login Success');
 	                } else {
-	                    $scope.message = data.Message;
+	                    $cordovaToast.showShortCenter(data.Message);
 	                }
 	                $ionicLoading.hide();
 	            }).error(function (errData) {
 	                console.log(errData);
 	                $ionicLoading.hide();
+	                alert(errData);
 	            });
 	        }
 	    }
@@ -559,23 +563,24 @@ var host = "http://192.168.1.43/SampleAPI/";
 	            return e.Name != "Transport";
 	        });
 	    }
-
-	    //$cordovaAppVersion.getVersionNumber().then(function (version) {
-	    //    localStorage['AppCurrentVersion'] = version;
-	    //    $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
-	    //        debugger;
-	    //        $scope.NewVersionData = data;
-	    //        $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
-	    //        console.log(data);
-	    //        if (data.Version.trim() != version.trim()) {
-	    //            $ionicPopup.alert({
-	    //                title: 'New Update Available!',
-	    //                template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
-	    //                scope: $scope
-	    //            });
-	    //        }
-	    //    });
-	    //});
+	    document.addEventListener("deviceready", function () {
+	        $cordovaAppVersion.getVersionNumber().then(function (version) {
+	            localStorage['AppCurrentVersion'] = version;
+	            $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
+	                debugger;
+	                $scope.NewVersionData = data;
+	                $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+	                console.log(data);
+	                if (data.Version.trim() != version.trim()) {
+	                    $ionicPopup.alert({
+	                        title: 'New Update Available!',
+	                        template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+	                        scope: $scope
+	                    });
+	                }
+	            });
+	        });
+	    }, false);
 	}
 	])
 	.controller("subjectDetailCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
@@ -1355,7 +1360,7 @@ var host = "http://192.168.1.43/SampleAPI/";
                     ft.upload(imageData, encodeURI(host + "/Gallery/UploadImage"),
                         function (res) {
                             $ionicLoading.hide();
-                            alert(JSON.stringify(res));
+                            $cordovaToast.showShortCenter('Image uploaded successfully.');
                         },
                         function (err) {
                             $ionicLoading.hide();
