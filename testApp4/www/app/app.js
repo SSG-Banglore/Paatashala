@@ -23,29 +23,29 @@
         .state("view-ParentGallery", {
             url: "/view-ParentGallery",
             templateUrl: "app/templates/view-ParentGallery.html",
-		    controller: "ParentGalleryCtrl"
+            controller: "ParentGalleryCtrl"
         })
         .state("view-EmployeeDairy", {
             url: "/view-EmployeeDairy",
             templateUrl: "app/templates/view-EmployeeDairy.html",
-		    controller: "EmployeeDairyCtrl"
+            controller: "EmployeeDairyCtrl"
         })
         .state("NextEmployeeDairy", {
             url: "/NextEmployeeDairy",
-		    params: {
-		        BatchId: '',
-		        CourseId: '',
-                DairyDetails:'',
-		        Date: ''
-		    },
-		    templateUrl: "app/templates/view-NextEmployeeDairy.html",
-		    controller: "nextEmployeeDairyCtrl"
-		})
+            params: {
+                BatchId: '',
+                CourseId: '',
+                DairyDetails: '',
+                Date: ''
+            },
+            templateUrl: "app/templates/view-NextEmployeeDairy.html",
+            controller: "nextEmployeeDairyCtrl"
+        })
             .state("view-ParentDairy", {
                 url: "/view-ParentDairy",
-            templateUrl: "app/templates/view-ParentDairy.html",
-		    controller: "ParentDairyCtrl"
-		})
+                templateUrl: "app/templates/view-ParentDairy.html",
+                controller: "ParentDairyCtrl"
+            })
 		.state('app.setting', {
 		    url: '/setting',
 		    templateUrl: 'app/templates/view-setting.html',
@@ -251,9 +251,15 @@
 		})
 		.state("EmployeeGallery", {
 		    url: "/EmployeeGallery",
-		    templateUrl: "app/templates/EmployeeGallery.html",
+		    templateUrl: "app/templates/view-employee-gallery.html",
 		    controller: "EmployeeGalleryCtrl"
 		})
+        .state("EmployeeGalleryGrid", {
+            url: "/EmployeeGalleryGrid",
+            params: { BatchId: 0, CourseId: 0 },
+            templateUrl: "app/templates/view-employee-gallery-grid.html",
+            controller: "EmployeeGalleryGridCtrl"
+        })
 		.state("Attendance", {
 		    url: "/Attendance",
 		    templateUrl: "app/templates/Attendance.html",
