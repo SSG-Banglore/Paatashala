@@ -260,6 +260,11 @@
             templateUrl: "app/templates/view-employee-gallery-grid.html",
             controller: "EmployeeGalleryGridCtrl"
         })
+        .state("ParentGalleryGrid", {
+            url: "/ParentGalleryGrid",
+            templateUrl: "app/templates/view-parent-gallery-grid.html",
+            controller: "ParentGalleryGridCtrl"
+        })
 		.state("Attendance", {
 		    url: "/Attendance",
 		    templateUrl: "app/templates/Attendance.html",
