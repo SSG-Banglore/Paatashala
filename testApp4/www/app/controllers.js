@@ -61,7 +61,25 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    $scope.EmployeeForgetPassword = function () {
 	        $state.go('view-employeeForgetPassword');
 	    }
+	    var validate = function () {
+	        if (!$scope.loginData.Username) {
+	            $cordovaToast.showShortCenter('Email required!');
+	            return false;
+	        }
+	        if (!$scope.loginData.Password) {
+	            $cordovaToast.showShortCenter('Password required!');
+	            return false;
+	        }
+	        if (!$scope.loginData.OrgName && $scope.loginData.Usertype == 'Employee') {
+	            $cordovaToast.showShortCenter('Organisation Name required!');
+	            return false;
+	        }
+	        return true;
+	    };
 	    $scope.login = function () {
+	        if (!validate()) {
+	            return;
+	        }
 	        if ($scope.loginData.Usertype == 'Employee') {
 	            $ionicLoading.show({
 	                template: 'Loging In...',
@@ -75,7 +93,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	                    //$CustomLS.setObject('currentStudents', data.HasStudents);
 	                    localStorage['LoginToken'] = data.Token;
 	                    $state.go('appemp.view-Employee-home');
-                        $cordovaToast.showShortCenter('Login Success');
+	                    $cordovaToast.showShortCenter('Login Success');
 	                } else {
 	                    $cordovaToast.showShortCenter(data.Message);
 	                }
@@ -83,7 +101,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	            }).error(function (errData) {
 	                console.log(errData);
 	                $ionicLoading.hide();
-                    alert(errData);
+	                alert(errData);
 	            });
 	        } else {
 	            $ionicLoading.show({
@@ -515,54 +533,64 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
             {
                 "Name": "Transport",
                 "Href": "#/Transport",
-                "Icon": "ion-android-bus"
+                "Icon": "transport.png"
             }, {
                 "Name": "Attendance",
                 "Href": "#/Attendance",
-                "Icon": "ion-qr-scanner"
+                "Icon": "attendance.png"
             }, {
                 "Name": "Employee Attendance",
                 "Href": "#/EmployeeBarcodeAttendance",
-                "Icon": "ion-android-time"
+                "Icon": "emp-attendance.png"
             }, {
                 "Name": "Geo Location",
                 "Href": "#/Geolocation",
-                "Icon": "ion-location"
+                "Icon": "trackstudent.png"
             }, {
                 "Name": "Holidays",
                 "Href": "#/Employeeholidays",
-                "Icon": "ion-android-bicycle"
+                "Icon": "holiday.png"
             }, {
                 "Name": "Personal Details",
                 "Href": "#/EmployeeProfile",
-                "Icon": "ion-android-person"
-            }, {
-                "Name": "Gallery",
-                "Href": "#/EmployeeGallery",
-                "Icon": "ion-images"
+                "Icon": "man.png"
             }, {
                 "Name": "Student Attendance Entry",
                 "Href": "#/EmployeeAttendance",
-                "Icon": "ion-ios-people"
+                "Icon": "student.png"
+            }, {
+                "Name": "Gallery",
+                "Href": "#/EmployeeGallery",
+                "Icon": "gallery.png"
             },
             {
                 "Name": "Employee Attendance Entry",
                 "Href": "#/EmployeeManualAttendance",
-                "Icon": "ion-ios-people"
+                "Icon": "curriculum.png"
             },
             {
                 "Name": "Enquiry Form",
                 "Href": "#/EnquiryForm",
-                "Icon": " ion-card"
+                "Icon": "inquiry.png"
             }
 	    ];
 	    debugger;
-	    var user = JSON.parse(localStorage["LoginUser"]);
-	    if (user.Role != "Admin") {
+	    $scope.user = JSON.parse(localStorage["LoginUser"]);
+	    if ($scope.user.Role != "Admin") {
 	        $scope.Pages = $scope.Pages.filter(function (e) {
 	            return e.Name != "Transport";
 	        });
 	    }
+	    $scope.grid = [];
+	    for (var i = 0; i < Math.ceil($scope.Pages.length / 3) ; i++) {
+	        var row = [];
+	        for (var j = 0; j < 3; j++) {
+	            if (i * 3 + j < $scope.Pages.length)
+	                row.push(i * 3 + j);
+	        }
+	        $scope.grid.push(row);
+	    }
+	    debugger;
 	    document.addEventListener("deviceready", function () {
 	        $cordovaAppVersion.getVersionNumber().then(function (version) {
 	            localStorage['AppCurrentVersion'] = version;

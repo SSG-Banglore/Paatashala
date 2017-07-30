@@ -4,16 +4,40 @@
         <div style="vertical-align: top;display:inline">Employee</div>
     </ion-nav-title>
     <ion-content class="padding has-header">
-        <div class="list">
-            <a class="item item-icon-left" href="{{page.Href}}" ng-repeat="page in Pages">
-                <i class="icon {{page.Icon}}"></i>
-                {{page.Name}}
+        <div class="row" ng-repeat="row in grid">
+            <a href="{{Pages[col].Href}}" class="col c-col col-33" ng-repeat="col in row">
+                <img class="c-icon" src="{{Pages[col].Icon}}" />
+                <span class="c-heading">{{Pages[col].Name}}</span>
             </a>
         </div>
     </ion-content>
 </ion-view>
 <style>
-    .icon {
-        color: #387ef5;
+    .c-icon {
+        width: 60%;
+        display: block;
+        left: 20%;
+        position: relative;
     }
+
+    .c-heading {
+        font-size: 12pt;
+    }
+
+    .c-col {
+        text-align: center;
+        margin-bottom: 5%;
+        margin-top: 5%;
+        text-decoration: none;
+        color: #525252;
+    }
+
+        .c-col.activated {
+            background-color: #dadada;
+        }
+
+    /*body {
+        font-family: "Nunito-SemiBold";
+        font-size: 30px;
+    }*/
 </style>
