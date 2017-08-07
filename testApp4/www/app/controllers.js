@@ -47,8 +47,6 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
         $scope.menu.user.type = localStorage["LoginType"];
 
     }])
-    .controller("appEmpCtrl", ["$scope", function ($scope) {
-    }])
 	.controller('loginCtrl', ['$scope', '$http', '$CustomLS', '$ionicLoading', '$state', '$ionicHistory', '$cordovaToast', function ($scope, $http, $CustomLS, $ionicLoading, $state, $ionicHistory, $cordovaToast) {
 	    $scope.loginData = {};
 	    $scope.message = "";
@@ -990,16 +988,21 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 
 	}
 	])
-	.controller("studentDetailsCtrl", ["$scope", "$state", "$http", '$CustomLS', function ($scope, $state, $http, $CustomLS) {
+	.controller("studentDetailsCtrl", ["$scope", "$state", "$http", '$CustomLS', '$ionicLoading', function ($scope, $state, $http, $CustomLS, $ionicLoading) {
 	    var studentId = localStorage['selectedStudent'];
 	    var OrgId = localStorage['selectedStudentOrgId'];
 	    debugger;
 	    $scope.imageUrl = host + "Student/StudentImage?Id=" + studentId;
+	    $ionicLoading.show({
+	        template: 'Loading student details...',
+	        duration: 10000
+	    });
 	    $http.post(host + '/PersonalDetail/GetAllDetail', {
 	        StudentId: studentId,
 	        OrgId: OrgId
 	    }).success(function (data) {
 	        $scope.PersonalDetail = data;
+	        $ionicLoading.hide();
 	    });
 	}
 	])
@@ -1048,7 +1051,8 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	])
 	.controller("holidaysCtrl", ["$scope", "$state", "$http", '$CustomLS', '$ionicLoading', function ($scope, $state, $http, $CustomLS, $ionicLoading) {
 	    var OrgId = localStorage['selectedStudentOrgId'];
-
+	    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	    $scope.noHolidays = false;
 	    $ionicLoading.show({
 	        template: "Loading holidays..."
 	    });
@@ -1056,7 +1060,24 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    $http.post(host + '/Holiday/GetAll', {
 	        OrgId: OrgId
 	    }).success(function (data) {
-	        $scope.HolidayDetail = data;
+	        $scope.noHolidays = data.length == 0;
+	        $scope.HolidayDetail = [];
+	        for (var i = 0; i < data.Holidays.length; i++) {
+	            var tempMonthName = monthNames[new Date(data.Holidays[i].Date).getMonth()];
+	            var tempMonthIndex = new Date(data.Holidays[i].Date).getMonth();
+	            if (!$scope.HolidayDetail[tempMonthIndex]) {
+	                $scope.HolidayDetail[tempMonthIndex] = {
+	                    Index: tempMonthIndex,
+	                    MonthName: tempMonthName,
+	                    List: []
+	                };
+	            }
+	            $scope.HolidayDetail[tempMonthIndex].List.push({
+	                Date: new Date(data.Holidays[i].Date),
+	                Name: data.Holidays[i].Name.trim()
+	            });
+	        }
+	        //$scope.HolidayDetail = data;
 	        $ionicLoading.hide();
 	    });
 	}
@@ -1421,13 +1442,33 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
         }])
 	.controller("EmployeeHolidaysCtrl", ["$scope", "$state", "$http", "$CustomLS", '$ionicLoading', function ($scope, $state, $http, $CustomLS, $ionicLoading) {
 	    $scope.user = $CustomLS.getObject('LoginUser');
+	    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	    $scope.noHolidays = false;
+	    $scope.HolidayDetail = [];
 	    $ionicLoading.show({
 	        template: "Loading holidays..."
 	    });
 	    $http.post(host + '/Holiday/GetEmployeeHolidays', {
 	        'OrgId': $scope.user.OrgId
 	    }).success(function (data) {
-	        $scope.EmployeeHoliday = data;
+	        $scope.noHolidays = data.length == 0;
+	        $scope.HolidayDetail = [];
+	        for (var i = 0; i < data.Holidays.length; i++) {
+	            var tempMonthName = monthNames[new Date(data.Holidays[i].Date).getMonth()];
+	            var tempMonthIndex = new Date(data.Holidays[i].Date).getMonth();
+	            if (!$scope.HolidayDetail[tempMonthIndex]) {
+	                $scope.HolidayDetail[tempMonthIndex] = {
+	                    Index: tempMonthIndex,
+	                    MonthName: tempMonthName,
+	                    List: []
+	                };
+	            }
+	            $scope.HolidayDetail[tempMonthIndex].List.push({
+	                Date: new Date(data.Holidays[i].Date),
+	                Name: data.Holidays[i].Name.trim()
+	            });
+	        }
+	        //$scope.HolidayDetail = data;
 	        $ionicLoading.hide();
 	    });
 	}])
