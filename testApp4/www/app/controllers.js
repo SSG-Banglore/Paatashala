@@ -387,24 +387,33 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        $scope.time.refreshMessage = "";
 	        $scope.getRouteLocation();
 	    };
+	    var marker;
 	    $scope.getRouteLocation = function () {
+	        $ionicLoading.show({ template: 'Loading Route location...', duration: 10000 });
 	        $http.get(host + 'GeoLocation/ShowLocation?OrgId=' + localStorage['selectedStudentOrgId'] + '&Routecode=' + $scope.selected.Route).success(function (data) { //localStorage['selectedStudentOrgId']+, { OrgId: localStorage['selectedStudentOrgId'], Routecode: $scope.selected.Route }
+	            $ionicLoading.hide();
 	            $scope.locationData = data;
 	            $scope.map.setCenter(new google.maps.LatLng(data.Latitude, data.Longitude));
-
-	            var marker = new google.maps.Marker({
+	            $scope.time.refreshMessage = "Last updated on " + new Date().toLocaleTimeString();
+	            
+	            if (marker) {
+	                marker.setMap(null);
+	            }
+	            marker = new google.maps.Marker({
 	                position: new google.maps.LatLng(data.Latitude, data.Longitude),
 	                map: $scope.map,
 	                title: 'Route No: ' + $scope.selected.Route
 	            });
-
+	            var infowindow = new google.maps.InfoWindow({
+	                content: 'Route No: ' + $scope.selected.Route,
+	                position: new google.maps.LatLng(data.Latitude, data.Longitude)
+	            });
 	            google.maps.event.addListener(marker, 'click', function () {
 	                infowindow.open($scope.map, marker);
 	            });
-
 	        }).error(function (err) {
 	            $ionicLoading.hide();
-	            alert("Error Getting Location")
+	            $cordovaToast.showShortCenter('Error Getting Location.');
 	        });
 	    };
 
@@ -1390,6 +1399,10 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
                         OrgId: $scope.user.OrgId,
                         EmpId: $scope.user.UserId
                     };
+                    var authData = localStorage['LoginToken'];
+                    opt.headers = {
+                        "Token": authData
+                    };
 
                     var ft = new FileTransfer();
                     ft.onprogress = function (progressEvent) {
@@ -1412,11 +1425,12 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
                             $cordovaToast.showShortCenter('Image uploaded successfully.');
                         },
                         function (err) {
+                            $cordovaToast.showShortCenter('Failed to upload an Image!');
                             $ionicLoading.hide();
                         }, opt);
 
                 }, function (err) {
-                    (JSON.stringify(err));
+                    $cordovaToast.showShortCenter('Failed to get an Image from gallery!');
                 });
             };
             $scope.showGallery = function () {
@@ -1513,73 +1527,109 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	.controller("signoutCtrl", ["$scope", "$state", function ($scope, $state, $http) {
 	}
 	])
-	.controller("GeolocationCtrl", ["$scope", "$state", "$http", "$cordovaGeolocation", "$interval", "$CustomLS", function ($scope, $state, $http, $cordovaGeolocation, $interval, $CustomLS) {
+	.controller("GeolocationCtrl", ["$scope", "$state", "$http", "$interval", "$CustomLS", "$cordovaToast", "$ionicLoading", function ($scope, $state, $http, $interval, $CustomLS, $cordovaToast, $ionicLoading) {
 	    $scope.Button = {
 	        Text: "Start Location Update",
 	        LocationUpdate: localStorage['locationUpdate'] == "true"
-	    }
-
-	    //$scope.Button.LocationUpdate = $scope.Button.IsLocationUpading == "true";
-	    debugger;
+	    };
 	    $scope.Routes = [];
 	    $scope.data = {
+	        code: localStorage['locationUpdateRouteCode']
 	    };
-	    debugger;
 	    $scope.user = $CustomLS.getObject('LoginUser');
 	    $http.post(host + '/GeoLocation/GetRouteCode', {
 	        'OrgId': $scope.user.OrgId
-	    }).success(function (data) {
-	        debugger;
-	        $scope.RouteCode = data;
-	    });
+	    }).success(function (data) { $scope.RouteCode = data; });
+	    var bgGeo = null;
+
+
+	    $scope.callbackFn = function (location, taskId) {
+	        var coords = location.coords;
+	        var lat = coords.latitude;
+	        var lng = coords.longitude;
+	        $cordovaToast.showShortCenter('Location' + JSON.stringify(location));
+	        bgGeo.finish(taskId);
+	        $http.get(host + 'GeoLocation/UpdateRouteLocation?RouteCode=' + $scope.data.code + '&OrgId=' + $scope.user.OrgId + '&Lattitude=' + lat + '&Longitude=' + lng)
+            .success(function (data) {
+                $cordovaToast.showShortCenter('location updated');
+            }).error(function (err) {
+                $cordovaToast.showShortCenter('error updating location');
+                alert('error updating location-' + JSON.stringify(err));
+            });
+	    };
+
+	    $scope.failureFn = function (errorCode) {
+	        console.warn('BackgroundGeoLocation error:', errorCode);
+	    }
+
+	    document.addEventListener("deviceready", function () {
+	        bgGeo = window.BackgroundGeolocation;
+	        bgGeo.on('location', $scope.callbackFn, $scope.failureFn);
+	        bgGeo.on('motionchange', function (isMoving) {
+	            $cordovaToast.showShortCenter('onMotionChange' + isMoving);
+	        });
+	        bgGeo.on('geofence', function (geofence) {
+	            $cordovaToast.showShortCenter('onGeofence' + geofence.identifier + geofence.location);
+	        });
+	        bgGeo.on('http', function (response) {
+	            $cordovaToast.showShortCenter('http success: ' + response.responseText);
+	        }, function (response) {
+	            $cordovaToast.showShortCenter('http failure: ' + response.status);
+	        });
+	        bgGeo.configure({
+	            desiredAccuracy: 0,
+	            distanceFilter: 0,
+	            stationaryRadius: 25,
+	            activityRecognitionInterval: 1000,
+	            fastestLocationUpdateInterval: 10000,
+	            locationUpdateInterval: 1000,
+	            heartbeatInterval: 10,
+	            stopTimeout: 5,
+	            debug: true,
+	            stopOnTerminate: false,
+	            startOnBoot: true,
+	            maxDaysToPersist: 3,
+	        }, function (state) {
+	            $cordovaToast.showShortCenter('Background Geolocation ready : ' + state.enabled);
+	            $scope.GL = bgGeo;
+	        });
+	    }, false);
 
 	    $scope.StartUpdateLocation = function () {
-	        debugger;
-	        var callbackFn = function (location) {
-	            $http.get(host + 'GeoLocation/UpdateRouteLocation?RouteCode=' + $scope.data.code + '&OrgId=' + $scope.user.OrgId + '&Lattitude=' + location.latitude + '&Longitude=' + location.longitude)
-                .success(function (data) {
-                    alert('location updated');
-                }).error(function () {
-                    alert('error updating location');
-                });
-
-	            //alert('Location:' + location.latitude + ',' + location.longitude);
-	            backgroundGeolocation.finish();
-	        };
-
-	        var failureFn = function (error) {
-	            alert('BackgroundGeolocation error' + JSON.stringify(error));
-	        };
-
-	        backgroundGeolocation.configure(callbackFn, failureFn, {
-	            desiredAccuracy: 100,
-	            stationaryRadius: 20,
-	            distanceFilter: 30,
-	            interval: 5000,
-	            //debug: true,
-	            //startOnBoot: true,
-	            //stopOnTerminate: false
-	        }, function (state) {
-	            debugger;
-	        });
-	        if ($scope.Button.LocationUpdate == true) {
-	            localStorage["locationUpdate"] = "true";
-	            alert(JSON.stringify(backgroundGeolocation));
-	            backgroundGeolocation.start();
-	            var timeoutDate = new Date();
-	            timeoutDate.setMinutes(0);
-	            timeoutDate.setHours(22);
-	            setTimeout(function () {
-	                backgroundGeolocation.stop();
-	            }, (timeoutDate - new Date()))
-	        } else {
+	        if (isNaN($scope.data.code)) {
+	            $cordovaToast.showShortCenter('Select the Route Code');
 	            localStorage["locationUpdate"] = "false";
-	            alert(JSON.stringify(backgroundGeolocation));
-	            backgroundGeolocation.stop();
+	            $scope.Button.LocationUpdate = false;
+	            return;
+	        }
+	        if (!bgGeo) {
+	            $cordovaToast.showShortCenter('Background Geolocation is not ready. Please wait...');
+	            return;
+	        }
+	        if ($scope.Button.LocationUpdate) {
+	            $ionicLoading.show({ template: 'Enabling Geo-location tracking...', duration: 10000 });
+	            bgGeo.start();
+	            $ionicLoading.hide();
+	            localStorage["locationUpdate"] = "true";
+	            localStorage['locationUpdateRouteCode'] = $scope.data.code;
+	            $cordovaToast.showShortCenter('Background geolocation Enabled.');
+	        }
+	        else {
+	            $ionicLoading.show({ template: 'Disabling Geo-location tracking...', duration: 10000 });
+	            bgGeo.stop();
+	            $ionicLoading.hide();
+	            localStorage["locationUpdate"] = "false";
+	            $cordovaToast.showShortCenter('Background geolocation disabled.');
 	        }
 	    };
 
 	    $scope.Route = $scope.data.code;
+
+	    $scope.getGLStatus = function () {
+	        bgGeo.getState(function (state) {
+	            $cordovaToast.showShortCenter('Status:' + JSON.stringify(state));
+	        });
+	    };
 	}
 	])
 	.controller("AttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {

@@ -7,14 +7,6 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-geolocation": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-geolocation@~2.1.0"
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
     "cordova-plugin-camera": {
         "source": {
             "type": "registry",
@@ -174,6 +166,27 @@
             "id": "com-sarriaroman-photoviewer"
         },
         "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-background-geolocation-lt": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-background-geolocation-lt"
+        },
+        "is_top_level": true,
+        "variables": {
+            "LOCATION_ALWAYS_USAGE_DESCRIPTION": "Background",
+            "LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION": "Background",
+            "MOTION_USAGE_DESCRIPTION": "Using",
+            "LICENSE": "4bbb513c013111eae951647fd4f9e79f127fce6f7a00e9d327db9ea2a053a0df"
+        }
+    },
+    "cordova-plugin-background-fetch": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-background-fetch"
+        },
+        "is_top_level": false,
         "variables": {}
     }
 }
