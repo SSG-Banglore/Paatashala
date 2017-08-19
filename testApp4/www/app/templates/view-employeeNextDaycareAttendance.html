@@ -21,11 +21,9 @@
             </label>
         </div>
         <br />
-
-        <ul class="list" collection-repeat="i in EmployeesList">
-            <!--<ul class="list" ng-repeat="i in StudentsList">-->
+        <ul class="list" collection-repeat="i in StudentsList">
             <li class="item item-toggle">
-                {{i.Name}}
+                {{i.StudentName}}
                 <label class="toggle toggle-positive">
                     <input type="checkbox" ng-model="i.isPresent">
                     <div class="track">
@@ -34,10 +32,13 @@
                 </label>
             </li>
         </ul>
-        <!--</ion-item>-->
+        <br />
+            <div class="row">
+                <label>Time:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="time" ng-model="time1.value" placeholder="HH:mm" />
+            </div>
         <button class="button button-block button-positive" ng-click="SubmittingAttendance()">
             Submit
         </button>
     </ion-content>
 </ion-view>
-

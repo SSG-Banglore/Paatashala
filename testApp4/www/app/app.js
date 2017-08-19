@@ -20,32 +20,53 @@
 		    templateUrl: 'app/templates/view-login.html',
 		    controller: 'loginCtrl'
 		})
-        .state("view-ParentGallery", {
-            url: "/view-ParentGallery",
-            templateUrl: "app/templates/view-ParentGallery.html",
-            controller: "ParentGalleryCtrl"
+
+
+            .state("EmployeeDaycareAttendance", {
+                url: "/EmployeeDaycareAttendance",
+                templateUrl: "app/templates/view-employeeDaycareAttendance.html",
+                controller: "employeeDaycareAttendenceCtrl"
+            })
+            .state("NextEmployeeDaycareAttendanceScreen", {
+                url: "/NextEmployeeDaycareAttendanceScreen",
+                params: {
+                    BatchId: '',
+                    CourseId: '',
+                    Date: '',
+                    ChoiceId:'',
+                    Time:''
+                },
+                templateUrl: "app/templates/view-employeeNextDaycareAttendance.html",
+                controller: "nextEmployeeDaycareAttendanceCtrl"
+            })
+
+        .state("view-trackEmployee", {
+            url: "/view-trackEmployee",
+            templateUrl: "app/templates/view-trackInEmployee.html",
+            controller: "TrackInEmployeeCtrl"
         })
-        .state("view-EmployeeDairy", {
-            url: "/view-EmployeeDairy",
-            templateUrl: "app/templates/view-EmployeeDairy.html",
-            controller: "EmployeeDairyCtrl"
+
+         .state("ParentDiaryReport", {
+             url: "/ParentDiaryReport",
+             templateUrl: "app/templates/view-parent-diaryReport.html",
+             controller: "parentDiaryReportCtrl"
+         })
+        .state("EmployeeDiaryReport", {
+            url: "/EmployeeDiaryReport",
+            templateUrl: "app/templates/view-employee-diaryReport.html",
+            controller: "employeeDiaryReportCtrl"
         })
-        .state("NextEmployeeDairy", {
-            url: "/NextEmployeeDairy",
+        .state("NextEmployeeDiaryReport", {
+            url: "/NextEmployeeDiaryReport",
             params: {
                 BatchId: '',
                 CourseId: '',
-                DairyDetails: '',
                 Date: ''
             },
-            templateUrl: "app/templates/view-NextEmployeeDairy.html",
-            controller: "nextEmployeeDairyCtrl"
+            templateUrl: "app/templates/view-employee-nextDiaryReport.html",
+            controller: "nextEmployeeDiaryReportCtrl"
         })
-            .state("view-ParentDairy", {
-                url: "/view-ParentDairy",
-                templateUrl: "app/templates/view-ParentDairy.html",
-                controller: "ParentDairyCtrl"
-            })
+
 		.state('app.setting', {
 		    url: '/setting',
 		    templateUrl: 'app/templates/view-setting.html',
@@ -265,6 +286,7 @@
             templateUrl: "app/templates/view-parent-gallery-grid.html",
             controller: "ParentGalleryGridCtrl"
         })
+        //Student
 		.state("Attendance", {
 		    url: "/Attendance",
 		    templateUrl: "app/templates/Attendance.html",
@@ -314,11 +336,6 @@
 		    templateUrl: "app/templates/EnquiryForm.html",
 		    controller: "enquiryFormCtrl"
 		})
-        //.state("NextEnquiryForm", {
-		//    url: "/NextEnquiryForm",
-		//    templateUrl: "app/templates/NextEnquiryForm.html",
-		//    controller: "nextEnquiryFormCtrl"
-		//})
 		.state("view-trackstudent", {
 		    url: "/view-trackstudent",
 		    templateUrl: "app/templates/view-trackstudent.html",
