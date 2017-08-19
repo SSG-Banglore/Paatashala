@@ -9,36 +9,36 @@
             <input type="text" ng-model="data.searchText" ng-change="searchTextChanged()" placeholder="Search">
         </label>
         <div class="list">
-            <label class="item item-input item-select">
-                <div class="input-label">
-                    Mark All As
-                </div>
-                <select ng-model="dropdown.value" ng-change="dropvalueChange()" ng-init="dropdown.value='-1'">
-                    <option value="-1" selected>--Select--</option>
-                    <option value="1">Present</option>
-                    <option value="0">Absent</option>
-                </select>
-            </label>
-        </div>
-        <br />
-        <ul class="list" collection-repeat="i in StudentsList">
-            <li class="item item-toggle">
-                {{i.StudentName}}
-                <label class="toggle toggle-positive">
-                    <input type="checkbox" ng-model="i.isPresent">
-                    <div class="track">
-                        <div class="handle"></div>
-                    </div>
-                </label>
-            </li>
-        </ul>
-        <br />
-            <div class="row">
-                <label>Time:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="time" ng-model="time1.value" placeholder="HH:mm" />
+            <div class="item item-divider">
+                Student Name
+                <span class="item-note">
+                    Check In &nbsp; Check Out
+                </span>
             </div>
-        <button class="button button-block button-positive" ng-click="SubmittingAttendance()">
-            Submit
+            <div class="item item-text-wrap" collection-repeat="i in StudentsList">
+                {{i.StudentName}}
+                <span class="item-note">
+                    <button class="button button-small" 
+                            ng-class="{'button-positive': i.CheckInTime != 'NOT SET', 'button-stable': i.CheckInTime != 'NOT SET' }" 
+                            ng-click="getCheckInTime(i)">
+                        {{i.CheckInTime}}
+                    </button>
+                    <button class="button button-small" 
+                            ng-class="{'button-positive': i.CheckOutTime != 'NOT SET', 'button-stable': i.CheckOutTime != 'NOT SET' }" 
+                            ng-click="getCheckOutTime(i)">
+                        {{i.CheckOutTime}}
+                    </button>
+                </span>
+            </div>
+        </div>
+        <button class="button button-block button-positive" ng-click="SaveAttendance()">
+            Save Attendance
         </button>
+        <br/>
     </ion-content>
 </ion-view>
+<style>
+    .button-small{
+        width:51pt;
+    }
+</style>

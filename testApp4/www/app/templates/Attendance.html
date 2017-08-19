@@ -7,12 +7,10 @@
         <a class="button icon-left ion-chevron-left button-clear button-dark" href="#/templates/view-parent-home.html"></a>
         <h1 class="title"><strong> BarCode Scanner </strong></h1>
     </div>
-    <ion-content class="padding" style="margin-top: 52px;">
+    <ion-content class="padding">
         <form name="BarCodeForm">
-            <!--<button id="scan" ng-click="scanBarCode()" style="width:100px; height: 30px;">Scan</button>
-            <button id="scan" ng-click="add()" style="width:100px; height: 30px;">Add</button>-->
             <button class="button button-block button-positive" ng-click="scanBarCode()">
-                Scan
+                Scan Student ID
             </button>
             <div class="card">
                 <div class="item item-divider">
@@ -33,10 +31,9 @@
             <ion-list>
                 <ion-radio ng-model="data.choice" name="PickDropRadio" ng-value="true">Check-In</ion-radio>
                 <ion-radio ng-model="data.choice" name="PickDropRadio" ng-value="false" ng-required="!(data.choice)">Check-Out</ion-radio>
-                <span style="color:red" ng-show="BarCodeForm.PickDropRadio.$error.required">You have to choose pick up or drop</span>
             </ion-list>
-            <button class="button button-block button-positive" ng-disabled="BarCodeForm.$invalid" ng-click="sendStudentsTimings()">
-                Submit Student List
+            <button class="button button-block button-positive" ng-disabled="data.choice == undefined || scannedStudents.Name.length == 0" ng-click="sendStudentsTimings()">
+                Save Attendance
             </button>
         </form>
     </ion-content>

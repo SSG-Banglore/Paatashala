@@ -188,5 +188,13 @@
         },
         "is_top_level": false,
         "variables": {}
+    },
+    "cordova-plugin-datetimepicker": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-datetimepicker"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

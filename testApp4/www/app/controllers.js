@@ -395,7 +395,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	            $scope.locationData = data;
 	            $scope.map.setCenter(new google.maps.LatLng(data.Latitude, data.Longitude));
 	            $scope.time.refreshMessage = "Last updated on " + new Date().toLocaleTimeString();
-	            
+
 	            if (marker) {
 	                marker.setMap(null);
 	            }
@@ -599,7 +599,6 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
                 "Icon": "trackstudent.png"
             }
 	    ];
-	    debugger;
 	    $scope.user = JSON.parse(localStorage["LoginUser"]);
 	    //if ($scope.user.Role != "Admin") {
 	    //    $scope.Pages = $scope.Pages.filter(function (e) {
@@ -615,12 +614,10 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        }
 	        $scope.grid.push(row);
 	    }
-	    debugger;
 	    document.addEventListener("deviceready", function () {
 	        $cordovaAppVersion.getVersionNumber().then(function (version) {
 	            localStorage['AppCurrentVersion'] = version;
 	            $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
-	                debugger;
 	                $scope.NewVersionData = data;
 	                $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
 	                console.log(data);
@@ -776,8 +773,8 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	        ionicDatePicker.openDatePicker(ipObj1);
 	    };
 	    $scope.GiveAttendanceList = function () {
-	      	        debugger;
-      	        $state.go('NextEmployeeAttendanceScreen', {
+	        debugger;
+	        $state.go('NextEmployeeAttendanceScreen', {
 	            BatchId: $scope.selected.Batch,
 	            CourseId: $scope.selected.Course,
 	            Date: $scope.date
@@ -785,88 +782,84 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    };
 	}
 	])
-    .controller("nextEmployeeDaycareAttendanceCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
-            debugger;
-            $scope.dropdownValues = [{
-                Name: 'Present',
-                Id: true
-            }, {
-                Name: 'Absent',
-                Id: false
-            }
-            ]
-            
-	    $scope.time1 = { value: new Date()};
-	   
-            $scope.dropdown = {};
-            $scope.data = {};
-            $scope.BackupStudentsList = {};
-            $scope.user = $CustomLS.getObject('LoginUser');
-            $scope.BatchId = $stateParams.BatchId;
-            $scope.CourseId = $stateParams.CourseId;
-            $scope.Date = $stateParams.Date;
-            $scope.ChoiceId = $stateParams.ChoiceId;
-            $http.post(host + '/Attandance/getStudentsBasedOnFiler', {
-                BatchId: $scope.BatchId,
-                CourseId: $scope.CourseId,
-                OrgId: $scope.user.OrgId,
-                AttendanceDate: $scope.Date
-            }).success(function (data) {
-                debugger;
-                $scope.StudentsList = {};
-                $scope.BackupStudentsList = $scope.StudentsList = data;
-            });
-            $scope.dropvalueChange = function () {
-                console.log($scope.dropdown.value);
-                debugger;
-                if ($scope.dropdown.value != "-1") {
-                    $scope.StudentsList.forEach(function (e, i) {
-                        e.isPresent = $scope.dropdown.value == "0" ? false : true;
-                        $scope.BackupStudentsList.filter(function (e2) {
-                            return e2.Id == e.Id;
-                        })[0].isPresent = e.isPresent;
-                    });
-                }
-            };
-            $scope.searchTextChanged = function () {
-                $scope.StudentsList = $scope.BackupStudentsList.filter(function (e) {
-                    return e.StudentName.toUpperCase().indexOf($scope.data.searchText.toUpperCase()) != -1;
-                });
-            }
-            $scope.SubmittingAttendance = function () {
-                debugger;
-                $scope.StudentsList;
-                $http.post(host + '/Attandance/saveDailyStudentAttendance', {
-                    DailyAttendanceObj: $scope.StudentsList,
-                    dateAttendance: $scope.Date,
-                    OrgId: $scope.user.OrgId
-                }).success(function (data) {
-                    debugger;
-                    if (data.status) {
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'Success',
-                            template: 'Saved Successfully!'
-                        });
-                    } else {
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'Failed',
-                            template: 'Error Occured!'
-                        });
-                    }
-                });
-            };
+    .controller("nextEmployeeDaycareAttendanceCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", "$ionicLoading", "$cordovaToast", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup, $ionicLoading, $cordovaToast) {
 
+        $scope.StudentsList = [];
+        var getTime = function (time, callback) {
+            if (time == 'NOT SET' || !time) {
+                time = new Date();
+            }
+            else {
+                time = new Date('01/01/2001 ' + time);
+            }
+            datePicker.show({
+                date: time,
+                mode: 'time'
+            }, function (date) {
+                var time = ((date.getHours() % 12 < 10 ? '0' : '') + date.getHours() % 12) + ':' + ((date.getMinutes() < 10 ? '0' : '') + date.getMinutes()) + ' ' + (date.getHours() % 12 == 0 ? 'AM' : 'PM');
+                callback(time);
+            });
+        };
+        $scope.getCheckInTime = function (i) {
+            getTime(i.CheckInTime, function (time) {
+                i.CheckInTime = time;
+                $scope.$apply();
+            });
+        };
+        $scope.getCheckOutTime = function (i) {
+            getTime(i.CheckOutTime, function (time) {
+                i.CheckOutTime = time;
+                $scope.$apply();
+            });
+        };
+
+        $scope.data = {};
+        $scope.BackupStudentsList = {};
+        $scope.user = $CustomLS.getObject('LoginUser');
+        $scope.BatchId = $stateParams.BatchId;
+        $scope.CourseId = $stateParams.CourseId;
+        debugger;
+        $scope.Date = $stateParams.Date;
+        $scope.ChoiceId = $stateParams.ChoiceId;
+
+        $ionicLoading.show({ template: 'Loading students...', duration: 10000 });
+        $http.post(host + '/Attandance/GetStudentsAttendance', {
+            BatchId: $scope.BatchId,
+            CourseId: $scope.CourseId,
+            OrgId: $scope.user.OrgId,
+            AttendanceDate: (($scope.Date.getYear() + 1900) + '/' + ($scope.Date.getMonth() + 1) + '/' + $scope.Date.getDate())
+        }).success(function (data) {
+            $ionicLoading.hide();
+            $scope.BackupStudentsList = $scope.StudentsList = data;
+        });
+        $scope.searchTextChanged = function () {
+            $scope.StudentsList = $scope.BackupStudentsList.filter(function (e) {
+                return e.StudentName.toUpperCase().indexOf($scope.data.searchText.toUpperCase()) != -1;
+            });
         }
-        ])
+
+        $scope.SaveAttendance = function () {
+            $ionicLoading.show({ template: 'Saving attendance...', duration: 10000 });
+            $http.post(host + '/Attandance/SaveDailyStudentAttendanceByTime',
+            {
+                attendanceData: $scope.BackupStudentsList,
+                dateAttendance: (($scope.Date.getYear() + 1900) + '/' + ($scope.Date.getMonth() + 1) + '/' + $scope.Date.getDate()),
+                OrgId: $scope.user.OrgId
+            }).success(function (data) {
+                console.log("Saving attendance", data);
+                $ionicLoading.hide();
+                $cordovaToast.showShortCenter(data);
+            });
+        };
+    }
+    ])
 	.controller("employeeDaycareAttendenceCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
 
 	    $scope.selected = {}
 	    $scope.user = $CustomLS.getObject('LoginUser');
-	    debugger;
 	    $http.post(host + '/Attandance/getBatchAndCourse', {
 	        OrgId: $scope.user.OrgId
 	    }).success(function (data) {
-	        debugger;
 	        $scope.Batchlist = data.Batches;
 	        $scope.CourseList = data.Courses;
 	    });
@@ -892,7 +885,6 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    };
 
 	    $scope.GiveAttendanceList = function () {
-	        debugger;
 	        $state.go('NextEmployeeDaycareAttendanceScreen', {
 	            BatchId: $scope.selected.Batch,
 	            CourseId: $scope.selected.Course,
@@ -1765,7 +1757,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    };
 	}
 	])
-	.controller("AttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
+	.controller("AttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", "$cordovaToast", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup, $cordovaToast) {
 	    $scope.user = $CustomLS.getObject('LoginUser');
 	    $scope.studentsList = [];
 	    $http.post(host + '/Attandance/getStudentsList', {
@@ -1784,24 +1776,32 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    }
 
 	    $scope.DeleteCurrentRow = function (index) {
-
-	        $scope.scannedStudents.Name.splice(index, 1);
+	        debugger;
+	        var removedName = $scope.scannedStudents.Name.splice(index, 1);
 	        $scope.scannedStudents.Id.splice(index, 1);
+	        $scope.scannedStudents.StudentId.splice(index, 1);
+	        $cordovaToast.showShortCenter(removedName + ' removed.');
 	    }
 	    $scope.scanBarCode = function () {
 	        $cordovaBarcodeScanner.scan().then(function (imageData) {
 	            var Id = imageData.text;
+	            var found = false;
 	            $scope.studentsList.forEach(function (value, index) {
 	                if (value.StudentId == Id) {
+	                    found = true;
 	                    $scope.scannedStudents.Name.push(value.Name)
 	                    $scope.scannedStudents.Id.push(value.Id)
 	                    $scope.scannedStudents.StudentId.push(value.StudentId)
+	                    $cordovaToast.showShortCenter('Student scanned successfully.');
 	                }
-	            })
+	            });
+	            if (!found)
+	                $cordovaToast.showShortCenter('Invalid Student ID!');
 	            localStorage.setItem(JSON.stringify($scope.scannedStudents.Name), JSON.stringify($scope.scannedStudents.Id));
 
 	        }, function (error) {
 	            console.log("An error happened -> " + error);
+	            $cordovaToast.showLongCenter("An error happened -> " + error);
 	        });
 	    }
 	    $scope.sendStudentsTimings = function () {
@@ -1994,7 +1994,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
             $http.post(host + '/Diary/AddNewDiary', {
                 DailyAttendanceObj: $scope.StudentsList,
                 dateAttendance: $scope.Date,
-                Comments:$scope.comments,
+                Comments: $scope.comments,
                 OrgId: $scope.user.OrgId
             }).success(function (data) {
                 debugger;
@@ -2018,183 +2018,183 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
     }
     ])
     .controller("TrackInEmployeeCtrl", ["$scope", "$state", "$http", "$cordovaGeolocation", "$interval", "$CustomLS", function ($scope, $state, $http, $cordovaGeolocation, $interval, $CustomLS) {
-         $scope.map = {};
-         $scope.time = {
-             timeToRefresh: 1000,
-             refreshMessage: 'Please select the Route Code!',
-             refreshInterval: 10000
-         };
-         debugger;
-         $scope.Routes = [];
-         $scope.data = {
-         };
-         debugger;
-         $scope.user = $CustomLS.getObject('LoginUser');
-         $http.post(host + '/GeoLocation/GetRouteCode', {
-             'OrgId': $scope.user.OrgId
-         }).success(function (data) {
-             debugger;
-             $scope.RouteCode = data;
-         });
-         $scope.routeChanged = function () {
-             $scope.time.refreshMessage = "";
-             $scope.getRouteLocation();
-         };
-         $scope.getRouteLocation = function () {
-             $http.get(host + 'GeoLocation/ShowLocation?OrgId=' + localStorage['selectedStudentOrgId'] + '&Routecode=' + $scope.selected.Route).success(function (data) { //localStorage['selectedStudentOrgId']+, { OrgId: localStorage['selectedStudentOrgId'], Routecode: $scope.selected.Route }
-                 $scope.locationData = data;
-                 $scope.map.setCenter(new google.maps.LatLng(data.Latitude, data.Longitude));
+        $scope.map = {};
+        $scope.time = {
+            timeToRefresh: 1000,
+            refreshMessage: 'Please select the Route Code!',
+            refreshInterval: 10000
+        };
+        debugger;
+        $scope.Routes = [];
+        $scope.data = {
+        };
+        debugger;
+        $scope.user = $CustomLS.getObject('LoginUser');
+        $http.post(host + '/GeoLocation/GetRouteCode', {
+            'OrgId': $scope.user.OrgId
+        }).success(function (data) {
+            debugger;
+            $scope.RouteCode = data;
+        });
+        $scope.routeChanged = function () {
+            $scope.time.refreshMessage = "";
+            $scope.getRouteLocation();
+        };
+        $scope.getRouteLocation = function () {
+            $http.get(host + 'GeoLocation/ShowLocation?OrgId=' + localStorage['selectedStudentOrgId'] + '&Routecode=' + $scope.selected.Route).success(function (data) { //localStorage['selectedStudentOrgId']+, { OrgId: localStorage['selectedStudentOrgId'], Routecode: $scope.selected.Route }
+                $scope.locationData = data;
+                $scope.map.setCenter(new google.maps.LatLng(data.Latitude, data.Longitude));
 
-                 var marker = new google.maps.Marker({
-                     position: new google.maps.LatLng(data.Latitude, data.Longitude),
-                     map: $scope.map,
-                     title: 'Route No: ' + $scope.selected.Route
-                 });
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(data.Latitude, data.Longitude),
+                    map: $scope.map,
+                    title: 'Route No: ' + $scope.selected.Route
+                });
 
-                 google.maps.event.addListener(marker, 'click', function () {
-                     infowindow.open($scope.map, marker);
-                 });
+                google.maps.event.addListener(marker, 'click', function () {
+                    infowindow.open($scope.map, marker);
+                });
 
-             }).error(function (err) {
-                 $ionicLoading.hide();
-                 alert("Error Getting Location")
-             });
-         };
+            }).error(function (err) {
+                $ionicLoading.hide();
+                alert("Error Getting Location")
+            });
+        };
 
-         var mapOptions = {
-             center: new google.maps.LatLng(43.07493, -89.381388),
-             zoom: 15,
-             mapTypeId: google.maps.MapTypeId.ROADMAP
-         };
+        var mapOptions = {
+            center: new google.maps.LatLng(43.07493, -89.381388),
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
 
-         $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-         var timer;
-         if (!timer) {
-             timer = setInterval(function () {
-                 if ($scope.time.timeToRefresh >= $scope.time.refreshInterval) {
-                     $scope.time.timeToRefresh = 0;
-                     if ($scope.selected.Route) {
-                         $scope.getRouteLocation();
-                     }
-                     console.log($scope.time.timeToRefresh);
-                 }
-                 $scope.time.timeToRefresh += $scope.time.refreshInterval;
-                 $scope.$apply();
-             }, $scope.time.refreshInterval);
-         }
-     }
-     ])
+        $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        var timer;
+        if (!timer) {
+            timer = setInterval(function () {
+                if ($scope.time.timeToRefresh >= $scope.time.refreshInterval) {
+                    $scope.time.timeToRefresh = 0;
+                    if ($scope.selected.Route) {
+                        $scope.getRouteLocation();
+                    }
+                    console.log($scope.time.timeToRefresh);
+                }
+                $scope.time.timeToRefresh += $scope.time.refreshInterval;
+                $scope.$apply();
+            }, $scope.time.refreshInterval);
+        }
+    }
+    ])
     .controller("TransportCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
-	    $scope.user = $CustomLS.getObject('LoginUser');
-	    $scope.RouteCode = [];
-	    $scope.selected = {};
-	    $scope.studentsList = [];
-	    $http.post(host + '/Attandance/getStudentsList', {
-	        'OrgId': $scope.user.OrgId
-	    }).then(function (res) {
-	        console.log(res);
-	        $scope.studentsList = res.data.AdmStudents;
-	    })
-	    $http.post(host + '/GeoLocation/GetRouteCode', {
-	        'OrgId': $scope.user.OrgId
-	    }).success(function (data) {
-	        $scope.RouteCode = data;
-	    })
-	    $scope.scannedStudents = {
-	        Id: [],
-	        Name: [],
-	        StudentId: []
-	    }
-	    $scope.data = {
-	    }
+        $scope.user = $CustomLS.getObject('LoginUser');
+        $scope.RouteCode = [];
+        $scope.selected = {};
+        $scope.studentsList = [];
+        $http.post(host + '/Attandance/getStudentsList', {
+            'OrgId': $scope.user.OrgId
+        }).then(function (res) {
+            console.log(res);
+            $scope.studentsList = res.data.AdmStudents;
+        })
+        $http.post(host + '/GeoLocation/GetRouteCode', {
+            'OrgId': $scope.user.OrgId
+        }).success(function (data) {
+            $scope.RouteCode = data;
+        })
+        $scope.scannedStudents = {
+            Id: [],
+            Name: [],
+            StudentId: []
+        }
+        $scope.data = {
+        }
 
-	    $scope.DeleteCurrentRow = function (index) {
+        $scope.DeleteCurrentRow = function (index) {
 
-	        $scope.scannedStudents.Name.splice(index, 1);
-	        $scope.scannedStudents.Id.splice(index, 1);
-	    }
-	    $scope.scanBarCode = function () {
-	        $cordovaBarcodeScanner.scan().then(function (imageData) {
-	            var Id = imageData.text;
-	            $scope.studentsList.forEach(function (value, index) {
-	                if (value.StudentId == Id) {
-	                    $scope.scannedStudents.Name.push(value.Name)
-	                    $scope.scannedStudents.Id.push(value.Id)
-	                    $scope.scannedStudents.StudentId.push(value.StudentId)
-	                }
-	            })
-	            localStorage.setItem(JSON.stringify($scope.scannedStudents.Name), JSON.stringify($scope.scannedStudents.Id));
+            $scope.scannedStudents.Name.splice(index, 1);
+            $scope.scannedStudents.Id.splice(index, 1);
+        }
+        $scope.scanBarCode = function () {
+            $cordovaBarcodeScanner.scan().then(function (imageData) {
+                var Id = imageData.text;
+                $scope.studentsList.forEach(function (value, index) {
+                    if (value.StudentId == Id) {
+                        $scope.scannedStudents.Name.push(value.Name)
+                        $scope.scannedStudents.Id.push(value.Id)
+                        $scope.scannedStudents.StudentId.push(value.StudentId)
+                    }
+                })
+                localStorage.setItem(JSON.stringify($scope.scannedStudents.Name), JSON.stringify($scope.scannedStudents.Id));
 
-	        }, function (error) {
-	            console.log("An error happened -> " + error);
-	        });
-	    }
-	    $scope.sendStudentsTimings = function () {
-	        debugger;
-	        //if (!$scope.selected.Route) {
-	        //    alert("Please select the Route Code!");
-	        //    return;
-	        //}
-	        var pick = $scope.data.choice;
-	        var Position = $scope.data.postion;
-	        var jsonObj1 = $scope.scannedStudents.Id;
-	        var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedStudents.Name)).replace(']', '').replace('[', '');
-	        $scope.date = new Date();
-	        var jsonObj2 = JSON.stringify($scope.date);
-	        $http.post(host + '/Attandance/SaveTransport?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + $scope.date + '&IsPickUp=' + pick + '&Position=' + Position).success(function (data) {
-	            debugger;
-	            if (data.status) {
-	                var alertPopup = $ionicPopup.alert({
-	                    title: 'Success',
-	                    template: 'Saved Successfully!'
-	                });
-	                $state.go('barCodeScanner');
-	                $scope.scannedStudents = {
-	                };
-	            } else {
-	                var alertPopup = $ionicPopup.alert({
-	                    title: 'Failed',
-	                    template: 'Error Occured!'
-	                });
-	            }
-	        });
+            }, function (error) {
+                console.log("An error happened -> " + error);
+            });
+        }
+        $scope.sendStudentsTimings = function () {
+            debugger;
+            //if (!$scope.selected.Route) {
+            //    alert("Please select the Route Code!");
+            //    return;
+            //}
+            var pick = $scope.data.choice;
+            var Position = $scope.data.postion;
+            var jsonObj1 = $scope.scannedStudents.Id;
+            var jasonobj4 = localStorage.getItem(JSON.stringify($scope.scannedStudents.Name)).replace(']', '').replace('[', '');
+            $scope.date = new Date();
+            var jsonObj2 = JSON.stringify($scope.date);
+            $http.post(host + '/Attandance/SaveTransport?OrgId=' + $scope.user.OrgId + '&StudentId=' + jasonobj4 + '&scanDateTime=' + $scope.date + '&IsPickUp=' + pick + '&Position=' + Position).success(function (data) {
+                debugger;
+                if (data.status) {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Success',
+                        template: 'Saved Successfully!'
+                    });
+                    $state.go('barCodeScanner');
+                    $scope.scannedStudents = {
+                    };
+                } else {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Failed',
+                        template: 'Error Occured!'
+                    });
+                }
+            });
 
-	        //var callbackFn = function (location) {
-	        //    $http.get(host + 'GeoLocation/UpdateRouteLocation?RouteCode=' + $scope.selected.Route + '&OrgId=' + $scope.user.OrgId + '&Lattitude=' + location.latitude + '&Longitude=' + location.longitude)
-	        //        .success(function (data) {
-	        //            alert('location updated');
-	        //        }).error(function () {
-	        //            alert('error updating location');
-	        //        });
+            //var callbackFn = function (location) {
+            //    $http.get(host + 'GeoLocation/UpdateRouteLocation?RouteCode=' + $scope.selected.Route + '&OrgId=' + $scope.user.OrgId + '&Lattitude=' + location.latitude + '&Longitude=' + location.longitude)
+            //        .success(function (data) {
+            //            alert('location updated');
+            //        }).error(function () {
+            //            alert('error updating location');
+            //        });
 
-	        //    //alert('Location:' + location.latitude + ',' + location.longitude);
-	        //    backgroundGeolocation.finish();
-	        //};
+            //    //alert('Location:' + location.latitude + ',' + location.longitude);
+            //    backgroundGeolocation.finish();
+            //};
 
-	        //var failureFn = function (error) {
-	        //    alert('BackgroundGeolocation error');
-	        //};
+            //var failureFn = function (error) {
+            //    alert('BackgroundGeolocation error');
+            //};
 
-	        //backgroundGeolocation.configure(callbackFn, failureFn, {
-	        //    desiredAccuracy: 100,
-	        //    stationaryRadius: 20,
-	        //    distanceFilter: 30,
-	        //    interval: 5000,
-	        //    //debug: true,
-	        //    //startOnBoot: true,
-	        //    //stopOnTerminate: false
-	        //});
+            //backgroundGeolocation.configure(callbackFn, failureFn, {
+            //    desiredAccuracy: 100,
+            //    stationaryRadius: 20,
+            //    distanceFilter: 30,
+            //    interval: 5000,
+            //    //debug: true,
+            //    //startOnBoot: true,
+            //    //stopOnTerminate: false
+            //});
 
-	        //if (pick) {
-	        //    backgroundGeolocation.start();
-	        //}
-	        //else {
-	        //    backgroundGeolocation.stop();
-	        //}
-	    }
+            //if (pick) {
+            //    backgroundGeolocation.start();
+            //}
+            //else {
+            //    backgroundGeolocation.stop();
+            //}
+        }
 
-	}
-	])
+    }
+    ])
 	.controller('debugCtrl', ['$scope', function ($scope) {
 	    $scope.localstorageItems = [];
 	    for (var key in localStorage) {
