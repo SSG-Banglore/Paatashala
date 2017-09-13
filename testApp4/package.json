@@ -20,7 +20,14 @@
         "cordova-plugin-whitelist": "1",
         "phonegap-plugin-barcodescanner": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git",
         "pushbots-cordova-plugin": "1.4.3",
-        "cordova-plugin-file-transfer": "1.6.3"
+        "cordova-plugin-file-transfer": "1.6.3",
+        "com-sarriaroman-photoviewer": "1.1.10",
+        "cordova-background-geolocation-lt": "2.7.6",
+        "cordova-plugin-background-fetch": "4.0.4",
+        "cordova-plugin-datetimepicker": "1.0.0",
+        "cordova-plugin-imagepicker": "1.1.0",
+        "cordova-plugin-x-toast": "https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin",
+        "es.keensoft.fullscreenimage": "1.0.1"
     },
     "cordova": {
         "plugins": {
@@ -45,7 +52,18 @@
             "cordova-plugin-whitelist": {},
             "phonegap-plugin-barcodescanner": {},
             "pushbots-cordova-plugin": {},
-            "cordova-plugin-file-transfer": {}
+            "cordova-plugin-file-transfer": {},
+            "com-sarriaroman-photoviewer": {},
+            "cordova-background-geolocation-lt": {
+                "LOCATION_ALWAYS_USAGE_DESCRIPTION": "Background location-tracking is required",
+                "LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION": "Background location-tracking is required",
+                "MOTION_USAGE_DESCRIPTION": "Using the accelerometer increases battery-efficiency"
+            },
+            "cordova-plugin-background-fetch": {},
+            "cordova-plugin-datetimepicker": {},
+            "cordova-plugin-imagepicker": {},
+            "cordova-plugin-x-toast": {},
+            "es.keensoft.fullscreenimage": {}
         }
     }
 }

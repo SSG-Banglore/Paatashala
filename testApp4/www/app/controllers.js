@@ -1,10 +1,10 @@
-﻿//14-08-2017
-var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+﻿//09-09-2017
+//var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 //var host = "http://192.168.31.100/SampleAPI/";
 //var host = "http://192.168.43.164/SampleAPI/";
 //var host = "http://192.168.1.43/SampleAPI/";
 //var host = "http://192.168.1.34/SampleAPI/";
-//var host = 'http://192.168.31.100:4261/';
+//var host = "http://192.168.1.25/SampleAPI";
 (function () {
     "use strict";
     angular.module("myapp.controllers", ['ionic-datepicker', 'tabSlideBox'])
@@ -543,43 +543,56 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	.controller("employeeHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
 	    $scope.Pages = [
             {
-                "Name": "Transport",
-                "Href": "#/Transport",
+                "Name": "Transport Attendance  (BC)",
+                "Href": "#/TransportBarcodeAttendance",
                 "Icon": "transport.png"
             }, {
-                "Name": "Attendance",
-                "Href": "#/Attendance",
+                "Name": " Student Attendance  (BC)",
+                "Href": "#/StudentBarcodeAttendance",
                 "Icon": "attendance.png"
             }, {
-                "Name": "Employee Attendance",
+                "Name": "Employee Attendance  (BC)",
                 "Href": "#/EmployeeBarcodeAttendance",
                 "Icon": "emp-attendance.png"
-            }, {
-                "Name": "Geo Location",
-                "Href": "#/Geolocation",
-                "Icon": "trackstudent.png"
-            }, {
-                "Name": "Holidays",
-                "Href": "#/Employeeholidays",
-                "Icon": "holiday.png"
-            }, {
-                "Name": "Personal Details",
-                "Href": "#/EmployeeProfile",
-                "Icon": "man.png"
-            }, {
-                "Name": "Student Attendance Entry",
-                "Href": "#/EmployeeAttendance",
-                "Icon": "student.png"
             }, {
                 "Name": "Gallery",
                 "Href": "#/EmployeeGallery",
                 "Icon": "gallery.png"
             },
             {
-                "Name": "Employee Attendance Entry",
+                "Name": "Geo Location",
+                "Href": "#/Geolocation",
+                "Icon": "trackstudent.png"
+            }, {
+                "Name": "Daycare Attendance",
+                "Href": "#/EmployeeDaycareAttendance",
+                "Icon": "DayCareAttendance.png"
+            },
+            {
+                "Name": "Student Attendance  (M)",
+                "Href": "#/StudentManualAttendance",
+                "Icon": "student.png"
+            },
+             {
+                 "Name": "Transport Attendance  (M)",
+                 "Href": "#/TransportManualAttendance",
+                 "Icon": "TransportManualAttendance.png"
+             },
+            {
+                "Name": "Employee Attendance  (M)",
                 "Href": "#/EmployeeManualAttendance",
                 "Icon": "curriculum.png"
             },
+             {
+                "Name": "Holidays",
+                "Href": "#/Employeeholidays",
+                "Icon": "holiday.png"
+             },
+               {
+                   "Name": "Personal Details",
+                   "Href": "#/EmployeeProfile",
+                   "Icon": "man.png"
+               },
             {
                 "Name": "Enquiry Form",
                 "Href": "#/EnquiryForm",
@@ -588,16 +601,13 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
                 "Name": "Diary Report",
                 "Href": "#/EmployeeDiaryReport",
                 "Icon": "subject.png"
-            }, {
-                "Name": "Daycare Attendance",
-                "Href": "#/EmployeeDaycareAttendance",
-                "Icon": "student.png"
-            },
-            {
-                "Name": "TrackBus",
-                "Href": "#/view-trackEmployee",
-                "Icon": "trackstudent.png"
             }
+            //{
+            //    "Name": "TrackBus",
+            //    "Href": "#/view-trackEmployee",
+            //    "Icon": "trackstudent.png"
+            //},
+           
 	    ];
 	    $scope.user = JSON.parse(localStorage["LoginUser"]);
 	    //if ($scope.user.Role != "Admin") {
@@ -644,7 +654,9 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	}
 	])
 	.controller("feeDetailCtrl", ["$scope", "$state", "$http", "$ionicLoading", '$CustomLS', function ($scope, $state, $http, $ionicLoading, $CustomLS) {
+	    debugger;
 	    var studentId = localStorage['selectedStudent'];
+
 	    $scope.student = $CustomLS.getObject('currentStudents').find(function (f) {
 	        return f.Id == studentId
 	    });
@@ -655,6 +667,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    $http.post(host + 'FeeDetail/GetByStudent', {
 	        StudentId: studentId
 	    }).success(function (data) {
+	        debugger;
 	        $scope.feeDetails = data;
 	        $ionicLoading.hide();
 	    });
@@ -671,7 +684,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 
 	}
 	])
-	.controller("nextEmployeeAttendanceCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
+	.controller("StudentManualAttendanceNextPageCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
 	    debugger;
 	    $scope.dropdownValues = [{
 	        Name: 'Present',
@@ -740,7 +753,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 
 	}
 	])
-	.controller("employeeAttendenceCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
+	.controller("StudentManualAttendanceCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
 
 	    $scope.selected = {}
 	    $scope.user = $CustomLS.getObject('LoginUser');
@@ -774,7 +787,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    };
 	    $scope.GiveAttendanceList = function () {
 	        debugger;
-	        $state.go('NextEmployeeAttendanceScreen', {
+	        $state.go('NextStudentManualAttendanceScreen', {
 	            BatchId: $scope.selected.Batch,
 	            CourseId: $scope.selected.Course,
 	            Date: $scope.date
@@ -782,7 +795,123 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    };
 	}
 	])
-    .controller("nextEmployeeDaycareAttendanceCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", "$ionicLoading", "$cordovaToast", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup, $ionicLoading, $cordovaToast) {
+    .controller("transportManualAttendenceCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
+
+        $scope.selected = {}
+        $scope.data={}
+            $scope.user = $CustomLS.getObject('LoginUser');
+            debugger;
+            $http.post(host + '/Attandance/getBatchAndCourse', {
+                OrgId: $scope.user.OrgId
+            }).success(function (data) {
+                debugger;
+                $scope.Batchlist = data.Batches;
+                $scope.CourseList = data.Courses;
+            });
+
+            $scope.date = new Date();
+            $scope.FormattedDate = $scope.date.toLocaleDateString();
+            $scope.setDateTime = function () {
+                var ipObj1 = {
+                    callback: function (val) { //Mandatory
+                        var date = new Date(val);
+                        $scope.date = date;
+                        $scope.FormattedDate = date.toLocaleDateString();
+                    },
+                    inputDate: new Date(),
+                    showTodayButton: true,
+                    to: new Date(), //Optional
+                    inputDate: new Date(), //Optional
+                    mondayFirst: false, //Optional
+                    closeOnSelect: false, //Optional
+                    templateType: 'popup' //Optional
+                };
+                ionicDatePicker.openDatePicker(ipObj1);
+            };
+            $scope.GiveTransportManualAttendanceList = function () {
+                debugger;
+                $state.go('NextTransportManualAttendance', {
+                    BatchId: $scope.selected.Batch,
+                    CourseId: $scope.selected.Course,
+                    Date: $scope.date,
+                    Choice:$scope.data.choice
+                });
+            };
+        }
+    ])
+    .controller("TransportManualAttendanceNextPageCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
+         debugger;
+         $scope.dropdownValues = [{
+             Name: 'Present',
+             Id: true
+         }, {
+             Name: 'Absent',
+             Id: false
+         }
+         ]
+         $scope.dropdown = {};
+         $scope.data={};
+         $scope.BackupStudentsList = {};
+         $scope.user = $CustomLS.getObject('LoginUser');
+         $scope.BatchId = $stateParams.BatchId;
+         $scope.CourseId = $stateParams.CourseId;
+         $scope.Choice = $stateParams.Choice
+         $scope.Date = $stateParams.Date;
+         $http.post(host + '/Attandance/getTransportStudentsBasedOnFiler', {
+             BatchId: $scope.BatchId,
+             CourseId: $scope.CourseId,
+             OrgId: $scope.user.OrgId,
+             AttendanceDate: $scope.Date,
+             Choice: $scope.Choice
+         }).success(function (data) {
+             debugger;
+             $scope.StudentsList = {};
+             $scope.BackupStudentsList = $scope.StudentsList = data;
+         });
+         $scope.dropvalueChange = function () {
+             console.log($scope.dropdown.value);
+             debugger;
+             if ($scope.dropdown.value != "-1") {
+                 $scope.StudentsList.forEach(function (e, i) {
+                     e.isPresent = $scope.dropdown.value == "0" ? false : true;
+                     $scope.BackupStudentsList.filter(function (e2) {
+                         return e2.Id == e.Id;
+                     })[0].isPresent = e.isPresent;
+                 });
+             }
+         };
+         $scope.searchTextChanged = function () {
+             $scope.StudentsList = $scope.BackupStudentsList.filter(function (e) {
+                 return e.StudentName.toUpperCase().indexOf($scope.data.searchText.toUpperCase()) != -1;
+             });
+         }
+         $scope.SubmitTransportManualAttendance = function () {
+             debugger;
+             $scope.StudentsList;
+             $http.post(host + 'Attandance/SaveStudentTransportManualAttendance', {
+                 DailyTransportAttendanceObj: $scope.StudentsList,
+                 dateAttendance: $scope.Date,
+                 OrgId: $scope.user.OrgId,
+                 Choice: $scope.Choice
+             }).success(function (data) {
+                 debugger;
+                 if (data.status) {
+                     var alertPopup = $ionicPopup.alert({
+                         title: 'Success',
+                         template: 'Saved Successfully!'
+                     });
+                 } else {
+                     var alertPopup = $ionicPopup.alert({
+                         title: 'Failed',
+                         template: 'Error Occured!'
+                     });
+                 }
+             });
+         };
+
+     }
+     ])
+    .controller("EmployeeDaycareAttendanceNextPageCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", "$ionicLoading", "$cordovaToast", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup, $ionicLoading, $cordovaToast) {
 
         $scope.StudentsList = [];
         var getTime = function (time, callback) {
@@ -853,7 +982,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
         };
     }
     ])
-	.controller("employeeDaycareAttendenceCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
+	.controller("EmployeeDaycareAttendenceCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
 
 	    $scope.selected = {}
 	    $scope.user = $CustomLS.getObject('LoginUser');
@@ -936,7 +1065,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
         };
     }
     ])
-    .controller("nextEmployeeManualAttendanceCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
+    .controller("EmployeeManualAttendanceNextPageCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
         debugger;
         $scope.dropdownValues = [{
             Name: 'Present',
@@ -1757,7 +1886,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    };
 	}
 	])
-	.controller("AttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", "$cordovaToast", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup, $cordovaToast) {
+	.controller("StudentBarcodeAttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", "$cordovaToast", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup, $cordovaToast) {
 	    $scope.user = $CustomLS.getObject('LoginUser');
 	    $scope.studentsList = [];
 	    $http.post(host + '/Attandance/getStudentsList', {
@@ -1831,7 +1960,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 	    }
 	}
 	])
-    .controller("employeeBarcodeAttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", "$ionicLoading", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup, $ionicLoading) {
+    .controller("EmployeeBarcodeAttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", "$ionicLoading", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup, $ionicLoading) {
         debugger;
         $ionicLoading.show({
             template: 'Loading Attendance...', duration: 3000
@@ -1991,11 +2120,14 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
         $scope.SubmittingDairy = function () {
             debugger;
             $scope.StudentsList;
-            $http.post(host + '/Diary/AddNewDiary', {
-                DailyAttendanceObj: $scope.StudentsList,
+            $http.post(host + 'Diary/AddDailyDiaryReport', {
+                AttendaceObj: $scope.StudentsList,
                 dateAttendance: $scope.Date,
-                Comments: $scope.comments,
-                OrgId: $scope.user.OrgId
+                Comments: $scope.comments.DiaryNote,
+                Title:$scope.comments.DiaryTitle,
+                OrgId: $scope.user.OrgId,
+                BatchId: $scope.BatchId,
+                CourseId:$scope.CourseId
             }).success(function (data) {
                 debugger;
                 if (data.status) {
@@ -2014,7 +2146,25 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 
     }
     ])
-    .controller("parentDiaryReportCtrl", ["$scope", "$state", function ($scope, $state, $http) {
+    .controller("parentDiaryReportCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+        debugger;
+        $scope.currentStudent = $CustomLS.getObject('currentStudents').find(function (ele) {
+            return ele.Id == localStorage['selectedStudent'];
+        });
+         $scope.Diary = [];
+        $http.post(host + 'Diary/GetDiaryReport', {
+            BatchId: $scope.currentStudent.Batch,
+            CourseId: $scope.currentStudent.Course,
+            OrgId: $scope.currentStudent.OrgId,
+            StudentId: $scope.currentStudent.Id
+        }).success(function (data) {
+            debugger
+                if (data.length == 0) {
+                }
+            else
+                    $scope.Diary = data;
+        });
+
     }
     ])
     .controller("TrackInEmployeeCtrl", ["$scope", "$state", "$http", "$cordovaGeolocation", "$interval", "$CustomLS", function ($scope, $state, $http, $cordovaGeolocation, $interval, $CustomLS) {
@@ -2084,7 +2234,7 @@ var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
         }
     }
     ])
-    .controller("TransportCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
+    .controller("TransportBarcodeAttendanceCtrl", ["$scope", "$state", "$http", "$cordovaBarcodeScanner", "$CustomLS", "$ionicPopup", function ($scope, $state, $http, $cordovaBarcodeScanner, $CustomLS, $ionicPopup) {
         $scope.user = $CustomLS.getObject('LoginUser');
         $scope.RouteCode = [];
         $scope.selected = {};
