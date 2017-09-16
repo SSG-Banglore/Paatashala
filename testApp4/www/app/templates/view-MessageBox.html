@@ -14,36 +14,27 @@
         <ion-spinner icon="bubbles" class="spinner-balanced"></ion-spinner>
         <div class="list">
             <a class="item item-icon-left item-text-wrap" ng-click="showMessage(s)" ng-repeat="s in MessageContents">
-                <i class="icon ion-android-mail"></i>
-                <span>{{s.Contents}}</span>
-                <span class="item-note">
-                    {{s.CreatedOn}}
-                </span>
+                <i class="icon ion-android-mail" ng-class="{'ion-arrow-swap': (!!s.Type && s.Type != 'NONE') ,'ion-android-mail': (!s.Type || s.Type == 'NONE') }"></i>
+                <span ng-class="{'new-message': !s.Response && (!!s.Type && s.Type != 'NONE')}">{{s.Contents}}</span>
+                <p>
+                    <span style="color:red;">{{ (!s.Response && (!!s.Type && s.Type != 'NONE')) ? '(New)' : '.'}}</span>
+                    <span class="item-note">
+                        {{s.CreatedOn}}
+                    </span>
+                </p>
             </a>
-            <a class="item item-icon-left item-text-wrap" ng-click="loadMessages()">
+            <a class="item item-icon-left item-text-wrap" ng-hide="data.hide" ng-click="loadMessages()" style="text-align: center;">
                 <span>Load older messages</span>
             </a>
+            <div class="item item-icon-left item-text-wrap" ng-show="data.hide" style="text-align: center;">
+                <span>End of messages</span>
+            </div>
         </div>
     </ion-content>
 </ion-view>
 <!--<link href="../../css/custom-table.css" rel="stylesheet" />-->
 <style>
-    .rwd-table {
-        background: #34495E;
-        color: #fff;
-        border-radius: .4em;
-        overflow: hidden;
+    .new-message {
+        font-weight:bold;
     }
-
-        .rwd-table tr {
-            border-color: gold;
-        }
-
-        .rwd-table th, td {
-            margin: .5em 1em;
-        }
-
-            .rwd-table th, td:before {
-                color: #dd5;
-            }
 </style>

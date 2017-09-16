@@ -1,10 +1,8 @@
-﻿//09-09-2017
-//var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+﻿var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 //var host = "http://192.168.31.100/SampleAPI/";
 //var host = "http://192.168.43.164/SampleAPI/";
-//var host = "http://192.168.1.43/SampleAPI/";
-//var host = "http://192.168.1.34/SampleAPI/";
-//var host = "http://192.168.1.25/SampleAPI";
+//var host = "http://192.168.1.12/SampleAPI/";
+//var host = "http://localhost/SampleAPI/";
 (function () {
     "use strict";
     angular.module("myapp.controllers", ['ionic-datepicker', 'tabSlideBox'])
@@ -584,9 +582,9 @@
                 "Icon": "curriculum.png"
             },
              {
-                "Name": "Holidays",
-                "Href": "#/Employeeholidays",
-                "Icon": "holiday.png"
+                 "Name": "Holidays",
+                 "Href": "#/Employeeholidays",
+                 "Icon": "holiday.png"
              },
                {
                    "Name": "Personal Details",
@@ -607,7 +605,7 @@
             //    "Href": "#/view-trackEmployee",
             //    "Icon": "trackstudent.png"
             //},
-           
+
 	    ];
 	    $scope.user = JSON.parse(localStorage["LoginUser"]);
 	    //if ($scope.user.Role != "Admin") {
@@ -798,119 +796,119 @@
     .controller("transportManualAttendenceCtrl", ["$scope", "$state", "$filter", "$http", "$ionicPopup", "ionicDatePicker", "$ionicHistory", "$ionicLoading", "$CustomLS", function ($scope, $state, $filter, $http, $ionicPopup, ionicDatePicker, $ionicLoading, $ionicHistory, $CustomLS) {
 
         $scope.selected = {}
-        $scope.data={}
-            $scope.user = $CustomLS.getObject('LoginUser');
+        $scope.data = {}
+        $scope.user = $CustomLS.getObject('LoginUser');
+        debugger;
+        $http.post(host + '/Attandance/getBatchAndCourse', {
+            OrgId: $scope.user.OrgId
+        }).success(function (data) {
             debugger;
-            $http.post(host + '/Attandance/getBatchAndCourse', {
-                OrgId: $scope.user.OrgId
-            }).success(function (data) {
-                debugger;
-                $scope.Batchlist = data.Batches;
-                $scope.CourseList = data.Courses;
-            });
+            $scope.Batchlist = data.Batches;
+            $scope.CourseList = data.Courses;
+        });
 
-            $scope.date = new Date();
-            $scope.FormattedDate = $scope.date.toLocaleDateString();
-            $scope.setDateTime = function () {
-                var ipObj1 = {
-                    callback: function (val) { //Mandatory
-                        var date = new Date(val);
-                        $scope.date = date;
-                        $scope.FormattedDate = date.toLocaleDateString();
-                    },
-                    inputDate: new Date(),
-                    showTodayButton: true,
-                    to: new Date(), //Optional
-                    inputDate: new Date(), //Optional
-                    mondayFirst: false, //Optional
-                    closeOnSelect: false, //Optional
-                    templateType: 'popup' //Optional
-                };
-                ionicDatePicker.openDatePicker(ipObj1);
+        $scope.date = new Date();
+        $scope.FormattedDate = $scope.date.toLocaleDateString();
+        $scope.setDateTime = function () {
+            var ipObj1 = {
+                callback: function (val) { //Mandatory
+                    var date = new Date(val);
+                    $scope.date = date;
+                    $scope.FormattedDate = date.toLocaleDateString();
+                },
+                inputDate: new Date(),
+                showTodayButton: true,
+                to: new Date(), //Optional
+                inputDate: new Date(), //Optional
+                mondayFirst: false, //Optional
+                closeOnSelect: false, //Optional
+                templateType: 'popup' //Optional
             };
-            $scope.GiveTransportManualAttendanceList = function () {
-                debugger;
-                $state.go('NextTransportManualAttendance', {
-                    BatchId: $scope.selected.Batch,
-                    CourseId: $scope.selected.Course,
-                    Date: $scope.date,
-                    Choice:$scope.data.choice
-                });
-            };
-        }
+            ionicDatePicker.openDatePicker(ipObj1);
+        };
+        $scope.GiveTransportManualAttendanceList = function () {
+            debugger;
+            $state.go('NextTransportManualAttendance', {
+                BatchId: $scope.selected.Batch,
+                CourseId: $scope.selected.Course,
+                Date: $scope.date,
+                Choice: $scope.data.choice
+            });
+        };
+    }
     ])
     .controller("TransportManualAttendanceNextPageCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup) {
-         debugger;
-         $scope.dropdownValues = [{
-             Name: 'Present',
-             Id: true
-         }, {
-             Name: 'Absent',
-             Id: false
-         }
-         ]
-         $scope.dropdown = {};
-         $scope.data={};
-         $scope.BackupStudentsList = {};
-         $scope.user = $CustomLS.getObject('LoginUser');
-         $scope.BatchId = $stateParams.BatchId;
-         $scope.CourseId = $stateParams.CourseId;
-         $scope.Choice = $stateParams.Choice
-         $scope.Date = $stateParams.Date;
-         $http.post(host + '/Attandance/getTransportStudentsBasedOnFiler', {
-             BatchId: $scope.BatchId,
-             CourseId: $scope.CourseId,
-             OrgId: $scope.user.OrgId,
-             AttendanceDate: $scope.Date,
-             Choice: $scope.Choice
-         }).success(function (data) {
-             debugger;
-             $scope.StudentsList = {};
-             $scope.BackupStudentsList = $scope.StudentsList = data;
-         });
-         $scope.dropvalueChange = function () {
-             console.log($scope.dropdown.value);
-             debugger;
-             if ($scope.dropdown.value != "-1") {
-                 $scope.StudentsList.forEach(function (e, i) {
-                     e.isPresent = $scope.dropdown.value == "0" ? false : true;
-                     $scope.BackupStudentsList.filter(function (e2) {
-                         return e2.Id == e.Id;
-                     })[0].isPresent = e.isPresent;
-                 });
-             }
-         };
-         $scope.searchTextChanged = function () {
-             $scope.StudentsList = $scope.BackupStudentsList.filter(function (e) {
-                 return e.StudentName.toUpperCase().indexOf($scope.data.searchText.toUpperCase()) != -1;
-             });
-         }
-         $scope.SubmitTransportManualAttendance = function () {
-             debugger;
-             $scope.StudentsList;
-             $http.post(host + 'Attandance/SaveStudentTransportManualAttendance', {
-                 DailyTransportAttendanceObj: $scope.StudentsList,
-                 dateAttendance: $scope.Date,
-                 OrgId: $scope.user.OrgId,
-                 Choice: $scope.Choice
-             }).success(function (data) {
-                 debugger;
-                 if (data.status) {
-                     var alertPopup = $ionicPopup.alert({
-                         title: 'Success',
-                         template: 'Saved Successfully!'
-                     });
-                 } else {
-                     var alertPopup = $ionicPopup.alert({
-                         title: 'Failed',
-                         template: 'Error Occured!'
-                     });
-                 }
-             });
-         };
+        debugger;
+        $scope.dropdownValues = [{
+            Name: 'Present',
+            Id: true
+        }, {
+            Name: 'Absent',
+            Id: false
+        }
+        ]
+        $scope.dropdown = {};
+        $scope.data = {};
+        $scope.BackupStudentsList = {};
+        $scope.user = $CustomLS.getObject('LoginUser');
+        $scope.BatchId = $stateParams.BatchId;
+        $scope.CourseId = $stateParams.CourseId;
+        $scope.Choice = $stateParams.Choice
+        $scope.Date = $stateParams.Date;
+        $http.post(host + '/Attandance/getTransportStudentsBasedOnFiler', {
+            BatchId: $scope.BatchId,
+            CourseId: $scope.CourseId,
+            OrgId: $scope.user.OrgId,
+            AttendanceDate: $scope.Date,
+            Choice: $scope.Choice
+        }).success(function (data) {
+            debugger;
+            $scope.StudentsList = {};
+            $scope.BackupStudentsList = $scope.StudentsList = data;
+        });
+        $scope.dropvalueChange = function () {
+            console.log($scope.dropdown.value);
+            debugger;
+            if ($scope.dropdown.value != "-1") {
+                $scope.StudentsList.forEach(function (e, i) {
+                    e.isPresent = $scope.dropdown.value == "0" ? false : true;
+                    $scope.BackupStudentsList.filter(function (e2) {
+                        return e2.Id == e.Id;
+                    })[0].isPresent = e.isPresent;
+                });
+            }
+        };
+        $scope.searchTextChanged = function () {
+            $scope.StudentsList = $scope.BackupStudentsList.filter(function (e) {
+                return e.StudentName.toUpperCase().indexOf($scope.data.searchText.toUpperCase()) != -1;
+            });
+        }
+        $scope.SubmitTransportManualAttendance = function () {
+            debugger;
+            $scope.StudentsList;
+            $http.post(host + 'Attandance/SaveStudentTransportManualAttendance', {
+                DailyTransportAttendanceObj: $scope.StudentsList,
+                dateAttendance: $scope.Date,
+                OrgId: $scope.user.OrgId,
+                Choice: $scope.Choice
+            }).success(function (data) {
+                debugger;
+                if (data.status) {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Success',
+                        template: 'Saved Successfully!'
+                    });
+                } else {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Failed',
+                        template: 'Error Occured!'
+                    });
+                }
+            });
+        };
 
-     }
-     ])
+    }
+    ])
     .controller("EmployeeDaycareAttendanceNextPageCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$ionicPopup", "$ionicLoading", "$cordovaToast", function ($scope, $state, $http, $CustomLS, $stateParams, $ionicPopup, $ionicLoading, $cordovaToast) {
 
         $scope.StudentsList = [];
@@ -1375,9 +1373,10 @@
 	            Count: count
 	        }).success(function (data) {
 	            if (data.length == 0) {
-
+	                $scope.data.hide = true;
 	            }
 	            else {
+	                $scope.data.hide = false;
 	                $scope.MessageContents = $scope.MessageContents.concat(data);
 	                $scope.MessageContents.sort(function (a, b) {
 	                    return new Date(b.CreatedOn) - new Date(a.CreatedOn);
@@ -1397,13 +1396,29 @@
 	    };
 	}
 	])
-    .controller("messageShowCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", function ($scope, $state, $http, $CustomLS, $stateParams) {
+    .controller("messageShowCtrl", ["$scope", "$state", "$http", "$CustomLS", "$stateParams", "$cordovaToast", "$ionicLoading", function ($scope, $state, $http, $CustomLS, $stateParams, $cordovaToast, $ionicLoading) {
         $scope.data = $stateParams.data;
         if (localStorage["Message"]) {
             localStorage["Message"] = "";
         }
-    }
-    ])
+        $scope.data.disabled = !!$scope.data.Response;
+        $scope.submitResponse = function () {
+            if (!$scope.data.Response) {
+                $cordovaToast.showShortCenter('Response can not be empty!');
+            }
+            else {
+                $ionicLoading.show({ template: 'Saving response.', duration: 10000 });
+                $http.post(host + '/MessageBox/SaveMessageBoxResponse', { MessageId: $scope.data.Id, Response: $scope.data.Response }).success(function (data) {
+                    if (data.Status)
+                    {
+                        $scope.data.disabled = true;
+                    }
+                    $cordovaToast.showShortCenter(!data.Message ? 'Unable to save the response!' : data.Message);
+                    $ionicLoading.hide();
+                });
+            }
+        }
+    }])
 	.controller("TimeTableCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
 	    $scope.periodData = {
 	        WeekdayTimeTables: []
@@ -2124,10 +2139,10 @@
                 AttendaceObj: $scope.StudentsList,
                 dateAttendance: $scope.Date,
                 Comments: $scope.comments.DiaryNote,
-                Title:$scope.comments.DiaryTitle,
+                Title: $scope.comments.DiaryTitle,
                 OrgId: $scope.user.OrgId,
                 BatchId: $scope.BatchId,
-                CourseId:$scope.CourseId
+                CourseId: $scope.CourseId
             }).success(function (data) {
                 debugger;
                 if (data.status) {
@@ -2151,7 +2166,7 @@
         $scope.currentStudent = $CustomLS.getObject('currentStudents').find(function (ele) {
             return ele.Id == localStorage['selectedStudent'];
         });
-         $scope.Diary = [];
+        $scope.Diary = [];
         $http.post(host + 'Diary/GetDiaryReport', {
             BatchId: $scope.currentStudent.Batch,
             CourseId: $scope.currentStudent.Course,
@@ -2159,10 +2174,10 @@
             StudentId: $scope.currentStudent.Id
         }).success(function (data) {
             debugger
-                if (data.length == 0) {
-                }
+            if (data.length == 0) {
+            }
             else
-                    $scope.Diary = data;
+                $scope.Diary = data;
         });
 
     }

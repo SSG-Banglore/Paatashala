@@ -118,23 +118,6 @@
             "ALWAYS_USAGE_DESCRIPTION": "Testing"
         }
     },
-    "cordova-plugin-firebase": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-firebase"
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
-    "cordova-plugin-x-toast": {
-        "source": {
-            "type": "git",
-            "url": "https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin",
-            "subdir": "."
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
     "cordova-plugin-imagepicker": {
         "source": {
             "type": "registry",
@@ -209,6 +192,22 @@
         "source": {
             "type": "registry",
             "id": "pushbots-cordova-plugin@1.4.3"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-x-toast": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-x-toast"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-firebase": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-firebase"
         },
         "is_top_level": true,
         "variables": {}
