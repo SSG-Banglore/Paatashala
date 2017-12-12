@@ -1,11 +1,11 @@
 {
      "android": {
-         "release": {
-             "keystore": "",
-             "storePassword": "",
-             "alias": "",
-             "password" : "",
-             "keystoreType": ""
-         }
+      "release": {
+        "keystore": "C:\\ssg-paatashala-key",
+        "storePassword": "9845452933",
+        "alias": "ssg",
+        "password": "9845452933",
+        "keystoreType": ""
+      }
      }
  }

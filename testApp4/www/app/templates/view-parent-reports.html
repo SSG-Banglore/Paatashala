@@ -1,0 +1,27 @@
+﻿<ion-view cache-view="false">
+    <ion-nav-title>
+        <img src="Paatashala.png" style="height:100%;">
+        <div style="vertical-align: top;display:inline">Reports</div>
+    </ion-nav-title>
+    <ion-content>
+        <div class="list">
+            <div class="item item-divider" ng-if="groupedReport && groupedReport.length == 0" style="text-align: center;">
+                No Reports
+            </div>
+            <div ng-repeat="gr in groupedReport">
+                <div class="item item-divider" ng-click="gr.hide = !gr.hide">
+                    {{gr.Date}}
+                </div>
+                <a class="item item-text-wrap item-icon-left" href="http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/Report/getReportEntireDetails?Id=4&OrgId=1" ng-hide="gr.hide" ng-repeat="item in gr.Items">
+                    <i class="icon ion-document-text"></i>
+                    {{item.CategoryName}} ({{item.Type}})
+                    <span class="item-note">
+                        {{item.createdOn | date: "h:mm a"}}
+                    </span>
+                    <p ng-if="item.Type == 'Daily'"><i>{{item.StartTime | date: "MMM dd yyyy"}}</i></p>
+                    <p ng-if="item.Type != 'Daily'">From <em>{{item.StartTime | date: "MMM dd yyyy"}}</em> to <i>{{item.EndTime | date: "MMM dd yyyy"}}</i></p>
+                </a>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

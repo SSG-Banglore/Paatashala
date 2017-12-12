@@ -5,12 +5,12 @@
 (function () {
     "use strict";
 
-    document.addEventListener( 'deviceready', onDeviceReady.bind( this ), false );
+    document.addEventListener('deviceready', onDeviceReady.bind(this), false);
 
     function onDeviceReady() {
         // Handle the Cordova pause and resume events
-        document.addEventListener( 'pause', onPause.bind( this ), false );
-        document.addEventListener( 'resume', onResume.bind( this ), false );
+        document.addEventListener('pause', onPause.bind(this), false);
+        document.addEventListener('resume', onResume.bind(this), false);
         FirebasePlugin.getToken(function (token) {
             localStorage["FCMToken"] = token;
         }, function (error) {
@@ -49,4 +49,20 @@
     function errorFun(err) {
         console.log(err);
     };
-} )();
+})();
+
+function getUniqueDates(dateList) {
+    var uniqueDates = [];
+    dateList.forEach(function (e, i) {
+        if (!uniqueDates.find(function (d) {
+            return (d.getDay() === e.getDay() && d.getMonth() === e.getMonth() && d.getYear() === e.getYear());
+        }))
+            uniqueDates.push(e);
+    });
+
+    return uniqueDates.sort(function (a, b) { return a < b; });
+}
+
+function compareOnlyDate(date1, date2) {
+    return date1.getDay() === date2.getDay() && date1.getMonth() === date2.getMonth() && date1.getYear() === date2.getYear();
+}
