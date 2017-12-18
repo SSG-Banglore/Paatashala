@@ -1,8 +1,8 @@
-﻿var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+﻿//var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 //var host = "http://192.168.31.100/SampleAPI/";
 //var host = "http://192.168.1.43/SampleAPI/";
-//var host = "http://192.168.1.12/SampleAPI/";
-//var host = "http://localhost/SampleAPI/";
+var host = "http://192.168.31.180/SampleAPI/";
+//var host = "http://localhost:4261/";
 (function () {
     "use strict";
     angular.module("myapp.controllers", ['ionic-datepicker', 'tabSlideBox', 'ngAnimate'])
@@ -443,87 +443,31 @@
             }
         }
         ])
-        .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
-            $scope.Pages = [{
-                "Href": "#/parent-reports",
-                "Icon": "reports.png",
-                "Name": "Reports"
-            }, {
-                "Href": "#/ParentGalleryGrid",
-                "Icon": "gallery.png",
-                "Name": "Photo Gallery"
-            }, {
-
-                "Href": "#/view-feeDeatils",
-                "Icon": "fee2.png",
-                "Name": "Fee Details"
-            }, {
-
-                "Href": "#/view-subject-details",
-                "Icon": "subject.png",
-                "Name": "Subjects"
-            }, {
-
-                "Href": "#/view-studentDetail",
-                "Icon": "student.png",
-                "Name": "Student Details"
-            }, {
-
-                "Href": "#/view-HomeWork-Details",
-                "Icon": "homework.png",
-                "Name": "Homework Details"
-            }, {
-
-                "Href": "#/view-holidays",
-                "Icon": "holiday.png",
-                "Name": "Holidays"
-            }, {
-
-                "Href": "#/view-MessageBox",
-                "Icon": "message.png",
-                "Name": "Message Box"
-            }, {
-
-                "Href": "#/view-TimeTable",
-                "Icon": "timetable.png",
-                "Name": "Time Table"
-            }, {
-
-                "Href": "#/view-ExaminationDetails",
-                "Icon": "exam.png",
-                "Name": "Exam Details"
-            }, {
-
-                "Href": "#/view-teacherDetail",
-                "Icon": "teacher.png",
-                "Name": "Teacher Details"
-            }, {
-
-                "Href": "#/view-assesmentReport",
-                "Icon": "assesment.png",
-                "Name": "Assesment Report"
-            }, {
-
-                "Href": "#/view-trackstudent",
-                "Icon": "trackstudent.png",
-                "Name": "Track Student"
-            }, {
-
-                "Href": "#/ParentDiaryReport",
-                "Icon": "curriculum.png",
-                "Name": "Diary Report"
-            }
-            ];
+        .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', '$ionicLoading', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup, $ionicLoading) {
+            $scope.Pages = [];
 
             $scope.grid = [];
-            for (var i = 0; i < Math.ceil($scope.Pages.length / 3); i++) {
-                var row = [];
-                for (var j = 0; j < 3; j++) {
-                    if (i * 3 + j < $scope.Pages.length)
-                        row.push(i * 3 + j);
+            var user = JSON.parse(localStorage['LoginUser']);
+            $ionicLoading.show({
+                template: 'Loading Menu...',
+                duration: 20000
+            });
+            $http.post(host + 'AppMenu/GetMenu', { OrgId: user.OrgId, LoginType: localStorage['LoginType'] }).success(function (data) {
+                $ionicLoading.hide();
+                $scope.Pages = data;
+                try {
+                    for (var i = 0; i < Math.ceil($scope.Pages.length / 3); i++) {
+                        var row = [];
+                        for (var j = 0; j < 3; j++) {
+                            if (i * 3 + j < $scope.Pages.length)
+                                row.push(i * 3 + j);
+                        }
+                        $scope.grid.push(row);
+                    }
+                } catch (e) {
+                    alert(JSON.stringify(e));
                 }
-                $scope.grid.push(row);
-            }
+            });
 
             $scope.NewVersionData = {};
             if (localStorage['LastToken'] != localStorage["FCMToken"]) {
@@ -550,8 +494,63 @@
                 $cordovaAppVersion.getVersionNumber().then(function (version) {
                     localStorage['AppCurrentVersion'] = version;
                     $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
-                        if (data) {
-                            $scope.NewVersionData = data ? data : {};
+                        try {
+
+                            if (data) {
+                                $scope.NewVersionData = data ? data : {};
+                                $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+                                console.log(data);
+                                if (data.Version.trim() != version.trim()) {
+                                    $ionicPopup.alert({
+                                        title: 'New Update Available!',
+                                        template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+                                        scope: $scope
+                                    });
+                                }
+                            }
+
+                        } catch (e) {
+                            alert(JSON.stringify(e));
+                        }
+                    });
+                });
+            }, false);
+        }
+        ])
+        .controller("employeeHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', '$ionicLoading', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup, $ionicLoading) {
+            $scope.Pages = [];
+            $scope.user = JSON.parse(localStorage["LoginUser"]);
+
+            $scope.grid = [];
+            $ionicLoading.show({
+                template: 'Loading Menu...',
+                duration: 20000
+            });
+            $http.post(host + 'AppMenu/GetMenu', { OrgId: $scope.user.OrgId, LoginType: localStorage['LoginType'] }).success(function (data) {
+                $ionicLoading.hide();
+                debugger;
+                $scope.Pages = data;
+                try {
+                    for (var i = 0; i < Math.ceil($scope.Pages.length / 3); i++) {
+                        var row = [];
+                        for (var j = 0; j < 3; j++) {
+                            if (i * 3 + j < $scope.Pages.length)
+                                row.push(i * 3 + j);
+                        }
+                        $scope.grid.push(row);
+                    }
+                } catch (e) {
+                    alert(JSON.stringify(e));
+                }
+            });
+
+            document.addEventListener("deviceready", function () {
+                $cordovaAppVersion.getVersionNumber().then(function (version) {
+                    localStorage['AppCurrentVersion'] = version;
+                    debugger;
+                    $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
+                        try {
+                            $scope.NewVersionData = data;
                             $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
                             console.log(data);
                             if (data.Version.trim() != version.trim()) {
@@ -561,109 +560,8 @@
                                     scope: $scope
                                 });
                             }
-                        }
-                    });
-                });
-            }, false);
-        }
-        ])
-        .controller("employeeHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup) {
-            $scope.Pages = [
-                {
-                    "Name": "Transport Attendance  (BC)",
-                    "Href": "#/TransportBarcodeAttendance",
-                    "Icon": "transport.png"
-                }, {
-                    "Name": " Student Attendance  (BC)",
-                    "Href": "#/StudentBarcodeAttendance",
-                    "Icon": "attendance.png"
-                }, {
-                    "Name": "Employee Attendance  (BC)",
-                    "Href": "#/EmployeeBarcodeAttendance",
-                    "Icon": "emp-attendance.png"
-                }, {
-                    "Name": "Gallery",
-                    "Href": "#/EmployeeGallery",
-                    "Icon": "gallery.png"
-                },
-                {
-                    "Name": "Geo Location",
-                    "Href": "#/Geolocation",
-                    "Icon": "trackstudent.png"
-                }, {
-                    "Name": "Daycare Attendance",
-                    "Href": "#/EmployeeDaycareAttendance",
-                    "Icon": "DayCareAttendance.png"
-                },
-                {
-                    "Name": "Student Attendance  (M)",
-                    "Href": "#/StudentManualAttendance",
-                    "Icon": "student.png"
-                },
-                {
-                    "Name": "Transport Attendance  (M)",
-                    "Href": "#/TransportManualAttendance",
-                    "Icon": "TransportManualAttendance.png"
-                },
-                {
-                    "Name": "Employee Attendance  (M)",
-                    "Href": "#/EmployeeManualAttendance",
-                    "Icon": "curriculum.png"
-                },
-                {
-                    "Name": "Holidays",
-                    "Href": "#/Employeeholidays",
-                    "Icon": "holiday.png"
-                },
-                {
-                    "Name": "Personal Details",
-                    "Href": "#/EmployeeProfile",
-                    "Icon": "man.png"
-                },
-                {
-                    "Name": "Enquiry Form",
-                    "Href": "#/EnquiryForm",
-                    "Icon": "inquiry.png"
-                }, {
-                    "Name": "Diary Report",
-                    "Href": "#/EmployeeDiaryReport",
-                    "Icon": "subject.png"
-                }
-                //{
-                //    "Name": "TrackBus",
-                //    "Href": "#/view-trackEmployee",
-                //    "Icon": "trackstudent.png"
-                //},
-
-            ];
-            $scope.user = JSON.parse(localStorage["LoginUser"]);
-            //if ($scope.user.Role != "Admin") {
-            //    $scope.Pages = $scope.Pages.filter(function (e) {
-            //        return e.Name != "Transport";
-            //    });
-            //}
-            $scope.grid = [];
-            for (var i = 0; i < Math.ceil($scope.Pages.length / 3); i++) {
-                var row = [];
-                for (var j = 0; j < 3; j++) {
-                    if (i * 3 + j < $scope.Pages.length)
-                        row.push(i * 3 + j);
-                }
-                $scope.grid.push(row);
-            }
-            document.addEventListener("deviceready", function () {
-                $cordovaAppVersion.getVersionNumber().then(function (version) {
-                    localStorage['AppCurrentVersion'] = version;
-                    $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
-                        $scope.NewVersionData = data;
-                        $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
-                        console.log(data);
-                        if (data.Version.trim() != version.trim()) {
-                            $ionicPopup.alert({
-                                title: 'New Update Available!',
-                                template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
-                                scope: $scope
-                            });
+                        } catch (e) {
+                            alert(e.message);
                         }
                     });
                 });
@@ -952,7 +850,7 @@
                     date: time,
                     mode: 'time'
                 }, function (date) {
-                    var time = ((date.getHours() % 12 < 10 ? '0' : '') + date.getHours() % 12) + ':' + ((date.getMinutes() < 10 ? '0' : '') + date.getMinutes()) + ' ' + (date.getHours() % 12 == 0 ? 'AM' : 'PM');
+                    var time = ((date.getHours() % 12 < 10 ? '0' : '') + date.getHours() % 12) + ':' + ((date.getMinutes() < 10 ? '0' : '') + date.getMinutes()) + ' ' + (date.getHours() < 12 ? 'AM' : 'PM');
                     callback(time);
                 });
             };
@@ -1796,24 +1694,27 @@
             $scope.checkForUpdate = function () {
                 debugger;
                 $http.get(host + 'AppManager/GetLatestVersion').success(function (data) {
-                    debugger;
-                    $scope.NewVersionData = data;
-                    $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
-                    console.log(data);
-                    var version = localStorage['AppCurrentVersion'];
-                    if (data.Version.trim() != version.trim()) {
-                        $ionicPopup.alert({
-                            title: 'New Update Available!',
-                            template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
-                            scope: $scope
-                        });
-                    }
-                    else {
-                        $ionicPopup.alert({
-                            title: 'App is up to date.',
-                            template: "<strong>Great! You are using the latest Version.",
-                            scope: $scope
-                        });
+                    try {
+                        $scope.NewVersionData = data;
+                        $scope.NewVersionData.Url = host + "AppManager/PatashalaApp";
+                        console.log(data);
+                        var version = localStorage['AppCurrentVersion'];
+                        if (data.Version.trim() != version.trim()) {
+                            $ionicPopup.alert({
+                                title: 'New Update Available!',
+                                template: "<strong>New Version : </strong> {{NewVersionData.Version}} <br />  <a href=\"#\" onclick=\"window.open('" + $scope.NewVersionData.Url + "', '_system', 'location=yes'); return false;\"> Get from here</a><br /> {{NewVersionData.UpdateMessage}}",
+                                scope: $scope
+                            });
+                        }
+                        else {
+                            $ionicPopup.alert({
+                                title: 'App is up to date.',
+                                template: "<strong>Great! You are using the latest Version.",
+                                scope: $scope
+                            });
+                        }
+                    } catch (e) {
+                        alert(JSON.stringify(e));
                     }
                 });
             }
@@ -2186,30 +2087,30 @@
                     }
                 });
             };
-
         }
         ])
-        .controller("parentDiaryReportCtrl", ["$scope", "$state", "$http", "$CustomLS", function ($scope, $state, $http, $CustomLS) {
+        .controller("parentDiaryReportCtrl", ["$scope", "$state", "$http", "$CustomLS", "$ionicLoading", function ($scope, $state, $http, $CustomLS, $ionicLoading) {
             debugger;
             $scope.currentStudent = $CustomLS.getObject('currentStudents').find(function (ele) {
                 return ele.Id == localStorage['selectedStudent'];
             });
-            $scope.Diary = [];
+            $scope.Diary = null;
+            $ionicLoading.show({
+                template: 'Loading Diary Reports...',
+                duration: 20000
+            });
             $http.post(host + 'Diary/GetDiaryReport', {
                 BatchId: $scope.currentStudent.Batch,
                 CourseId: $scope.currentStudent.Course,
                 OrgId: $scope.currentStudent.OrgId,
                 StudentId: $scope.currentStudent.Id
             }).success(function (data) {
-                debugger
-                if (data.length == 0) {
-                }
-                else
-                    $scope.Diary = data;
+                debugger;
+                $ionicLoading.hide();
+                $scope.Diary = (data.length == 0 ? {} : data);
             });
 
-        }
-        ])
+        }])
         .controller("TrackInEmployeeCtrl", ["$scope", "$state", "$http", "$cordovaGeolocation", "$interval", "$CustomLS", function ($scope, $state, $http, $cordovaGeolocation, $interval, $CustomLS) {
             $scope.map = {};
             $scope.time = {

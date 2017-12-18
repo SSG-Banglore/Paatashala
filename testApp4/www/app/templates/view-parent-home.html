@@ -5,9 +5,9 @@
     </ion-nav-title>
     <ion-content class="padding has-header">
         <div class="row" ng-repeat="row in grid">
-            <a href="{{Pages[col].Href}}" class="col c-col col-33" ng-repeat="col in row">
+            <a href="{{Pages[col].Url}}" class="col c-col col-33" ng-repeat="col in row">
                 <img class="c-icon" src="{{Pages[col].Icon}}" />
-                <span class="c-heading">{{Pages[col].Name}}</span>
+                <span class="c-heading">{{Pages[col].MenuName}}</span>
             </a>
         </div>
     </ion-content>
