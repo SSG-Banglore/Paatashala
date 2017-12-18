@@ -1,7 +1,7 @@
-﻿//var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+﻿var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 //var host = "http://192.168.31.100/SampleAPI/";
 //var host = "http://192.168.1.43/SampleAPI/";
-var host = "http://192.168.31.180/SampleAPI/";
+//var host = "http://192.168.31.180/SampleAPI/";
 //var host = "http://localhost:4261/";
 (function () {
     "use strict";
@@ -452,7 +452,7 @@ var host = "http://192.168.31.180/SampleAPI/";
                 template: 'Loading Menu...',
                 duration: 20000
             });
-            $http.post(host + 'AppMenu/GetMenu', { OrgId: user.OrgId, LoginType: localStorage['LoginType'] }).success(function (data) {
+            $http.post(host + 'AppMenu/GetMenu', { OrgId: user.OrgId, LoginType: "Parent" }).success(function (data) {
                 $ionicLoading.hide();
                 $scope.Pages = data;
                 try {
@@ -526,7 +526,7 @@ var host = "http://192.168.31.180/SampleAPI/";
                 template: 'Loading Menu...',
                 duration: 20000
             });
-            $http.post(host + 'AppMenu/GetMenu', { OrgId: $scope.user.OrgId, LoginType: localStorage['LoginType'] }).success(function (data) {
+            $http.post(host + 'AppMenu/GetMenu', { OrgId: $scope.user.OrgId, LoginType: $scope.user.Role }).success(function (data) {
                 $ionicLoading.hide();
                 debugger;
                 $scope.Pages = data;
