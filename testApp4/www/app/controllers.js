@@ -2309,8 +2309,9 @@
             });
             $http.get(host + '/Report/getReportBaseDetails?StudentId=' + studentId + '&OrgId=' + $scope.OrgId).success(function (data) {
                 $ionicLoading.hide();
+                debugger;
                 data.forEach(function (e) {
-                    e.createdOn = new Date(e.createdOn);
+                    e.createdOn = new Date(e.createdOn); 
                     e.StartTime = new Date(e.StartTime);
                     e.EndTime = new Date(e.EndTime);
                     e.pdfUrl = host + 'Report/getReportEntireDetails?Id=' + e.Id + '&OrgId=' + $scope.OrgId
