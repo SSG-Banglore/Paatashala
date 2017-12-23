@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<widget android-versionCode="" defaultlocale="en-US" id="io.cordova.myapp2f6bd8" version="1.4.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:vs="http://schemas.microsoft.com/appx/2014/htmlapps">
+<widget android-versionCode="" defaultlocale="en-US" id="io.cordova.myapp2f6bd8" version="1.4.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:vs="http://schemas.microsoft.com/appx/2014/htmlapps">
   <name>Paatashala</name>
   <description>Patashal School Management app helps parent to track and get the update on their children about the curriculum</description>
   <author email="dev@cordova.apache.org" href="http://cordova.io">Soft Serve Global</author>

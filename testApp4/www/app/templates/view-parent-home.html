@@ -3,7 +3,12 @@
         <img src="Paatashala.png" style="height:100%;">
         <div style="vertical-align: top;display:inline">Parent</div>
     </ion-nav-title>
-    <ion-content class="padding has-header">
+    <ion-content class="padding has-header" on-scroll="getScrollPosition()">
+        <head-logo>
+            <div style="text-align: center">
+                <img id="org-logo" src="{{OrgLogoUrl}}" />
+            </div>
+        </head-logo>
         <div class="row" ng-repeat="row in grid">
             <a href="{{Pages[col].Url}}" class="col c-col col-33" ng-repeat="col in row">
                 <img class="c-icon" src="{{Pages[col].Icon}}" />
@@ -13,6 +18,14 @@
     </ion-content>
 </ion-view>
 <style>
+    head-logo {
+        text-align: center;
+    }
+
+        head-logo img {
+            width: 20%;
+        }
+
     .c-icon {
         width: 60%;
         display: block;

@@ -443,31 +443,81 @@
             }
         }
         ])
-        .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', '$ionicLoading', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup, $ionicLoading) {
-            $scope.Pages = [];
-
+        .controller("parentHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', '$ionicLoading', "$cordovaToast", "$ionicScrollDelegate", function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup, $ionicLoading, $cordovaToast, $ionicScrollDelegate) {
+            $scope.Pages = localStorage['ParentPagesData'] ? JSON.parse(localStorage['ParentPagesData']) : [];
+            $("#org-logo").error(function () {
+                $(this).hide();
+            });
+            
             $scope.grid = [];
-            var user = JSON.parse(localStorage['LoginUser']);
-            $ionicLoading.show({
-                template: 'Loading Menu...',
-                duration: 20000
-            });
-            $http.post(host + 'AppMenu/GetMenu', { OrgId: user.OrgId, LoginType: "Parent" }).success(function (data) {
-                $ionicLoading.hide();
-                $scope.Pages = data;
-                try {
-                    for (var i = 0; i < Math.ceil($scope.Pages.length / 3); i++) {
-                        var row = [];
-                        for (var j = 0; j < 3; j++) {
-                            if (i * 3 + j < $scope.Pages.length)
-                                row.push(i * 3 + j);
-                        }
-                        $scope.grid.push(row);
+            try {
+                for (var i = 0; i < Math.ceil($scope.Pages.length / 3); i++) {
+                    var row = [];
+                    for (var j = 0; j < 3; j++) {
+                        if (i * 3 + j < $scope.Pages.length)
+                            row.push(i * 3 + j);
                     }
-                } catch (e) {
-                    alert(JSON.stringify(e));
+                    $scope.grid.push(row);
                 }
-            });
+            } catch (e) {
+                alert(JSON.stringify(e));
+            }
+            var user = JSON.parse(localStorage['LoginUser']);
+            $scope.OrgLogoUrl = host + "AppMenu/GetOrgLogo?OrgId=" + user.OrgId;
+            $scope.LoadMenu = function () {
+                var req = {
+                    method: 'GET',
+                    url: host + 'AppMenu/GetMenu?OrgId=' + user.OrgId + "&LoginType=Parent",
+                    headers: {
+                        'Token': localStorage['LoginToken']
+                    }
+                }
+                $http(req).success(function (data) {
+                    $cordovaToast.showShortCenter('Refreshing Menu Successful');
+                    localStorage['ParentPagesData'] = JSON.stringify(data);
+                    $scope.Pages = data;
+                    $scope.grid = [];
+                    try {
+                        for (var i = 0; i < Math.ceil($scope.Pages.length / 3); i++) {
+                            var row = [];
+                            for (var j = 0; j < 3; j++) {
+                                if (i * 3 + j < $scope.Pages.length)
+                                    row.push(i * 3 + j);
+                            }
+                            $scope.grid.push(row);
+                        }
+                    } catch (e) {
+                        alert(JSON.stringify(e));
+                    }
+                }).error(function () { $cordovaToast.showShortCenter('Refreshing Menu Failed'); });
+            }
+
+            $scope.LoadMenu();
+            $scope.doRefresh = function () {
+                $scope.LoadMenu();
+            };
+
+            var oldScrollPosition = {};
+            var windowWidth = parseInt($('ion-view').css('width').replace('px', ''));
+            var logoWidth = windowWidth * 0.3;
+            var shrinkScale = windowWidth * 0.05;
+            var enlargeScale = windowWidth * 0.015;
+            $scope.getScrollPosition = function () {
+                var newScrollPosition = $ionicScrollDelegate.getScrollPosition();
+                if (newScrollPosition.top == 0) {
+                    if (logoWidth + enlargeScale < (windowWidth * 0.8)) {
+                        logoWidth += enlargeScale;
+                        $('#org-logo').css('width', logoWidth + 'px');
+                    }
+                } else if (oldScrollPosition && oldScrollPosition.top < newScrollPosition.top) {
+                    if ((logoWidth - shrinkScale) > (windowWidth * 0.3)) {
+                        logoWidth -= shrinkScale;
+                        //$ionicScrollDelegate.scrollTop();
+                        $('#org-logo').css('width', logoWidth + 'px');
+                    }
+                }
+                oldScrollPosition = newScrollPosition;
+            };
 
             $scope.NewVersionData = {};
             if (localStorage['LastToken'] != localStorage["FCMToken"]) {
@@ -517,32 +567,59 @@
             }, false);
         }
         ])
-        .controller("employeeHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', '$ionicLoading', function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup, $ionicLoading) {
-            $scope.Pages = [];
+        .controller("employeeHomeCtrl", ["$scope", "$state", "$ionicPopover", '$ionicHistory', '$ionicNavBarDelegate', '$cordovaAppVersion', '$http', '$ionicPopup', '$ionicLoading', "$cordovaToast", function ($scope, $state, $ionicPopover, $ionicHistory, $ionicNavBarDelegate, $cordovaAppVersion, $http, $ionicPopup, $ionicLoading, $cordovaToast) {
+            $scope.Pages = localStorage['EmployeePagesData'] ? JSON.parse(localStorage['EmployeePagesData']) : [];
             $scope.user = JSON.parse(localStorage["LoginUser"]);
 
             $scope.grid = [];
-            $ionicLoading.show({
-                template: 'Loading Menu...',
-                duration: 20000
-            });
-            $http.post(host + 'AppMenu/GetMenu', { OrgId: $scope.user.OrgId, LoginType: $scope.user.Role }).success(function (data) {
-                $ionicLoading.hide();
-                debugger;
-                $scope.Pages = data;
-                try {
-                    for (var i = 0; i < Math.ceil($scope.Pages.length / 3); i++) {
-                        var row = [];
-                        for (var j = 0; j < 3; j++) {
-                            if (i * 3 + j < $scope.Pages.length)
-                                row.push(i * 3 + j);
-                        }
-                        $scope.grid.push(row);
+            $scope.grid = [];
+            try {
+                for (var i = 0; i < Math.ceil($scope.Pages.length / 3); i++) {
+                    var row = [];
+                    for (var j = 0; j < 3; j++) {
+                        if (i * 3 + j < $scope.Pages.length)
+                            row.push(i * 3 + j);
                     }
-                } catch (e) {
-                    alert(JSON.stringify(e));
+                    $scope.grid.push(row);
                 }
-            });
+            } catch (e) {
+                alert(JSON.stringify(e));
+            }
+
+            $scope.LoadMenu = function () {
+
+                var req = {
+                    method: 'GET',
+                    url: host + 'AppMenu/GetMenu?OrgId=' + $scope.user.OrgId + "&LoginType=" + $scope.user.Role,
+                    headers: {
+                        'Token': localStorage['LoginToken']
+                    }
+                }
+
+                $http(req).success(function (data) {
+                    $cordovaToast.showShortCenter('Refreshing Menu Successful');
+                    $scope.Pages = data;
+                    localStorage['EmployeePagesData'] = JSON.stringify(data);
+                    $scope.grid = [];
+                    try {
+                        for (var i = 0; i < Math.ceil($scope.Pages.length / 3); i++) {
+                            var row = [];
+                            for (var j = 0; j < 3; j++) {
+                                if (i * 3 + j < $scope.Pages.length)
+                                    row.push(i * 3 + j);
+                            }
+                            $scope.grid.push(row);
+                        }
+                    } catch (e) {
+                        alert(JSON.stringify(e));
+                    }
+                }).error(function () { $cordovaToast.showShortCenter('Refreshing Menu Failed'); });
+            };
+
+            $scope.LoadMenu();
+            $scope.doRefresh = function () {
+                $scope.LoadMenu();
+            };
 
             document.addEventListener("deviceready", function () {
                 $cordovaAppVersion.getVersionNumber().then(function (version) {
@@ -2311,7 +2388,7 @@
                 $ionicLoading.hide();
                 debugger;
                 data.forEach(function (e) {
-                    e.createdOn = new Date(e.createdOn); 
+                    e.createdOn = new Date(e.createdOn);
                     e.StartTime = new Date(e.StartTime);
                     e.EndTime = new Date(e.EndTime);
                     e.pdfUrl = host + 'Report/getReportEntireDetails?Id=' + e.Id + '&OrgId=' + $scope.OrgId
