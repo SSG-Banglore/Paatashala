@@ -1,0 +1,54 @@
+﻿<ion-view>
+    <ion-nav-title>
+        <img src="Paatashala.png" style="height:100%;">
+        <div style="vertical-align: top;display:inline">Activity Report</div>
+    </ion-nav-title>
+    <div class="tabs-striped tabs-top tabs-background-positive tabs-color-light">
+        <div class="tabs">
+            <a class="tab-item" href="#/ActivityReport">
+                <strong>Add Activity Type</strong>
+            </a>
+            <a class="tab-item active" href="#/AddActivity">
+                <strong>Add Activity</strong>
+            </a>
+        </div>
+    </div>
+    <ion-content>
+        <br />
+        <br />
+        <br />
+        <br />
+        <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" ng-model="data.searchText" ng-change="searchTextChanged()" placeholder="Search">
+        </label>
+        <div class="list">
+            <label class="item item-input item-select">
+                <div class="input-label">
+                   Select
+                </div>
+                <select ng-model="dropdown.value" ng-change="dropvalueChange()" ng-init="dropdown.value='-1'">
+                    <option value="-1" selected>--Select--</option>
+                    <option value="1">All</option>
+                    <option value="0">None</option>
+                </select>
+            </label>
+        </div>
+        <br />
+        <ul class="list" collection-repeat="i in StudentsList">
+            <li class="item item-toggle">
+                {{i.StudentName}}
+                <label class="toggle toggle-positive">
+                    <input type="checkbox" ng-model="i.isPresent">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+        </ul>
+        <button class="button button-block button-positive" ng-click="SubmittingStudentList()">
+            Add Activity
+        </button>
+
+    </ion-content>
+</ion-view>

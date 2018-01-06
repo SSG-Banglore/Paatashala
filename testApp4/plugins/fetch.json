@@ -72,15 +72,6 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-datepicker": {
-        "source": {
-            "type": "git",
-            "url": "https://github.com/VitaliiBlagodir/cordova-plugin-datepicker",
-            "subdir": "."
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
     "cordova-plugin-app-version": {
         "source": {
             "type": "git",
@@ -208,6 +199,14 @@
         "source": {
             "type": "registry",
             "id": "cordova-plugin-firebase"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-datepicker": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-datepicker@~0.9.3"
         },
         "is_top_level": true,
         "variables": {}

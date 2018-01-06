@@ -1,0 +1,44 @@
+﻿<ion-view>
+    <ion-nav-title>
+        <img src="Paatashala.png" style="height:100%;">
+        <div style="vertical-align: top;display:inline">Medicine Report</div>
+    </ion-nav-title>
+    <div class="tabs-striped tabs-top tabs-background-positive tabs-color-light">
+        <div class="tabs">
+            <a class="tab-item active" href="#/MedicineReport">
+                <strong>Add Medicine Type</strong>
+            </a>
+            <a class="tab-item " href="#/MedicineAddStudent">
+                <strong>Add Medicine</strong>
+            </a>
+        </div>
+    </div>
+    <ion-content class="padding">
+        <form name="Form">
+            <br />
+            <br />
+            <br />
+            <br />
+            <div class="list">
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Name</span>
+                    <input type="text" placeholder="Medicine Name" ng-model="data.MedicineName">
+                </label>
+                <br />
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Description</span>
+                    <input type="text" placeholder="Description" ng-model="data.Description">
+                </label>
+                <br />
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Company</span>
+                    <input type="text" placeholder="Medicine Company" ng-model="data.Company">
+                </label>
+            </div>
+            <br />
+            <br />
+            <button class="button button-positive button-block" ng-disabled=" !data.MedicineName || !data.Description || !data.Company" ng-click="SaveMedicineItems(data)">Submit</button>
+         
+        </form>
+    </ion-content>
+</ion-view>

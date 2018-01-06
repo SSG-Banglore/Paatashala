@@ -20,11 +20,63 @@
                     templateUrl: 'app/templates/view-login.html',
                     controller: 'loginCtrl'
                 })
+                .state("MedicineReport", {
+                    url: "/MedicineReport",
+                    templateUrl: "app/templates/MedicineReport.html",
+                    controller: "medicineReportCtrl"
+                })
+                .state("MedicineAddStudent", {
+                    url: "/MedicineAddStudent",
+                    templateUrl: "app/templates/MedicineAddStudent.html",
+                    controller: "medicineAddStudentCtrl"
+                })
+                .state("AddMedicineToStudent", {
+                    url: "/AddMedicineToStudent",
+                    params: {
+                        BatchId: '',
+                        CourseId: '',
+                        StudentId:''
+                    },
+                    templateUrl: "app/templates/AddMedicinesToStudent.html",
+                    controller: "AddMedicineToStudentCtrl"
+                })
+                .state("ActivityReport", {
+                    url: "/ActivityReport",
+                    templateUrl: "app/templates/ActivityReport.html",
+                    controller: "activityReportCtrl"
+                })
+                .state("AddActivity", {
+                    url: "/AddActivity",
+                    templateUrl: "app/templates/AddActivity.html",
+                    controller: "addActivityCtrl"
+                })
+
+                .state("SubmitAddActivity", {
+                    url: "/SubmitAddActivity",
+                    params: {
+                        BatchId: '',
+                        CourseId: '',
+                        Date: ''
+                    },
+                    templateUrl: "app/templates/SubmitAddActivity.html",
+                    controller: "SubmitAddActivityCtrl"
+                })
+                .state("SaveStudentActivity", {
+                    url: "/SaveStudentActivity",
+                    params: {
+                        StudentListObj:'',
+                        BatchId: '',
+                        CourseId: '',
+                        Date: ''
+                    },
+                    templateUrl: "app/templates/SaveStudentActivity.html",
+                    controller: "SaveStudentActivityCtrl"
+                })
+
                 .state("TransportManualAttendance", {
                     url: "/TransportManualAttendance",
                     templateUrl: "app/templates/view-employee-transportManualAttendance.html",
                     controller: "transportManualAttendenceCtrl"
-
                 })
                 .state("NextTransportManualAttendance", {
                     url: "/NextTransportManualAttendance",

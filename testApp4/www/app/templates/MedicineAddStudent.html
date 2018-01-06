@@ -1,0 +1,45 @@
+﻿<ion-view>
+    <ion-nav-title>
+        <img src="Paatashala.png" style="height:100%;">
+        <div style="vertical-align: top;display:inline">Medicine Report</div>
+    </ion-nav-title>
+    <div class="tabs-striped tabs-top tabs-background-positive tabs-color-light">
+        <div class="tabs">
+            <a class="tab-item " href="#/MedicineReport">
+                <strong>Add Medicine Type</strong>
+            </a>
+            <a class="tab-item active" href="#/MedicineAddStudent">
+                <strong>Add Medicine</strong>
+            </a>
+        </div>
+    </div>
+    <ion-content>
+        <form name="Form">
+            <br />
+            <br />
+            <br />
+            <br />
+            <label class="item item-input item-select" style="margin-top: 14px;">
+                <label class="input-label">
+                    Batch
+                </label>
+                <select ng-model="selected.Batch" ng-options="r.Id as r.Name for r in Batchlist"></select>
+            </label>
+            <label class="item item-input item-select" style="margin-top: 14px;">
+                <label class="input-label">
+                    Course
+                </label>
+                <select ng-model="selected.Course" ng-options="r.Id as r.Name for r in CourseList" ng-change="GetStudentOnChange(selected)"></select>
+            </label>
+            <label class="item item-input item-select" style="margin-top: 14px;">
+                <label class="input-label">
+                    Student
+                </label>
+                <select ng-model="selected.StudentId" ng-options="r.Id as r.StudentName for r in StudentList"></select>
+            </label>
+            <br />
+            <br />
+            <button class="button button-positive button-block" ng-disabled="!selected.Batch || !selected.Course || !selected.StudentId" ng-click="AddMedicineToStudent(selected)">Add Medicine</button>
+    </form>
+  </ion-content>
+</ion-view>
