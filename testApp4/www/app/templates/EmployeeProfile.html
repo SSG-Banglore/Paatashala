@@ -1,6 +1,4 @@
-﻿
-
-<ion-view>
+﻿<ion-view>
     <ion-nav-title>
         <img src="Paatashala.png" style="height:100%;">
         <div style="vertical-align: top;display:inline">Personal Details</div>
@@ -8,7 +6,7 @@
     <ion-content>
         <div class="card">
             <div class="item item-image">
-                <img src="{{imageUrl}}" onerror="this.src='babyphoto.jpg';" />
+                <img src="{{imageUrl}}" onerror="this.style.display = 'none';" />
             </div>
             <div class="item item-text-wrap">
                 <p>Name : <b>{{Details.Data.Name}}</b></p>

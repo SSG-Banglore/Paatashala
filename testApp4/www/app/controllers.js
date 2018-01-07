@@ -1,6 +1,6 @@
-﻿//var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
+﻿var host = "http://paatshaalamobileapi-prod.us-west-2.elasticbeanstalk.com/";
 //var host = "http://192.168.31.100/SampleAPI/";
-var host = "http://192.168.1.43/SampleAPI/";
+//var host = "http://192.168.1.43/SampleAPI/";
 //var host = "http://192.168.31.180/SampleAPI/";
 //var host = "http://192.168.1.105:4261/";
 //var host = "http://192.168.1.105/SampleAPI/";
@@ -2150,10 +2150,10 @@ var host = "http://192.168.1.43/SampleAPI/";
                     fastestLocationUpdateInterval: 30000,
                     locationUpdateInterval: 3000,
                     stopTimeout: 5,
-                    debug: true,
+                    debug: false,
                     stopOnTerminate: false,
-                    startOnBoot: true,
-                    maxDaysToPersist: 3,
+                    startOnBoot: false,
+                    maxDaysToPersist: 1,
                 }, function (state) {
                     $cordovaToast.showShortCenter('Background Geolocation ready : ' + state.enabled);
                     $scope.GL = bgGeo;
